@@ -1,0 +1,32 @@
+version: "3.5"
+
+services:
+  nadeko:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - redis
+    restart: unless-stopped
+    volumes:
+      - ./credentials.json:/home/nadeko/app/credentials.json:ro
+      - nadeko-data:/home/nadeko/app/data
+      - nadeko-db:/home/nadeko/app/db/
+    environment:
+      NadekoBot_RedisOptions: redis,name=nadeko
+      NadekoBot_ShardRunCommand: dotnet
+      NadekoBot_ShardRunArguments: NadekoBot.dll {0} {1}
+      NadekoBot_Db__Type: sqlite
+      NadekoBot_Db__ConnectionString: "Data Source=db/nadekobot.db"
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    sysctls:
+      net.core.somaxconn: 511
+    ports:
+      - "6379:6379/tcp"
+
+volumes:
+  nadeko-data:
+  nadeko-db:
