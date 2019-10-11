@@ -1,26 +1,23 @@
 version: "3.5"
+
 services:
   nadeko:
     build: .
-    #image: kwoth/nadeko
-    restart: unless-stopped
     depends_on:
       - redis
+    restart: on-failure
     volumes:
-      - ./credentials.json:/app/credentials.json:ro
-      - ./data:/app/data
+      - ./credentials.json:/home/nadeko/app/credentials.json:ro
+      - nadeko-data:/home/nadeko/app/data
     environment:
       NadekoBot_RedisOptions: redis,name=nadeko
       NadekoBot_ShardRunCommand: dotnet
       NadekoBot_ShardRunArguments: NadekoBot.dll {0} {1}
-    labels:
-      "com.centurylinklabs.watchtower.enable": "true"
+
   redis:
     image: redis:alpine
     sysctls:
       net.core.somaxconn: 511
-  #watchtower:
-  #  image: v2tec/watchtower
-  #  volumes:
-  #    - /var/run/docker.sock:/var/run/docker.sock
-  #  command: --interval 86400 --cleanup --label-enable
+
+volumes:
+  nadeko-data:

@@ -1,3 +1,4 @@
+# Build with the dotnot alpine SDK image
 FROM microsoft/dotnet:2.1-sdk-alpine AS build
 
 COPY . /nadekoBot
@@ -14,9 +15,16 @@ RUN set -ex; \
     find . -type f -exec chmod -x {} \;; \
     rm -R runtimes/win* runtimes/osx* runtimes/linux-*
 
+# Set up runtime container
+
 FROM microsoft/dotnet:2.1-runtime-alpine AS runtime
-WORKDIR /app
-COPY --from=build /app /app
+
+RUN adduser -D nadeko
+
+COPY --from=build /app /home/nadeko/app
+
+RUN mv /home/nadeko/app/data /home/nadeko/app/data-default && mkdir /home/nadeko/app/data && chown -R nadeko:nadeko /home/nadeko/app/
+
 RUN set -ex; \
     echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories; \
     echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories; \
@@ -25,20 +33,18 @@ RUN set -ex; \
         youtube-dl@edge \
         libsodium \
         opus \
-        rsync; \
-    adduser -D nadeko; \
-    chown nadeko /app; \
-    chmod u+w /app; \
-    mv /app/data /app/data-default; \
-    install -d -o nadeko -g nadeko -m 755 /app/data;
+        rsync;
+
+USER nadeko
 
 # workaround for the runtime to find the native libs loaded through DllImport
 RUN set -ex; \
-    ln -s /usr/lib/libopus.so.0 /app/libopus.so; \
-    ln -s /usr/lib/libsodium.so.23 /app/libsodium.so
+    ln -s /usr/lib/libopus.so.0 /home/nadeko/app/libopus.so; \
+    ln -s /usr/lib/libsodium.so.23 /home/nadeko/app/libsodium.so
 
-VOLUME [ "/app/data" ]
-USER nadeko
+WORKDIR /home/nadeko/app
 
-COPY docker-entrypoint.sh /
-CMD ["/docker-entrypoint.sh"]
+COPY data-init.sh .
+RUN ["./data-init.sh"]
+
+ENTRYPOINT ["dotnet", "/home/nadeko/app/NadekoBot.dll"]
