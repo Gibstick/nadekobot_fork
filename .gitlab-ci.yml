@@ -13,7 +13,7 @@ before_script:
 build:
   stage: build
   variables:
-    build_path: "$project/src/$project"
+    build_path: "src/$project"
   script:
     - "cd $build_path"
     - "dotnet build -c Release"
