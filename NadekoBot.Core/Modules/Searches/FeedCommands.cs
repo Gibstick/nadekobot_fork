@@ -17,13 +17,6 @@ namespace NadekoBot.Modules.Searches
         [Group]
         public class FeedCommands : NadekoSubmodule<FeedsService>
         {
-            private readonly DiscordSocketClient _client;
-
-            public FeedCommands(DiscordSocketClient client)
-            {
-                _client = client;
-            }
-
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageMessages)]
