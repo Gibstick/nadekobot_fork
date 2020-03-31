@@ -17,7 +17,7 @@
 - Windows 8 or later (64-bit)
 - [dotNET Core 2.1 SDK][dotNET] (restart Windows after installation)
 - [Redis][Redis] (supplied with the updater)
-- [Create a Discord Bot application](../jsons-explained.md#creating-discord-bot-application) and [invite the bot to your server](../jsons-explained.md/#inviting-your-bot-to-your-server).
+- [Create a Discord Bot application](../../jsons-explained#creating-discord-bot-application) and [invite the bot to your server](../../jsons-explained/#inviting-your-bot-to-your-server).
 
 **Optional**
 
@@ -37,7 +37,7 @@
 
 *If you happen to close the wizard with that option unchecked, you can easily find the credentials file in `C:\Program Files\NadekoBot\system`.*
 
-- [Set up the credentials.json](../jsons-explained.md) file.
+- [Set up the credentials.json](../../jsons-explained) file.
 
 #### Starting the bot
 
