@@ -41,4 +41,4 @@ Now if you try to trigger `/o/`, it won't print anything.
 
 ### Placeholders!
 
-To learn about placeholders, go [here](/placeholders)
+To learn about placeholders, go [here](placeholders.md)
