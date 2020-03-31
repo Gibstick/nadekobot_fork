@@ -1,4 +1,7 @@
-site_name: NadekoBot
+site_name: 'NadekoBot'
+site_url: 'https://nadeko.bot'
+repo_url: 'https://gitlab.com/kwoth/nadekobot'
+site_author: 'Kwoth'
 nav:
 - About: about.md
 - Guides:
@@ -18,5 +21,4 @@ nav:
 - Frequently Asked Questions: Frequently Asked Questions.md
 - Contribution Guide: Contribution Guide.md
 - ❤ Donate ❤: Donate.md
-
-theme: readthedocs
+theme: 'material'
