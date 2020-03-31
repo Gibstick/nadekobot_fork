@@ -17,7 +17,7 @@
 - Windows 8 or later (64-bit)
 - [dotNET Core 2.1 SDK][dotNET] (restart Windows after installation)
 - [Redis][Redis] (supplied with the updater)
-- [Create a Discord Bot application](http://nadekobot.readthedocs.io/en/latest/JSON%20Explanations/#creating-discord-bot-application) and [invite the bot to your server](http://nadekobot.readthedocs.io/en/latest/JSON%20Explanations/#inviting-your-bot-to-your-server).
+- [Create a Discord Bot application](/jsons-explained#creating-discord-bot-application) and [invite the bot to your server](/jsons-explained/#inviting-your-bot-to-your-server).
 
 **Optional**
 
@@ -37,7 +37,7 @@
 
 *If you happen to close the wizard with that option unchecked, you can easily find the credentials file in `C:\Program Files\NadekoBot\system`.*
 
-- [Set up the credentials.json](http://nadekobot.readthedocs.io/en/latest/JSON%20Explanations/#setting-up-credentialsjson-file) file.
+- [Set up the credentials.json](/jsons-explained/#setting-up-credentialsjson-file) file.
 
 #### Starting the bot
 
@@ -67,6 +67,6 @@ You can still install them manually:
 [Redis]: https://github.com/MicrosoftArchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.msi
 [Visual C++ 2010 (x86)]: https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe
 [Visual C++ 2017 (x64)]: https://aka.ms/vs/15/release/vc_redist.x64.exe
-[SourceGuide]: https://nadekobot.readthedocs.io/en/latest/guides/From%20Source/
+[SourceGuide]: /guides/from-source
 [ffmpeg]: https://ffmpeg.zeranoe.com/builds/
 [youtube-dl]: https://rg3.github.io/youtube-dl/download.html

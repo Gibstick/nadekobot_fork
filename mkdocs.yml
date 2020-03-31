@@ -3,22 +3,22 @@ site_url: 'https://nadeko.bot'
 repo_url: 'https://gitlab.com/kwoth/nadekobot'
 site_author: 'Kwoth'
 nav:
-- About: about.md
+- Home: index.md
 - Guides:
-    - 'Windows Guide': 'guides/Windows Guide.md'
-    - 'Linux Guide': 'guides/Linux Guide.md'
-    - OSX Guide: guides/OSX Guide.md
-    - From Source: guides/From Source.md
+    - Windows Guide: guides/windows-guide.md
+    - Linux Guide: guides/linux-guide.md
+    - OSX Guide: guides/osx-guide.md
+    - From Source: guides/from-source.md
 - Commands:
-    - Readme: cmds_readme.md
-    - Commands List: 'Commands List.md'
+    - Readme: commands-readme.md
+    - Commands List: https://nadeko.bot/commands
 - Features Explained:
-    - JSON Explanations: JSON Explanations.md
-    - Permissions System: Permissions System.md
-    - Custom Reactions: Custom Reactions.md
-    - Placeholders: Placeholders.md
-    - Bot Config: Bce Guide.md
-- Frequently Asked Questions: Frequently Asked Questions.md
-- Contribution Guide: Contribution Guide.md
-- ❤ Donate ❤: Donate.md
+    - JSON Explanations: jsons-explained.md
+    - Permissions System: permissions-system.md
+    - Custom Reactions: custom-reactions.md
+    - Placeholders: placeholders.md
+    - Bot Config: bce-guide.md
+- Contribution Guide: contribution-guide.md
+- ❤ Donate ❤: donate.md
+- License: license.md
 theme: 'material'

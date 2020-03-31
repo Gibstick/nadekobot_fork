@@ -120,9 +120,6 @@ It should look like this:
     - Required for Urban Disctionary, Hashtag search, and Hearthstone cards.
     - You need to create an account on their [api marketplace](https://market.mashape.com/), after that go to `market.mashape.com/YOURNAMEHERE/applications/default-application` and press **Get the keys** in the top right corner.
     - Copy the key and paste it into `credentials.json`
-- **LoLApiKey**
-    - Required for all League of Legends commands.
-    - You can get this key [here](http://api.champion.gg/).
 - **OsuApiKey**
     - Required for Osu commands
     - You can get this key [here](https://osu.ppy.sh/p/api).
