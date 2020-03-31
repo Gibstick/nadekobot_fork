@@ -163,6 +163,5 @@ Other useful commands:
 [Git]: https://git-scm.com/downloads
 [Visual C++ 2010 (x86)]: https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe
 [Visual C++ 2017]: https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
-[SourceGuide]: /guides/from-source
 [ffmpeg]: https://ffmpeg.zeranoe.com/builds/
 [youtube-dl]: https://rg3.github.io/youtube-dl/download.html
