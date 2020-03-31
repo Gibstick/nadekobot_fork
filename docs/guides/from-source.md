@@ -23,7 +23,7 @@ This is the recommended way of installing Nadeko from source. If you don't want 
 - Redis
     - Windows 64 bit: Download and install the [latest msi][Redis]. Don't forget to [add it to the path environment variable](https://i.imgur.com/uUby6Xw.png) during the installation process.
     - Windows 32 bit: Skip this step
-- [Create a Discord Bot application](/jsons-explained/#creating-discord-bot-application) and [invite the bot to your server](/jsons-explained/#inviting-your-bot-to-your-server).
+- [Create a Discord Bot application](../jsons-explained.md/#creating-discord-bot-application) and [invite the bot to your server](../jsons-explained.md/#inviting-your-bot-to-your-server).
 
 **Optional**
 
@@ -59,7 +59,7 @@ If you want Nadeko to play music, do the following:
 ```
 
 - Run Option `1` to download Nadeko (type 1 and press Enter). Once it's done, it should take you back to the main menu.
-- Run Option `4` to [set up your credentials](/jsons-explained). Paste the info as requested.
+- Run Option `4` to [set up your credentials](../jsons-explained.md). Paste the info as requested.
     - **If your Windows is 32-bit**, run Option `14` now. Otherwise, ignore this step.
 - Nadeko should be ready to launch. Run Option `2` to test it out. If everything goes well, Nadeko should appear as online on your Discord server and respond to commands. Once you're done with testing, type **`.die`** to shut it down and return to the installer's main menu.
 
@@ -89,7 +89,7 @@ This is the *"hard"* way of installing Nadeko. If you're here, we are assuming y
 - Redis
     - Windows 64 bit: Download and install the [latest msi][Redis]. Don't forget to [add it to the path environment variable](https://i.imgur.com/uUby6Xw.png) during the installation process.
     - Windows 32 bit: Download [redis-server.exe](https://github.com/MaybeGoogle/NadekoFiles/blob/master/x86%20Prereqs/redis-server.exe?raw=true) and store it somewhere accessible.
-- [Create a Discord Bot application](/jsons-explained/#creating-discord-bot-application) and [invite the bot to your server](/jsons-explained/#inviting-your-bot-to-your-server).
+- [Create a Discord Bot application](../jsons-explained.md/#creating-discord-bot-application) and [invite the bot to your server](../jsons-explained.md/#inviting-your-bot-to-your-server).
 
 **Optional**
 If you want Nadeko to play music, do the following:
@@ -104,7 +104,7 @@ If you want Nadeko to play music, do the following:
 
 - Open command prompt (`cmd.exe`) and run the following command to download the source:
 - `git clone -b 1.9 https://gitlab.com/Kwoth/NadekoBot`
-- On Windows Explorer, go to `NadekoBot/src/NadekoBot` and edit the `credentials.json` file according to this [guide](/jsons-explained/#setting-up-credentialsjson-file).
+- On Windows Explorer, go to `NadekoBot/src/NadekoBot` and edit the `credentials.json` file according to this [guide](../jsons-explained.md/#setting-up-credentialsjson-file).
 - Add these 2 arguments to your credentials file:
 
 ```js

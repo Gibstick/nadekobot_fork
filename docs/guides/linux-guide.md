@@ -59,7 +59,7 @@ Once it finishes, the installer should automatically take you back to the main m
 #### Installing Nadeko
 
 - Choose Option `1` to get the **most updated build of NadekoBot**. When the installation is complete, you will see the options again.
-- If you haven't [set up your Discord bot application](/jsons-explained/#creating-discord-bot-application) and [invited the bot to your server](/jsons-explained/#inviting-your-bot-to-your-server) yet, do it now.
+- If you haven't [set up your Discord bot application](../jsons-explained.md/#creating-discord-bot-application) and [invited the bot to your server](../jsons-explained.md/#inviting-your-bot-to-your-server) yet, do it now.
     - Only the ClientID, Bot Token and OwnerID are required. Everything else is optional.
     - The Google API Key is required if you want Nadeko to play music.
 - Once you have acquired them, choose Option `5` to set up your credentials.
@@ -248,7 +248,7 @@ Assuming you have followed the link above to setup an account and a Droplet with
 
 - Download [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html)
 - Download [WinSCP](https://winscp.net/eng/download.php) *(optional)*
-- [Create and invite the bot](/jsons-explained/#creating-discord-bot-application).
+- [Create and invite the bot](../jsons-explained.md/#creating-discord-bot-application).
 
 #### Starting up
 
