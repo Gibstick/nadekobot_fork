@@ -1,15 +1,14 @@
 site_name: NadekoBot
-pages:
-- Home: index.md
+nav:
 - About: about.md
 - Guides:
-    - Windows Guide: guides/Windows Guide.md
-    - Linux Guide: guides/Linux Guide.md
+    - 'Windows Guide': 'guides/Windows Guide.md'
+    - 'Linux Guide': 'guides/Linux Guide.md'
     - OSX Guide: guides/OSX Guide.md
     - From Source: guides/From Source.md
 - Commands:
-    - Readme: Readme.md
-    - Commands List: Commands List.md
+    - Readme: cmds_readme.md
+    - Commands List: 'Commands List.md'
 - Features Explained:
     - JSON Explanations: JSON Explanations.md
     - Permissions System: Permissions System.md
