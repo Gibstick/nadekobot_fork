@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
+using NadekoBot.Core.Common.Attributes;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
@@ -13,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NadekoBot.Modules.Utility
@@ -320,16 +322,28 @@ namespace NadekoBot.Modules.Utility
                 await ctx.User.SendFileAsync(stream, title, title, false).ConfigureAwait(false);
             }
         }
+        private static SemaphoreSlim sem = new SemaphoreSlim(1, 1);
 
         [NadekoCommand, Usage, Description, Aliases]
+#if GLOBAL_NADEKO
+        [Ratelimit(30)]
+#endif
         public async Task Ping()
         {
-            var sw = Stopwatch.StartNew();
-            var msg = await ctx.Channel.SendMessageAsync("🏓").ConfigureAwait(false);
-            sw.Stop();
-            msg.DeleteAfter(0);
+            await sem.WaitAsync(5000).ConfigureAwait(false);
+            try
+            {
+                var sw = Stopwatch.StartNew();
+                var msg = await ctx.Channel.SendMessageAsync("🏓").ConfigureAwait(false);
+                sw.Stop();
+                msg.DeleteAfter(0);
 
-            await ctx.Channel.SendConfirmAsync($"{Format.Bold(ctx.User.ToString())} 🏓 {(int)sw.Elapsed.TotalMilliseconds}ms").ConfigureAwait(false);
+                await ctx.Channel.SendConfirmAsync($"{Format.Bold(ctx.User.ToString())} 🏓 {(int)sw.Elapsed.TotalMilliseconds}ms").ConfigureAwait(false);
+            }
+            finally
+            {
+                sem.Release();
+            }
         }
     }
 }
