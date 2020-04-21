@@ -293,7 +293,8 @@ namespace NadekoBot.Modules.Searches.Services
 
                         using (var geoRes = await _http.SendAsync(req))
                         {
-                            var timeObj = JsonConvert.DeserializeObject<TimeZoneResult>(await geoRes.Content.ReadAsStringAsync());
+                            var resString = await geoRes.Content.ReadAsStringAsync();
+                            var timeObj = JsonConvert.DeserializeObject<TimeZoneResult>(res);
 
                             var time = new DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds(timeObj.Timestamp);
 
