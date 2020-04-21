@@ -35,29 +35,17 @@ namespace NadekoBot.Modules.Searches
                 if (string.IsNullOrWhiteSpace(usr))
                     return;
 
-                using (var http = _httpFactory.CreateClient())
+                var m = 0;
+                if (!string.IsNullOrWhiteSpace(mode))
                 {
-                    try
-                    {
-                        var m = 0;
-                        if (!string.IsNullOrWhiteSpace(mode))
-                        {
-                            m = ResolveGameMode(mode);
-                        }
-                        http.AddFakeHeaders();
-                        using (var res = await http.GetStreamAsync(new Uri($"http://lemmmy.pw/osusig/sig.php?uname={ usr }&flagshadow&xpbar&xpbarhex&pp=2&mode={m}")).ConfigureAwait(false))
-                        {
-                            await ctx.Channel.SendFileAsync(res, $"{usr}.png", $"🎧 **{GetText("profile_link")}** " +
-                                $"<https://new.ppy.sh/u/{Uri.EscapeDataString(usr)}>\n" +
-                                $"`Image provided by https://lemmmy.pw/osusig`").ConfigureAwait(false);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        await ReplyErrorLocalizedAsync("osu_failed").ConfigureAwait(false);
-                        _log.Warn(ex);
-                    }
+                    m = ResolveGameMode(mode);
                 }
+                var eb = new EmbedBuilder()
+                    .WithOkColor()
+                    .WithDescription($"[Profile](https://osu.ppy.sh/users/{Uri.EscapeDataString(usr)})")
+                    .WithImageUrl($"http://lemmmy.pw/osusig/sig.php?uname={ usr }&flagshadow&xpbar&xpbarhex&pp=2&mode={m}")
+                    .WithFooter("Image provided by https://lemmmy.pw/osusig");
+                await Context.Channel.SendMessageAsync(embed: eb.Build()).ConfigureAwait(false);
             }
 
             [NadekoCommand, Usage, Description, Aliases]
