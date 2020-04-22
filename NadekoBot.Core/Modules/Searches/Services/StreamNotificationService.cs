@@ -37,7 +37,7 @@ namespace NadekoBot.Modules.Searches.Services
         private readonly Random _rng = new NadekoRandom();
         private readonly ConcurrentDictionary<
             (FollowedStream.FType Type, string Username),
-            ConcurrentHashSet<(ulong GuildId, FollowedStream fs)>> _followedStreams 
+            ConcurrentHashSet<(ulong GuildId, FollowedStream fs)>> _followedStreams
                 = new ConcurrentDictionary<(FollowedStream.FType Type, string Username), ConcurrentHashSet<(ulong GuildId, FollowedStream fs)>>();
         private readonly ConcurrentHashSet<ulong> _yesOffline = new ConcurrentHashSet<ulong>();
 
@@ -51,6 +51,13 @@ namespace NadekoBot.Modules.Searches.Services
             _creds = creds;
             _log = LogManager.GetCurrentClassLogger();
             _httpFactory = factory;
+
+            if(string.IsNullOrWhiteSpace(_creds.TwitchClientId))
+            {
+                _log.Warn($"You don't have {nameof(_creds.TwitchClientId)} specified in credentials.json\n" +
+                    $"You won't be able to follow twitch streams unless you set it and restart the bot.\n" +
+                    $"Guide: https://nadekobot.readthedocs.io/en/latest/jsons-explained/#setting-up-your-api-keys");
+            }
 
 #if !GLOBAL_NADEKO
             _followedStreams = bot.AllGuildConfigs
@@ -193,7 +200,8 @@ namespace NadekoBot.Modules.Searches.Services
 
                         var twitchurl = $"https://api.twitch.tv/kraken/users?login={Uri.EscapeUriString(username)}";
                         var fullUseridData = await http.GetStringAsync(twitchurl);
-                        var data = JObject.Parse(fullUseridData)["users"].ToArray().FirstOrDefault();
+                        var fullData = JObject.Parse(fullUseridData);
+                        var data = fullData["users"].ToArray().FirstOrDefault();
                         if(data is default(JToken))
                         {
                             throw new StreamNotFoundException($"Stream Not Found: {username} [{type.Name}]");
