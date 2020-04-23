@@ -67,6 +67,6 @@ You can still install them manually:
 [Redis]: https://github.com/MicrosoftArchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.msi
 [Visual C++ 2010 (x86)]: https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe
 [Visual C++ 2017 (x64)]: https://aka.ms/vs/15/release/vc_redist.x64.exe
-[SourceGuide]: ../guides/from-source
+[SourceGuide]: ../from-source
 [ffmpeg]: https://ffmpeg.zeranoe.com/builds/
 [youtube-dl]: https://rg3.github.io/youtube-dl/download.html
