@@ -14,7 +14,7 @@ Compression=lzma2
 SolidCompression=yes
 OutputDir=userdocs:_projekti/NadekoInstallerOutput/{#version}/
 OutputBaseFilename=nadeko-setup-{#version}
-AppReadmeFile=http://nadekobot.readthedocs.io/en/latest/Commands%20List/
+AppReadmeFile=https://nadeko.bot/commands
 ArchitecturesInstallIn64BitMode=x64
 UsePreviousSetupType=no
 DisableWelcomePage=no
@@ -42,7 +42,7 @@ Name:"{app}\{#sysfolder}\data"; Permissions: everyone-modify
 Name:"{app}\{#sysfolder}"; Permissions: everyone-modify
 
 [Run]
-Filename: "http://nadekobot.readthedocs.io/en/latest/JSON%20Explanations/"; Flags: postinstall shellexec runasoriginaluser; Description: "Open setup guide"
+Filename: "http://nadekobot.readthedocs.io/en/latest/jsons-explained/"; Flags: postinstall shellexec runasoriginaluser; Description: "Open setup guide"
 Filename: "{app}\{#sysfolder}\credentials.json"; Flags: postinstall shellexec runasoriginaluser; Description: "Open credentials file"
 
 [Icons]
