@@ -12,6 +12,7 @@ using NadekoBot.Core.Services.Impl;
 using NadekoBot.Common;
 using NLog;
 using CommandLine;
+using System.Collections.Generic;
 
 namespace NadekoBot.Modules.Help.Services
 {
@@ -52,7 +53,7 @@ namespace NadekoBot.Modules.Help.Services
         public EmbedBuilder GetCommandHelp(CommandInfo com, IGuild guild)
         {
             var prefix = _ch.GetPrefix(guild);
-            
+
             var str = string.Format("**`{0}`**", prefix + com.Aliases.First());
             var alias = com.Aliases.Skip(1).FirstOrDefault();
             if (alias != null)
@@ -89,22 +90,30 @@ namespace NadekoBot.Modules.Help.Services
 
         public static string GetCommandOptionHelp(Type opt)
         {
-            var strs = opt.GetProperties()
-                .Select(x => x.GetCustomAttributes(true).FirstOrDefault(a => a is OptionAttribute))
-                .Where(x => x != null)
-                .Cast<OptionAttribute>()
-                .Select(x =>
-                {
-                    var toReturn = $"`--{x.LongName}`";
-
-                    if (!string.IsNullOrWhiteSpace(x.ShortName))
-                        toReturn += $" (`-{x.ShortName}`)";
-
-                    toReturn += $"   {x.HelpText}  ";
-                    return toReturn;
-                });
+            var strs = GetCommandOptionHelpList(opt);
 
             return string.Join("\n", strs);
+        }
+
+        public static List<string> GetCommandOptionHelpList(Type opt)
+        {
+            var strs = opt.GetProperties()
+                   .Select(x => x.GetCustomAttributes(true).FirstOrDefault(a => a is OptionAttribute))
+                   .Where(x => x != null)
+                   .Cast<OptionAttribute>()
+                   .Select(x =>
+                   {
+                       var toReturn = $"`--{x.LongName}`";
+
+                       if (!string.IsNullOrWhiteSpace(x.ShortName))
+                           toReturn += $" (`-{x.ShortName}`)";
+
+                       toReturn += $"   {x.HelpText}  ";
+                       return toReturn;
+                   })
+                   .ToList();
+
+            return strs;
         }
 
         public static string[] GetCommandRequirements(CommandInfo cmd) =>

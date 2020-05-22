@@ -539,7 +539,7 @@
         ".addplaying",
         ".adpl"
       ],
-      "Description": "Adds a specified string to the list of playing strings to rotate. You have to pick either 'Playing', 'Watching' or 'Listening' as the first parameter. Supported placeholders: `%servers%`, `%users%`, `%playing%`, `%queued%`, `%time%`, `%shardid%`, `%shardcount%`, `%shardguilds%`.",
+      "Description": "Adds a specified string to the list of playing strings to rotate. You have to pick either 'Playing', 'Watching' or 'Listening' as the first parameter.",
       "Usage": [
         ".adpl Playing with you",
         ".adpl Watching you sleep"
@@ -1434,9 +1434,9 @@
       "Aliases": [
         ".greetmsg"
       ],
-      "Description": "Sets a new join announcement message which will be shown in the server's channel. Type `%user%` if you want to mention the new member. Using it with no message will show the current greet message. You can use embed json from <https://eb.nadeko.bot/> instead of a regular text, if you want the message to be embedded.",
+      "Description": "Sets a new join announcement message which will be shown in the server's channel. Type `%user.mention%` if you want to mention the new member. Using it with no message will show the current greet message. You can use embed json from <https://eb.nadeko.bot/> instead of a regular text, if you want the message to be embedded.",
       "Usage": [
-        ".greetmsg Welcome, %user%."
+        ".greetmsg Welcome, %user.mention%."
       ],
       "Submodule": "ServerGreetCommands",
       "Module": "Administration",
@@ -1464,9 +1464,9 @@
       "Aliases": [
         ".greetdmmsg"
       ],
-      "Description": "Sets a new join announcement message which will be sent to the user who joined. Type `%user%` if you want to mention the new member. Using it with no message will show the current DM greet message. You can use embed json from <https://eb.nadeko.bot> instead of a regular text, if you want the message to be embedded.",
+      "Description": "Sets a new join announcement message which will be sent to the user who joined. Type `%user.mention%` if you want to mention the new member. Using it with no message will show the current DM greet message. You can use embed json from <https://eb.nadeko.bot> instead of a regular text, if you want the message to be embedded.",
       "Usage": [
-        ".greetdmmsg Welcome to the server, %user%"
+        ".greetdmmsg Welcome to the server, %user.mention%"
       ],
       "Submodule": "ServerGreetCommands",
       "Module": "Administration",
@@ -1494,9 +1494,9 @@
       "Aliases": [
         ".byemsg"
       ],
-      "Description": "Sets a new leave announcement message. Type `%user%` if you want to show the name the user who left. Type `%id%` to show id. Using this command with no message will show the current bye message. You can use embed json from <https://eb.nadeko.bot/> instead of a regular text, if you want the message to be embedded.",
+      "Description": "Sets a new leave announcement message. Type `%user.mention%` if you want to show the name the user who left. Type `%id%` to show id. Using this command with no message will show the current bye message. You can use embed json from <https://eb.nadeko.bot/> instead of a regular text, if you want the message to be embedded.",
       "Usage": [
-        ".byemsg %user% has left."
+        ".byemsg %user.mention% has left."
       ],
       "Submodule": "ServerGreetCommands",
       "Module": "Administration",
@@ -1763,7 +1763,7 @@
       ],
       "Description": "Add a custom reaction with a trigger and a response. Running this command in server requires the Administration permission. Running this command in DM is Bot Owner only and adds a new global custom reaction. Guide here: <http://nadekobot.readthedocs.io/en/latest/custom-reactions/>",
       "Usage": [
-        ".acr \"hello\" Hi there %user%"
+        ".acr \"hello\" Hi there %user.mention%"
       ],
       "Submodule": "CustomReactions",
       "Module": "CustomReactions",
@@ -2141,7 +2141,9 @@
       ],
       "Submodule": "AnimalRacingCommands",
       "Module": "Gambling",
-      "Options": "`--start-time` (`-s`)     ",
+      "Options": [
+        "`--start-time` (`-s`)     "
+      ],
       "Requirements": []
     },
     {
@@ -2223,7 +2225,10 @@
       ],
       "Submodule": "Connect4Commands",
       "Module": "Gambling",
-      "Options": "`--turn-timer` (`-t`)   Turn time in seconds. It has to be between 5 and 60. Default 15.  \n`--bet` (`-b`)   Amount you bet. Default 0.  ",
+      "Options": [
+        "`--turn-timer` (`-t`)   Turn time in seconds. It has to be between 5 and 60. Default 15.  ",
+        "`--bet` (`-b`)   Amount you bet. Default 0.  "
+      ],
       "Requirements": []
     },
     {
@@ -2237,7 +2242,11 @@
       ],
       "Submodule": "CurrencyEventsCommands",
       "Module": "Gambling",
-      "Options": "`--amount` (`-a`)   Amount of currency each user receives.  \n`--pot-size` (`-p`)   The maximum amount of currency that can be rewarded. 0 means no limit.  \n`--duration` (`-d`)   Number of hours the event should run for. Default 24.  ",
+      "Options": [
+        "`--amount` (`-a`)   Amount of currency each user receives.  ",
+        "`--pot-size` (`-p`)   The maximum amount of currency that can be rewarded. 0 means no limit.  ",
+        "`--duration` (`-d`)   Number of hours the event should run for. Default 24.  "
+      ],
       "Requirements": [
         "Bot Owner Only"
       ]
@@ -2681,7 +2690,10 @@
       ],
       "Submodule": "AcropobiaCommands",
       "Module": "Games",
-      "Options": "`--submission-time` (`-s`)   Time after which the submissions are closed and voting starts.  \n`--vote-time` (`-v`)   Time after which the voting is closed and the winner is declared.  ",
+      "Options": [
+        "`--submission-time` (`-s`)   Time after which the submissions are closed and voting starts.  ",
+        "`--vote-time` (`-v`)   Time after which the voting is closed and the winner is declared.  "
+      ],
       "Requirements": []
     },
     {
@@ -2869,7 +2881,9 @@
       ],
       "Submodule": "SpeedTypingCommands",
       "Module": "Games",
-      "Options": "`--start-time` (`-s`)   How long does it take for the race to start. Default 5.  ",
+      "Options": [
+        "`--start-time` (`-s`)   How long does it take for the race to start. Default 5.  "
+      ],
       "Requirements": []
     },
     {
@@ -2940,7 +2954,9 @@
       ],
       "Submodule": "TicTacToeCommands",
       "Module": "Games",
-      "Options": "`--turn-timer` (`-t`)   Turn time in seconds. Default 15.  ",
+      "Options": [
+        "`--turn-timer` (`-t`)   Turn time in seconds. Default 15.  "
+      ],
       "Requirements": []
     },
     {
@@ -2955,7 +2971,13 @@
       ],
       "Submodule": "TriviaCommands",
       "Module": "Games",
-      "Options": "`--pokemon` (`-p`)   Whether it's 'Who's that pokemon?' trivia.  \n`--nohint`   Don't show any hints.  \n`--win-req` (`-w`)   Winning requirement. Set 0 for an infinite game. Default 10.  \n`--question-timer` (`-q`)   How long until the question ends. Default 30.  \n`--timeout` (`-t`)   Number of questions of inactivity in order stop. Set 0 for never. Default 10.  ",
+      "Options": [
+        "`--pokemon` (`-p`)   Whether it's 'Who's that pokemon?' trivia.  ",
+        "`--nohint`   Don't show any hints.  ",
+        "`--win-req` (`-w`)   Winning requirement. Set 0 for an infinite game. Default 10.  ",
+        "`--question-timer` (`-q`)   How long until the question ends. Default 30.  ",
+        "`--timeout` (`-t`)   Number of questions of inactivity in order stop. Set 0 for never. Default 10.  "
+      ],
       "Requirements": []
     },
     {
@@ -3012,7 +3034,9 @@
       ],
       "Submodule": "Help",
       "Module": "Help",
-      "Options": "`--view` (`-v`)   Specifies how to output the list of commands. 0 - Hide commands which you can't use, 1 - Cross out commands which you can't use, 2 - Show all.  ",
+      "Options": [
+        "`--view` (`-v`)   Specifies how to output the list of commands. 0 - Hide commands which you can't use, 1 - Cross out commands which you can't use, 2 - Show all.  "
+      ],
       "Requirements": []
     },
     {
@@ -4363,7 +4387,7 @@
       "Aliases": [
         ".say"
       ],
-      "Description": "Bot will send the message you typed in the specified channel. If you ommit the channel name, it will send the mesasge in the current channel. Supports embeds.",
+      "Description": "Bot will send the message you typed in the specified channel. If you omit the channel name, it will send the message in the current channel. Supports embeds.",
       "Usage": [
         ".say hi",
         ".say #chat hi"
@@ -4594,19 +4618,6 @@
       "Description": "Finds a definition of a word.",
       "Usage": [
         ".def heresy"
-      ],
-      "Submodule": "Searches",
-      "Module": "Searches",
-      "Options": null,
-      "Requirements": []
-    },
-    {
-      "Aliases": [
-        ".#"
-      ],
-      "Description": "Searches Tagdef.com for a hashtag.",
-      "Usage": [
-        ".# ff"
       ],
       "Submodule": "Searches",
       "Module": "Searches",
@@ -5705,7 +5716,12 @@
       ],
       "Submodule": "InviteCommands",
       "Module": "Utility",
-      "Options": "`--max-uses` (`-m`)   Maximum number of times the invite can be used. Default 0 (never).  \n`--unique` (`-u`)   Not setting this flag will result in bot getting the existing invite with the same settings if it exists, instead of creating a new one.  \n`--temporary` (`-t`)   If this flag is set, the user will be kicked from the guild once they close their client.  \n`--expire` (`-e`)   Time in seconds to expire the invite. Default 0 (no expiry).  ",
+      "Options": [
+        "`--max-uses` (`-m`)   Maximum number of times the invite can be used. Default 0 (never).  ",
+        "`--unique` (`-u`)   Not setting this flag will result in bot getting the existing invite with the same settings if it exists, instead of creating a new one.  ",
+        "`--temporary` (`-t`)   If this flag is set, the user will be kicked from the guild once they close their client.  ",
+        "`--expire` (`-e`)   Time in seconds to expire the invite. Default 0 (no expiry).  "
+      ],
       "Requirements": [
         "CreateInstantInvite Channel Permission"
       ]
@@ -5919,9 +5935,9 @@
       "Aliases": [
         ".remindtemplate"
       ],
-      "Description": "Sets message for when the remind is triggered.  Available placeholders are `%user%` - user who ran the command, `%message%` - Message specified in the remind, `%target%` - target channel of the remind.",
+      "Description": "Sets message for when the remind is triggered.",
       "Usage": [
-        ".remindtemplate %user%, do %message%!"
+        ".remindtemplate %user.mention%, do %message%!"
       ],
       "Submodule": "RemindCommands",
       "Module": "Utility",
@@ -5973,7 +5989,11 @@
       ],
       "Submodule": "RepeatCommands",
       "Module": "Utility",
-      "Options": "`--message` (`-m`)   Message to be repeated  \n`--no-redundant` (`-n`)   Whether the message should be reposted if the last message in the channel is this same message.  \n`--interval` (`-i`)   How frequently the repeating message is posted, in minutes.  ",
+      "Options": [
+        "`--message` (`-m`)   Message to be repeated  ",
+        "`--no-redundant` (`-n`)   Whether the message should be reposted if the last message in the channel is this same message.  ",
+        "`--interval` (`-i`)   How frequently the repeating message is posted, in minutes.  "
+      ],
       "Requirements": [
         "ManageMessages Server Permission"
       ]
