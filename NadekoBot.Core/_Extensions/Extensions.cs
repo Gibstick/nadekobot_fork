@@ -36,6 +36,12 @@ namespace NadekoBot.Extensions
     {
         private static Logger _log = LogManager.GetCurrentClassLogger();
 
+        public static IEmote ToIEmote(this string emojiStr)
+            =>  Emote.TryParse(emojiStr, out var maybeEmote)
+                    ? (IEmote)maybeEmote
+                    : new Emoji(emojiStr);
+
+
         // https://github.com/SixLabors/ImageSharp/tree/master/samples/AvatarWithRoundedCorner
         public static void ApplyRoundedCorners(this Image<Rgba32> img, float cornerRadius)
         {
@@ -391,7 +397,7 @@ namespace NadekoBot.Extensions
                 if (collection.FirstOrDefault(x => x.ServiceType == serviceType) != null) // if that type is already added, skip
                     continue;
 
-                //also add the same type 
+                //also add the same type
                 var interfaceType = interfaces.FirstOrDefault(x => serviceType.GetInterfaces().Contains(x));
                 if (interfaceType != null)
                 {

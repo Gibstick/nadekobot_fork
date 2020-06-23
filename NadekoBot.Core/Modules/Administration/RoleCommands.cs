@@ -44,14 +44,16 @@ namespace NadekoBot.Modules.Administration
                             _log.Warn("Role {0} not found.", inputRoleStr);
                             return null;
                         }
-                        var emote = g.Emotes.FirstOrDefault(y => y.ToString() == x.Last());
-                        if (emote == null)
-                        {
-                            _log.Warn("Emote {0} not found.", x.Last());
-                            return null;
-                        }
-                        else
-                            return new { role, emote };
+                        //var emote = g.Emotes.FirstOrDefault(y => y.ToString() == x.Last());
+                        //if (emote == null)
+                        //{
+                        //    _log.Warn("Emote {0} not found.", x.Last());
+                        //    return null;
+                        //}
+                        //else
+
+                        var emote = x.Last().ToIEmote();
+                        return new { role, emote };
                     })
                     .Where(x => x != null);
 
@@ -67,7 +69,7 @@ namespace NadekoBot.Modules.Administration
                     await Task.Delay(100).ConfigureAwait(false);
                 }
 
-                if(_service.Add(ctx.Guild.Id, new ReactionRoleMessage()
+                if (_service.Add(ctx.Guild.Id, new ReactionRoleMessage()
                 {
                     Exclusive = exclusive,
                     MessageId = prev.Id,
@@ -76,7 +78,7 @@ namespace NadekoBot.Modules.Administration
                     {
                         return new ReactionRole()
                         {
-                            EmoteName = x.emote.Name,
+                            EmoteName = x.emote.ToString(),
                             RoleId = x.role.Id,
                         };
                     }).ToList(),
@@ -117,7 +119,7 @@ namespace NadekoBot.Modules.Administration
             {
                 var embed = new EmbedBuilder()
                     .WithOkColor();
-                if(!_service.Get(ctx.Guild.Id, out var rrs) ||
+                if (!_service.Get(ctx.Guild.Id, out var rrs) ||
                     !rrs.Any())
                 {
                     embed.WithDescription(GetText("no_reaction_roles"));
@@ -143,7 +145,7 @@ namespace NadekoBot.Modules.Administration
             [UserPerm(GuildPerm.ManageRoles)]
             public async Task ReactionRolesRemove(int index)
             {
-                if(index < 1 || index > 5 ||
+                if (index < 1 || index > 5 ||
                     !_service.Get(ctx.Guild.Id, out var rrs) ||
                     !rrs.Any() || rrs.Count < index)
                 {
@@ -316,7 +318,7 @@ namespace NadekoBot.Modules.Administration
             [BotPerm(GuildPerm.ManageRoles)]
             public async Task MentionRole([Leftover] IRole role)
             {
-                if(!role.IsMentionable)
+                if (!role.IsMentionable)
                 {
                     await role.ModifyAsync(x => x.Mentionable = true).ConfigureAwait(false);
                     await ctx.Channel.SendMessageAsync(role.Mention).ConfigureAwait(false);
