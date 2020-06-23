@@ -16,7 +16,7 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
         public void EnsureCreated(ulong userId, string username, string discrim, string avatarId)
         {
             _context.Database.ExecuteSqlCommand($@"
-UPDATE OR IGNORE DiscordUser 
+UPDATE OR IGNORE DiscordUser
 SET Username={username},
     Discriminator={discrim},
     AvatarId={avatarId}
@@ -41,9 +41,9 @@ VALUES ({userId}, {username}, {discrim}, {avatarId});
 
         public int GetUserGlobalRank(ulong id)
         {
-            //            @"SELECT COUNT(*) + 1 
+            //            @"SELECT COUNT(*) + 1
             //FROM DiscordUser
-            //WHERE TotalXp > COALESCE((SELECT TotalXp 
+            //WHERE TotalXp > COALESCE((SELECT TotalXp
             //    FROM DiscordUser
             //    WHERE UserId = @p1
             //    LIMIT 1), 0);"
@@ -64,11 +64,19 @@ VALUES ({userId}, {username}, {discrim}, {avatarId});
                 .ToArray();
         }
 
-        public IEnumerable<DiscordUser> GetTopRichest(ulong botId, int count, int skip = 0)
+        public List<DiscordUser> GetTopRichest(ulong botId, int count, int page = 0)
         {
             return _set.Where(c => c.CurrencyAmount > 0 && botId != c.UserId)
                 .OrderByDescending(c => c.CurrencyAmount)
-                .Skip(skip)
+                .Skip(page * 9)
+                .Take(count)
+                .ToList();
+        }
+
+        public List<DiscordUser> GetTopRichest(ulong botId, int count)
+        {
+            return _set.Where(c => c.CurrencyAmount > 0 && botId != c.UserId)
+                .OrderByDescending(c => c.CurrencyAmount)
                 .Take(count)
                 .ToList();
         }
@@ -123,7 +131,7 @@ WHERE UserId={userId};");
             if (!updatedUserData)
             {
                 _context.Database.ExecuteSqlCommand($@"
-UPDATE OR IGNORE DiscordUser 
+UPDATE OR IGNORE DiscordUser
 SET CurrencyAmount=CurrencyAmount+{amount}
 WHERE UserId={userId};
 
@@ -134,7 +142,7 @@ VALUES ({userId}, {name}, {discrim}, {avatarId}, {amount});
             else
             {
                 _context.Database.ExecuteSqlCommand($@"
-UPDATE OR IGNORE DiscordUser 
+UPDATE OR IGNORE DiscordUser
 SET CurrencyAmount=CurrencyAmount+{amount},
     Username={name},
     Discriminator={discrim},
