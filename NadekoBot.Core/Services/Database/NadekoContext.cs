@@ -143,6 +143,9 @@ namespace NadekoBot.Core.Services.Database
             modelBuilder.Entity<PlantedCurrency>()
                 .HasIndex(x => x.ChannelId);
 
+            configEntity.HasIndex(x => x.WarnExpireHours)
+                .IsUnique(false);
+
             #endregion
 
             #region streamrole
