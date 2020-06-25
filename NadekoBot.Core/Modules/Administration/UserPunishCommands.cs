@@ -48,7 +48,7 @@ namespace NadekoBot.Modules.Administration
 
                 }
 
-                PunishmentAction? punishment;
+                WarningPunishment punishment;
                 try
                 {
                     punishment = await _service.Warn(ctx.Guild, user.Id, ctx.User, reason).ConfigureAwait(false);
@@ -200,19 +200,65 @@ namespace NadekoBot.Modules.Administration
                 }
             }
 
+            public enum AddRole
+            {
+                AddRole
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.BanMembers)]
+            [Priority(1)]
+            public async Task WarnPunish(int number, AddRole _, IRole role, StoopidTime time = null)
+            {
+                var punish = PunishmentAction.AddRole;
+                var success = _service.WarnPunish(ctx.Guild.Id, number, punish, time, role);
+
+                if (!success)
+                    return;
+
+                if (time is null)
+                {
+                    await ReplyConfirmLocalizedAsync("warn_punish_set",
+                        Format.Bold(punish.ToString()),
+                        Format.Bold(number.ToString())).ConfigureAwait(false);
+                }
+                else
+                {
+                    await ReplyConfirmLocalizedAsync("warn_punish_set_timed",
+                        Format.Bold(punish.ToString()),
+                        Format.Bold(number.ToString()),
+                        Format.Bold(time.Input)).ConfigureAwait(false);
+                }
+            }
+
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             public async Task WarnPunish(int number, PunishmentAction punish, StoopidTime time = null)
             {
+                // this should never happen. Addrole has its own method with higher priority
+                if (punish == PunishmentAction.AddRole)
+                    return;
+
                 var success = _service.WarnPunish(ctx.Guild.Id, number, punish, time);
 
                 if (!success)
                     return;
 
-                await ReplyConfirmLocalizedAsync("warn_punish_set",
-                    Format.Bold(punish.ToString()),
-                    Format.Bold(number.ToString())).ConfigureAwait(false);
+                if (time is null)
+                {
+                    await ReplyConfirmLocalizedAsync("warn_punish_set",
+                        Format.Bold(punish.ToString()),
+                        Format.Bold(number.ToString())).ConfigureAwait(false);
+                }
+                else
+                {
+                    await ReplyConfirmLocalizedAsync("warn_punish_set_timed",
+                        Format.Bold(punish.ToString()),
+                        Format.Bold(number.ToString()),
+                        Format.Bold(time.Input)).ConfigureAwait(false);
+                }
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -220,7 +266,7 @@ namespace NadekoBot.Modules.Administration
             [UserPerm(GuildPerm.BanMembers)]
             public async Task WarnPunish(int number)
             {
-                if (!_service.WarnPunish(ctx.Guild.Id, number))
+                if (!_service.WarnPunishRemove(ctx.Guild.Id, number))
                 {
                     return;
                 }
@@ -238,7 +284,8 @@ namespace NadekoBot.Modules.Administration
                 string list;
                 if (ps.Any())
                 {
-                    list = string.Join("\n", ps.Select(x => $"{x.Count} -> {x.Punishment} {(x.Time <= 0 ? "" : x.Time.ToString() + "m")} "));
+
+                    list = string.Join("\n", ps.Select(x => $"{x.Count} -> {x.Punishment} {(x.Punishment == PunishmentAction.AddRole ? $"<@&{x.RoleId}>" : "")} {(x.Time <= 0 ? "" : x.Time.ToString() + "m")} "));
                 }
                 else
                 {
@@ -343,7 +390,7 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [BotPerm(GuildPerm.BanMembers)]
-            public async Task Unban([Leftover]string user)
+            public async Task Unban([Leftover] string user)
             {
                 var bans = await ctx.Guild.GetBansAsync().ConfigureAwait(false);
 
