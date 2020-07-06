@@ -282,8 +282,16 @@ namespace NadekoBot.Modules.Administration
             [BotPerm(GuildPerm.ManageRoles)]
             public async Task RoleHoist(IRole role)
             {
-                await role.ModifyAsync(r => r.Hoist = !role.IsHoisted).ConfigureAwait(false);
-                await ReplyConfirmLocalizedAsync("rh", Format.Bold(role.Name), Format.Bold(role.IsHoisted.ToString())).ConfigureAwait(false);
+                var newHoisted = !role.IsHoisted;
+                await role.ModifyAsync(r => r.Hoist = newHoisted).ConfigureAwait(false);
+                if (newHoisted)
+                {
+                    await ReplyConfirmLocalizedAsync("rolehoist_enabled", Format.Bold(role.Name)).ConfigureAwait(false);
+                }
+                else
+                {
+                    await ReplyConfirmLocalizedAsync("rolehoist_disabled", Format.Bold(role.Name)).ConfigureAwait(false);
+                }
             }
 
             [NadekoCommand, Usage, Description, Aliases]
