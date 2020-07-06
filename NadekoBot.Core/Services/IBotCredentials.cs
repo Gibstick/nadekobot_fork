@@ -34,6 +34,7 @@ namespace NadekoBot.Core.Services
         string RedisOptions { get; }
         string LocationIqApiKey { get; }
         string TimezoneDbApiKey { get; }
+        string CoinmarketcapApiKey { get; }
     }
 
     public class RestartConfig
