@@ -65,7 +65,7 @@ namespace NadekoBot.Modules.Administration
             }
         }
 
-        public enum Channel { Channel }
+        public enum Channel { Channel, Ch, Chnl, Chan }
         public enum State { Enable, Disable, Inherit }
 
         [NadekoCommand, Usage, Description, Aliases]
