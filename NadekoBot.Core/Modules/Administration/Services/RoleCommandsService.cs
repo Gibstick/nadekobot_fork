@@ -133,7 +133,7 @@ namespace NadekoBot.Modules.Administration.Services
                     if (conf == null)
                         return;
 
-                    var reactionRole = conf.ReactionRoles.FirstOrDefault(x => x.EmoteName == reaction.Emote.Name);
+                    var reactionRole = conf.ReactionRoles.FirstOrDefault(x => x.EmoteName == reaction.Emote.Name || x.EmoteName == reaction.Emote.ToString());
 
                     if (reactionRole != null)
                     {
