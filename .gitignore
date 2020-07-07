@@ -16,10 +16,11 @@ src/NadekoBot/data/musicdata
 # Created by https://www.gitignore.io/api/visualstudio,visualstudiocode,windows,linux,macos
 
 ### VisualStudioCode ###
+.vscode/
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
 
 
 ### Windows ###
