@@ -257,7 +257,7 @@ namespace NadekoBot.Modules.Administration
                 if (string.IsNullOrWhiteSpace(roleName))
                     return;
 
-                var r = await ctx.Guild.CreateRoleAsync(roleName).ConfigureAwait(false);
+                var r = await ctx.Guild.CreateRoleAsync(roleName, isMentionable: false).ConfigureAwait(false);
                 await ReplyConfirmLocalizedAsync("cr", Format.Bold(r.Name)).ConfigureAwait(false);
             }
 
