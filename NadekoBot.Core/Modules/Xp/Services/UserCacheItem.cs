@@ -7,6 +7,7 @@ namespace NadekoBot.Modules.Xp.Services
         public IGuildUser User { get; set; }
         public IGuild Guild { get; set; }
         public IMessageChannel Channel { get; set; }
+        public int XpAmount { get; set; }
 
         public override int GetHashCode()
         {
