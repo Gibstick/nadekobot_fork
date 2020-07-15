@@ -9,6 +9,7 @@ using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NLog;
 using System;
+using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 
 namespace NadekoBot.Modules.Utility.Services
@@ -22,17 +23,27 @@ namespace NadekoBot.Modules.Utility.Services
         private readonly DbService _db;
 
         //commandmap
-        public CommandMapService(NadekoBot bot, DbService db)
+        public CommandMapService(DiscordSocketClient client, DbService db)
         {
             _log = LogManager.GetCurrentClassLogger();
-            AliasMaps = new ConcurrentDictionary<ulong, ConcurrentDictionary<string, string>>(
-                bot.AllGuildConfigs.ToDictionary(
-                    x => x.GuildId,
+
+            using (var uow = db.GetDbContext())
+            {
+                var guildIds = client.Guilds.Select(x => x.Id).ToList();
+                var configs = uow._context.Set<GuildConfig>()
+                    .Include(gc => gc.CommandAliases)
+                    .Where(x => guildIds.Contains(x.GuildId))
+                    .ToList();
+                
+                AliasMaps = new ConcurrentDictionary<ulong, ConcurrentDictionary<string, string>>(configs
+                    .ToDictionary(
+                        x => x.GuildId,
                         x => new ConcurrentDictionary<string, string>(x.CommandAliases
                             .Distinct(new CommandAliasEqualityComparer())
                             .ToDictionary(ca => ca.Trigger, ca => ca.Mapping))));
 
-            _db = db;
+                _db = db;
+            }
         }
 
         public int ClearAliases(ulong guildId)
