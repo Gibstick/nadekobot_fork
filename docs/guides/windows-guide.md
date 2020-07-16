@@ -15,7 +15,7 @@
 #### Prerequisites
 
 - Windows 8 or later (64-bit)
-- [dotNET Core 2.1 SDK][dotNET] (restart Windows after installation)
+- [dotNET Core 3.1 SDK][dotNET] (restart Windows after installation)
 - [Redis][Redis] (supplied with the updater)
 - [Create a Discord Bot application](../../jsons-explained#creating-discord-bot-application) and [invite the bot to your server](../../jsons-explained/#inviting-your-bot-to-your-server).
 
@@ -63,7 +63,7 @@ You can still install them manually:
 
 [Updater]: https://dl.nadeko.bot/
 [Notepad++]: https://notepad-plus-plus.org/
-[dotNET]: https://www.microsoft.com/net/download/dotnet-core/2.1
+[dotNET]: https://www.microsoft.com/net/download/dotnet-core/3.1
 [Redis]: https://github.com/MicrosoftArchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.msi
 [Visual C++ 2010 (x86)]: https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe
 [Visual C++ 2017 (x64)]: https://aka.ms/vs/15/release/vc_redist.x64.exe
