@@ -16,6 +16,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NadekoBot.Core.Common;
 
 namespace NadekoBot.Modules.Utility
 {
@@ -27,10 +28,11 @@ namespace NadekoBot.Modules.Utility
         private readonly NadekoBot _bot;
         private readonly DbService _db;
         private readonly IHttpClientFactory _httpFactory;
+        private readonly DownloadTracker _tracker;
 
         public Utility(NadekoBot nadeko, DiscordSocketClient client,
             IStatsService stats, IBotCredentials creds,
-            DbService db, IHttpClientFactory factory)
+            DbService db, IHttpClientFactory factory, DownloadTracker tracker)
         {
             _client = client;
             _stats = stats;
@@ -38,6 +40,7 @@ namespace NadekoBot.Modules.Utility
             _bot = nadeko;
             _db = db;
             _httpFactory = factory;
+            _tracker = tracker;
         }
 
         [NadekoCommand, Usage, Description, Aliases]
@@ -93,9 +96,11 @@ namespace NadekoBot.Modules.Utility
         [RequireContext(ContextType.Guild)]
         public async Task InRole([Leftover] IRole role)
         {
-            var rng = new NadekoRandom();
-            var usrs = (await ctx.Guild.GetUsersAsync().ConfigureAwait(false)).ToArray();
-            var roleUsers = usrs
+            await Context.Channel.TriggerTypingAsync().ConfigureAwait(false);
+            await _tracker.EnsureUsersDownloadedAsync(ctx.Guild).ConfigureAwait(false);
+
+            var users = await ctx.Guild.GetUsersAsync();
+            var roleUsers = users
                 .Where(u => u.RoleIds.Contains(role.Id))
                 .Select(u => u.ToString())
                 .ToArray();
