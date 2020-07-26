@@ -27,7 +27,7 @@ namespace NadekoBot.Modules.Help
         private readonly GlobalPermissionService _perms;
         private readonly IServiceProvider _services;
 
-        public EmbedBuilder GetHelpStringEmbed()
+        public (string plainText, EmbedBuilder embed) GetHelpStringEmbed()
         {
             var r = new ReplacementBuilder()
                 .WithDefault(Context)
@@ -37,12 +37,12 @@ namespace NadekoBot.Modules.Help
 
 
             if (!CREmbed.TryParse(Bc.BotConfig.HelpString, out var embed))
-                return new EmbedBuilder().WithOkColor()
-                    .WithDescription(String.Format(Bc.BotConfig.HelpString, _creds.ClientId, Prefix));
+                return ("", new EmbedBuilder().WithOkColor()
+                    .WithDescription(String.Format(Bc.BotConfig.HelpString, _creds.ClientId, Prefix)));
 
             r.Replace(embed);
 
-            return embed.ToEmbed();
+            return (embed.PlainText, embed.ToEmbed());
         }
 
         public Help(IBotCredentials creds, GlobalPermissionService perms, CommandService cmds,
@@ -186,7 +186,8 @@ namespace NadekoBot.Modules.Help
                     : channel;
                 try
                 {
-                    await ch.EmbedAsync(GetHelpStringEmbed()).ConfigureAwait(false);
+                    var (plainText, helpEmbed) = GetHelpStringEmbed();
+                    await ch.EmbedAsync(helpEmbed, msg: plainText ?? "").ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
