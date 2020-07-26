@@ -1538,7 +1538,7 @@
   },
   "gatari": {
     "Cmd": "gatari",
-    "Desc": "Shows osu!gatari stats for a player."
+    "Desc": "Shows osu!gatari stats for a player.",
     "Usage": [
       "{0}gatari Name",
       "{0}gatari Name ctb"
