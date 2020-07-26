@@ -5,8 +5,6 @@ namespace NadekoBot.Core.Services
 {
     public interface IBotCredentials
     {
-        ulong ClientId { get; }
-
         string Token { get; }
         string GoogleApiKey { get; }
         ImmutableArray<ulong> OwnerIds { get; }
@@ -25,8 +23,6 @@ namespace NadekoBot.Core.Services
         string PatreonCampaignId { get; }
         string CleverbotApiKey { get; }
         RestartConfig RestartCommand { get; }
-        string MiningProxyUrl { get; }
-        string MiningProxyCreds { get; }
         string VotesUrl { get; }
         string VotesToken { get; }
         string BotListToken { get; }
