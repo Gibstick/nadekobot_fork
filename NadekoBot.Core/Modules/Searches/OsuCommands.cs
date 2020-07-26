@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Commands;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
@@ -29,22 +29,86 @@ namespace NadekoBot.Modules.Searches
             }
 
             [NadekoCommand, Usage, Description, Aliases]
-            public async Task Osu(string usr, [Leftover] string mode = null)
+            public async Task Osu(string user, [Leftover] string mode = null)
             {
-                if (string.IsNullOrWhiteSpace(usr))
+                if (string.IsNullOrWhiteSpace(user))
                     return;
-
-                var m = 0;
-                if (!string.IsNullOrWhiteSpace(mode))
+                using (var http = _httpFactory.CreateClient())
                 {
-                    m = ResolveGameMode(mode);
+                    int m = 0;
+                    if (!string.IsNullOrWhiteSpace(mode))
+                        m = ResolveGameMode(mode);
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(_creds.OsuApiKey))
+                        {
+                            await ReplyErrorLocalizedAsync("osu_api_key").ConfigureAwait(false);
+                            return;
+                        }
+                        string smode = ResolveGameMode(m);
+                        string result = await http.GetStringAsync($"https://osu.ppy.sh/api/get_user?k={_creds.OsuApiKey}&u={user}&m={m}").ConfigureAwait(false);
+	                    JToken obj = JArray.Parse(result)[0];
+                        string user_id = $"{obj["user_id"]}";
+                        await ctx.Channel.EmbedAsync(new EmbedBuilder().WithColor(15930310).WithTitle($"osu! {smode} profile for {user}")
+                            .WithThumbnailUrl($"https://a.ppy.sh/{user_id}")
+                            .WithDescription($"URL: https://osu.ppy.sh/u/{user_id}")
+                            .AddField("Official Rank", $"#{obj["pp_rank"]}", true)
+                            .AddField("Country Rank", $"#{obj["pp_country_rank"]}", true)
+                            .AddField("Total PP", Math.Round(double.Parse($"{obj["pp_raw"]}", CultureInfo.InvariantCulture)), true)
+                            .AddField("Accuracy", Math.Round(double.Parse($"{obj["accuracy"]}", CultureInfo.InvariantCulture), 2) + "%", true)
+                            .AddField("Playcount", $"{obj["playcount"]}", true)
+                            .AddField("Level", Math.Floor(double.Parse($"{obj["level"]}", CultureInfo.InvariantCulture)), true)
+                                );
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        await ReplyErrorLocalizedAsync("osu_user_not_found").ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        await ReplyErrorLocalizedAsync("osu_failed").ConfigureAwait(false);
+                        _log.Warn(ex);
+                    }
                 }
-                var eb = new EmbedBuilder()
-                    .WithOkColor()
-                    .WithDescription($"[Profile](https://osu.ppy.sh/users/{Uri.EscapeDataString(usr)})")
-                    .WithImageUrl($"http://lemmmy.pw/osusig/sig.php?uname={ usr }&flagshadow&xpbar&xpbarhex&pp=2&mode={m}")
-                    .WithFooter("Image provided by https://lemmmy.pw/osusig");
-                await Context.Channel.SendMessageAsync(embed: eb.Build()).ConfigureAwait(false);
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            public async Task Gatari(string user, [Leftover] string mode = null)
+            {
+                using (var http = _httpFactory.CreateClient())
+                {
+                    int m = 0;
+                    if (!string.IsNullOrWhiteSpace(mode))
+                        m = ResolveGameMode(mode);
+                    try
+                    {
+                        string smode = ResolveGameMode(m);
+                        string result = await http.GetStringAsync($"https://api.gatari.pw/user/stats?u={user}&mode={m}").ConfigureAwait(false);
+                        JToken obj = JToken.Parse(result)["stats"];
+                        string user_id = $"{obj["id"]}";
+                        string result2 = await http.GetStringAsync($"https://api.gatari.pw/users/get?u={user}");
+                        JToken obj2 = JToken.Parse(result2);
+                        await ctx.Channel.EmbedAsync(new EmbedBuilder().WithColor(7605814).WithTitle($"osu!Gatari {smode} profile for {user}")
+                            .WithThumbnailUrl($"https://a.gatari.pw/{user_id}")
+                            .WithDescription($"URL: https://osu.gatari.pw/u/{user_id}")
+                            .AddField("Official Rank", $"#{obj["rank"]}", true)
+                            .AddField("Country Rank", $"#{obj["country_rank"]} ({obj2["users"][0]["country"]})", true)
+                            .AddField("Total PP", $"{obj["pp"]}", true)
+                            .AddField("Accuracy", Math.Round(Math.Round(double.Parse($"{obj["avg_accuracy"]}", CultureInfo.InvariantCulture), 2) / 1000000000000, 2) + "%", true)
+                            .AddField("Playcount", $"{obj["playcount"]}", true)
+                            .AddField("Level", $"{obj["level"]}", true)
+                                );
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        await ReplyErrorLocalizedAsync("osu_user_not_found").ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        await ReplyErrorLocalizedAsync("osu_failed").ConfigureAwait(false);
+                        _log.Warn(ex);
+                    }
+                }
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -213,6 +277,23 @@ namespace NadekoBot.Modules.Searches
                         return 3;
                     default:
                         return 0;
+                }
+            }
+
+            private static string ResolveGameMode(int mode)
+            {
+                switch (mode)
+                {
+                    case 0:
+                        return "Standard";
+                    case 1:
+                        return "Taiko";
+                    case 2:
+                        return "Catch";
+                    case 3:
+                        return "Mania";
+                    default:
+                        return "Standard";
                 }
             }
 
