@@ -20,7 +20,6 @@ namespace NadekoBot.Core.Services.Impl
 
         public ImmutableArray<ulong> OwnerIds { get; }
 
-        public string LoLApiKey { get; }
         public string OsuApiKey { get; }
         public string CleverbotApiKey { get; }
         public RestartConfig RestartCommand { get; }
@@ -70,7 +69,6 @@ namespace NadekoBot.Core.Services.Impl
                     Environment.Exit(3);
                 }
                 OwnerIds = data.GetSection("OwnerIds").GetChildren().Select(c => ulong.Parse(c.Value)).ToImmutableArray();
-                LoLApiKey = data[nameof(LoLApiKey)];
                 GoogleApiKey = data[nameof(GoogleApiKey)];
                 MashapeKey = data[nameof(MashapeKey)];
                 OsuApiKey = data[nameof(OsuApiKey)];
@@ -161,7 +159,6 @@ namespace NadekoBot.Core.Services.Impl
             {
                 105635576866156544
             };
-            public string LoLApiKey { get; set; } = "";
             public string GoogleApiKey { get; set; } = "";
             public string MashapeKey { get; set; } = "";
             public string OsuApiKey { get; set; } = "";
