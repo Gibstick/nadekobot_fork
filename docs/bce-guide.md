@@ -147,3 +147,11 @@ Whether the bot will see if there are updates available. The patch notes will be
 
 You need this only if you have a patreon page, and you've specified the PatreonCampaignId and PatreonAccessToken in credentials.json. This value is the amount of currency the users will get with `.clparew` for each cent they've pledged. Also make sure your patreon is set to charge upfront, otherwise people will be able to pledge, claim reward and unpledge without getting charged.  
 **Default is 1**
+
+## VoiceXpPerMinute
+The average amount of xp added every minute to a user connected to a voice channel.  
+**Default is 3**
+
+## MaxXpMinutes
+The maximum amount of time, in minutes, a user can earn xp in a voice channel. This exists mainly to clear entries out of Redis.  
+**Default is 720**

@@ -15,6 +15,8 @@
 #### Prerequisites
 
 - Windows 8 or later (64-bit)
+- [dotNET Core 3.1 SDK][dotNET] (restart Windows after installation)
+- [Redis][Redis] (supplied with the updater)
 - [Create a Discord Bot application](../../jsons-explained#creating-discord-bot-application) and [invite the bot to your server](../../jsons-explained/#inviting-your-bot-to-your-server).
 
 **Optional**
@@ -25,17 +27,17 @@
 #### Setup
 
 - Download and run the [NadekoBot Updater][Updater].
-- Click on the + at the top left to create a new bot.
+- Click on the **`+`** at the top left to create a new bot.
  ![NadekoBot Updater](https://i.imgur.com/KZV49uf.png "NadekoBot Updater")
 - Give your bot a name and then click **`Go to setup`** at the lower right.
  ![Create a new bot](https://i.imgur.com/Xnp7iQL.png "Create a new bot")
-- Click on **`DOWNLOAD`** at the lower right
- ![Bot Setup](https://i.imgur.com/6RMXNqw.png "Bot Setup")
 - Click on **`Install`** next to **`Redis`**.
-- If you will use the music module, click on **`Install`** next to **`FFMPEG`** and **`Youtube-DL`**.
-- If any dependencies fail to install, you can temporarily disable your Windows Defender/AV until you install them. If you don't want to, then read [the last section of this guide](#Manual-Prerequisite-Installation).
+- If you want to use the music module, click on **`Install`** next to **`FFMPEG`** and **`Youtube-DL`**.
+- If any dependency fails to install, read the last section of this guide.
+ ![Bot Setup](https://i.imgur.com/6RMXNqw.png "Bot Setup")
+- Once dependencies are installed, click on **`DOWNLOAD`** at the lower right.
 - When installation is finished, click on **`CREDS`** to the left of **`RUN`** at the lower right.
-- Follow the guide on how to [Set up the credentials.json](../../jsons-explained) file.
+- [Set up the credentials.json](../../jsons-explained) file.
 
 #### Starting the bot
 
@@ -52,13 +54,14 @@
 - Launch the bot
 - You've updated and are running again, easy as that!
 
-#### Manual Prerequisite Installation
+#### If the updater fails to install the prerequisites for any reason
 
 You can still install them manually:
 
 - [Redis Installer](https://github.com/MicrosoftArchive/redis/releases/tag/win-3.0.504) - Download and run the **`.msi`** file
-- [ffmpeg] - Download the Release build and move `ffmpeg.exe` to a path that's in your PATH environment variable. If you don't know what that is, then just move the `ffmpeg.exe` file to NadekoBot/system
-- [youtube-dl] - Click on `Windows exe` and download the file. Then`youtube-dl.exe` to a path that's in your PATH environment variable. If you don't know what that is, then just move the `youtube-dl.exe` file to NadekoBot/system
+- [ffmpeg] - Download the Release build and move the file to **`C:\ffmpeg`**, extract its contents and rename the folder to `nightly`.
+    - If that still fails, move the `ffmpeg.exe` file to **`NadekoBot/system`**.
+- [youtube-dl] - Click on `Windows.exe` (on the top left corner) and download the file. Then move it to **`NadekoBot/system`**.
 
 [Updater]: https://dl.nadeko.bot/
 [Notepad++]: https://notepad-plus-plus.org/

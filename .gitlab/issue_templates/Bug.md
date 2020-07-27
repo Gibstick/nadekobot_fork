@@ -7,7 +7,7 @@ Write here a summary of the issue you're having.
   - The bot version (run the command .stats on Discord).  
   - Your operating system and its version.  
     - If you are on Windows, tell us whether you're using the updater version or the source version.
-    - If you are on Linux, tell us if you're hosting with tmux or pm2 or any other solution for managing processes.
+    - If you are on Linux or OSX, tell us if you're hosting with tmux or pm2 or any other solution for managing processes.
 
 ### Reproduction Steps  
 - Describe, in detail, the steps necessary to consistently reproduce the issue.  

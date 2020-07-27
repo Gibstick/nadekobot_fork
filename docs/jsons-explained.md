@@ -30,21 +30,8 @@ This document aims to guide you through the process of creating a Discord accoun
 
 #### Setting up credentials.json file
 
-- **For Windows (Updater)**: the `credentials.json` file is located in the `C:\Program Files\NadekoBot\system` folder.
-    - Note: there is a shortcut as well in `C:\Program Files\NadekoBot`, for easier access.
+- **For Windows (Updater)**: the `credentials.json` file is located in the `system` folder. You can access it through the updater by clicking on the `Creds` button.  
 - **For Windows (Source), Linux and OSX**: the `credentials.json` file is located in the `NadekoBot/src/NadekoBot` folder.
-
-##### Getting Client ID:
-
-- On the **General Information** tab of your [applications page][DiscordApp], copy your `Client ID`.
-- Open your `credentials.json` file and replace the `12312123` part of the **`"ClientId"`** line with it.
-    - Be careful to not delete or move commas or quotation marks, this will break the file's syntax, making Nadeko unable to launch correctly.
-
-It should look like this:
-
-```json
-"ClientId": 179372110000358912,
-```
 
 ---
 
@@ -62,14 +49,14 @@ It should look like this:
 
 ##### Getting Owner ID*(s)*:
 
-- Go to your Discord server and attempt to mention yourself, but put a backslash at the start:
-  *(to make it slightly easier, add the backslash after you type the mention out)*
+- Go to your Discord server and attempt to mention yourself, but put a backslash at the start
+  *(to make it slightly easier, add the backslash after the mention has been typed)*.
 - For example, the message `\@fearnlj01#3535` will appear as `<@145521851676884992>` after you send the message.
-- The message will appear as a mention if done correctly. Copy the numbers from it **`145521851676884992`** and replace the 0 on the `OwnerIds` section with your user ID.
+- The message will appear as a mention if done correctly. Copy the numbers from it **`145521851676884992`** and replace the big number on the `OwnerIds` section with your user ID.
 - Save the `credentials.json` file.
 - If done correctly, you should now be the bot owner. You can add multiple owners by seperating each owner ID with a comma within the square brackets.
 
-For single owner, it should look like this:
+For a single owner, it should look like this:
 
 ```json
     "OwnerIds": [
@@ -99,9 +86,7 @@ This part is completely optional, **however it's necessary for music and a few o
         - Go to [Google Console][Google Console] and log in.
         - Create a new project (name does not matter).
         - Once the project is created, go into **`Library`**
-        - Under the **`Other Popular APIs`** section, enable `URL Shortener API` and `Custom Search API`
         - Under the **`YouTube APIs`** section, enable `YouTube Data API`
-        - Under the **`Google Maps APIs`** section, enable `Google Maps Geocoding API` and `Google Maps Time Zone API`
         - On the left tab, access **`Credentials`**,
             - Click `Create Credentials` button,
             - Click on `API Key`
@@ -183,14 +168,12 @@ For Windows (Source), Linux or OSX, add this to your `credentials.json`
 
 ```json
 {
-  "ClientId": 179372110000358912,
   "Token": "MTc5MzcyXXX2MDI1ODY3MjY0.ChKs4g.I8J_R9XX0t-QY-0PzXXXiN0-7vo",
   "OwnerIds": [
         105635123466156544,
         145521851676884992,
         341420590009417729
   ],
-  "LoLApiKey": "6e99ecf36f0000095b0a3ccfe35df45f",
   "GoogleApiKey": "AIzaSyDSci1sdlWQOWNVj1vlXxxxxxbk0oWMEzM",
   "MashapeKey": "4UrKpcWXc2mshS8RKi00000y8Kf5p1Q8kI6jsn32bmd8oVWiY7",
   "OsuApiKey": "4c8c8fdff8e1234581725db27fd140a7d93320d6",
@@ -216,8 +199,8 @@ For Windows (Source), Linux or OSX, add this to your `credentials.json`
 
 Nadeko saves all settings and data in the database file `NadekoBot.db`, located in:
 
-- Windows (Updater): `C:\Program Files\NadekoBot\system\data`
-- Windows (Source), Linux and OSX: `NadekoBot/src/NadekoBot/bin/Release/netcoreapp2.1/data/NadekoBot.db`
+- Windows (Updater): `system/data` (can be easily accessed through the `Data` button on the updater)
+- Windows (Source), Linux and OSX: `NadekoBot/src/NadekoBot/bin/Release/netcoreapp3.1/data/NadekoBot.db`
 
 In order to open it you will need [SQLite Browser](http://sqlitebrowser.org/).
 
