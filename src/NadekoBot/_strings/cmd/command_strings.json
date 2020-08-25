@@ -2413,8 +2413,8 @@
     ]
   },
   "slot": {
-    "Cmd": "slot",
-    "Desc": "Play Nadeko slots. Max bet is 9999. 1.5 second cooldown per user.",
+    "Cmd": "slot slots",
+    "Desc": "Play Nadeko slots. 1 second cooldown per user.",
     "Usage": [
       "{0}slot 5"
     ]
