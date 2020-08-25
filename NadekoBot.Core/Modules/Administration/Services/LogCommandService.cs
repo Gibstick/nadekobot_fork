@@ -1047,6 +1047,9 @@ namespace NadekoBot.Modules.Administration.Services
                     if (before.Content == after.Content)
                         return;
 
+                    if (before.Author.IsBot)
+                        return;
+
                     if (!GuildLogSettings.TryGetValue(channel.Guild.Id, out LogSetting logSetting)
                         || (logSetting.MessageUpdatedId == null)
                         || logSetting.IgnoredChannels.Any(ilc => ilc.ChannelId == channel.Id))
