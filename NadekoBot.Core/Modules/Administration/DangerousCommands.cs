@@ -99,7 +99,7 @@ namespace NadekoBot.Modules.Administration
 
             [NadekoCommand, Usage, Description, Aliases]
             [OwnerOnly]
-            public Task DeleteExp() =>
+            public Task DeleteXp() =>
                 SqlExec(DangerousCommandsService.XpDeleteSql);
 
             //[NadekoCommand, Usage, Description, Aliases]
