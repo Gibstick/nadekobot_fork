@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using NadekoBot.Common;
@@ -70,14 +70,14 @@ namespace NadekoBot.Modules.Gambling
             }
             var embed = new EmbedBuilder()
                 .WithTitle(GetText("economy_state"))
-                .AddField(GetText("currency_owned"), ((BigInteger)ec.Cash) + _bc.BotConfig.CurrencySign)
+                .AddField(GetText("currency_owned"), ((BigInteger)(ec.Cash - ec.Bot)) + _bc.BotConfig.CurrencySign)
                 .AddField(GetText("currency_one_percent"), (onePercent * 100).ToString("F2") + "%")
                 .AddField(GetText("currency_planted"), ((BigInteger)ec.Planted) + _bc.BotConfig.CurrencySign)
                 .AddField(GetText("owned_waifus_total"), ((BigInteger)ec.Waifus) + _bc.BotConfig.CurrencySign)
                 .AddField(GetText("bot_currency"), ec.Bot + _bc.BotConfig.CurrencySign)
-                .AddField(GetText("total"), ((BigInteger)(ec.Cash + ec.Bot + ec.Planted + ec.Waifus)).ToString("N", _enUsCulture) + _bc.BotConfig.CurrencySign)
+                .AddField(GetText("total"), ((BigInteger)(ec.Cash + ec.Planted + ec.Waifus)).ToString("N", _enUsCulture) + _bc.BotConfig.CurrencySign)
                 .WithOkColor();
-
+                // ec.Cash already contains ec.Bot as it's the total of all values in the CurrencyAmount column of the DiscordUser table
             await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
         }
 
