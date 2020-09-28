@@ -241,7 +241,7 @@ namespace NadekoBot.Modules.CustomReactions
             var cr = _service.GetCustomReaction(Context.Guild?.Id, id);
             if (cr is null)
             {
-                await ReplyErrorLocalizedAsync("not_found").ConfigureAwait(false);
+                await ReplyErrorLocalizedAsync("no_found").ConfigureAwait(false);
                 return;
             }
 
