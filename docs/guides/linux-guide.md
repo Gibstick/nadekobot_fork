@@ -9,7 +9,6 @@
 | [Running Nadeko on tmux]                            |
 | [Making Nadeko persist upon system restarts (tmux)] |
 | [Setting up Nadeko on a VPS (Digital Ocean)]        |
-| [Setting up WinSCP]                                 |
 
 #### Operating System Compatibility
 
@@ -266,19 +265,6 @@ If you are running your droplet for the first time, it will most likely ask you 
 
 After that, your droplet should be ready for use. [Follow the guide from the beginning](#getting-started) to set Nadeko up on your newly created VPS.
 
-##### Setting up WinSCP
-
-WinSCP is useful for transfering files between a local system (your computer) and a remote system (your VPS). To set it up:
-
-- Open **WinSCP**
-- Click on **New Site** (top-left corner).
-- On the right-hand side, you should see **File Protocol** above a drop-down selection menu.
-- Select **SFTP** *(SSH File Transfer Protocol)* if its not already selected.
-- Now, in **Host name:** paste or type in your `Digital Ocean Droplets IP address` and leave `Port: 22` (no need to change it).
-- In **Username:** type `root`
-- In **Password:** type `the new root password (you changed at the start)`
-- Click on **Login**, it should connect.
-- If everything goes well, you should see the NadekoBot folder which was created by Git earlier on the right-hand side window. You should now be able to download and upload files to your VPS.
 
 [Getting Started]: #getting-started
 [Downloading and Installing the Prerequisites]: #downloading-and-installing-the-prerequisites
@@ -287,4 +273,3 @@ WinSCP is useful for transfering files between a local system (your computer) an
 [Running Nadeko on tmux]: #running-nadeko-on-tmux-if-you-dont-want-to-use-pm2
 [Making Nadeko persist upon system restarts (tmux)]: #making-nadeko-persist-upon-system-restarts-tmux-for-advanced-users
 [Setting up Nadeko on a VPS (Digital Ocean)]: #setting-up-nadeko-on-a-linux-vps-digital-ocean-droplet
-[Setting up WinSCP]: #setting-up-winscp
