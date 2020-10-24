@@ -15,6 +15,7 @@ namespace NadekoBot.Core.Services.Database
     {
         public NadekoContext CreateDbContext(string[] args)
         {
+            LogSetup.SetupLogger(-2);
             var optionsBuilder = new DbContextOptionsBuilder<NadekoContext>();
             IBotCredentials creds = new BotCredentials();
             var builder = new SqliteConnectionStringBuilder(creds.Db.ConnectionString);
