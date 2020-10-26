@@ -784,7 +784,8 @@
     "Cmd": "verbose v",
     "Desc": "Toggles or sets whether to show when a command/module is blocked.",
     "Usage": [
-      "{0}v", "{0}verbose true"
+      "{0}v",
+      "{0}verbose true"
     ]
   },
   "srvrmdl": {
@@ -2886,7 +2887,8 @@
     "Cmd": "verboseerror ve",
     "Desc": "Toggles or sets whether the bot should print command errors when a command is incorrectly used.",
     "Usage": [
-      "{0}ve", "{0}ve false"
+      "{0}ve",
+      "{0}ve false"
     ]
   },
   "streamrolekeyword": {
@@ -3429,6 +3431,13 @@
     "usage": [
       "{0}updatescheck commit",
       "{0}updatescheck release"
+    ]
+  },
+  "nsfwtoggle": {
+    "cmd": "nsfwtoggle nsfw nsfwtgl",
+    "desc": "Toggles the NSFW parameter of the current text channel.",
+    "usage": [
+      "{0}nsfwtoggle"
     ]
   },
   "economy": {

@@ -15,7 +15,7 @@
 #### Prerequisites
 
 - Windows 8 or later (64-bit)
-- [Create a Discord Bot application](../../jsons-explained#creating-discord-bot-application) and [invite the bot to your server](../../jsons-explained/#inviting-your-bot-to-your-server).
+- [Create a Discord Bot application](../../create-invite#creating-discord-bot-application) and [invite the bot to your server](../../create-invite/#inviting-your-bot-to-your-server).
 
 **Optional**
 
