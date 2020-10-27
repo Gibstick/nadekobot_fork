@@ -57,8 +57,8 @@
 You can still install them manually:
 
 - [Redis Installer](https://github.com/MicrosoftArchive/redis/releases/tag/win-3.0.504) - Download and run the **`.msi`** file
-- [ffmpeg] - Download the Release build and move `ffmpeg.exe` to a path that's in your PATH environment variable. If you don't know what that is, then just move the `ffmpeg.exe` file to NadekoBot/system
-- [youtube-dl] - Click on `Windows exe` and download the file. Then`youtube-dl.exe` to a path that's in your PATH environment variable. If you don't know what that is, then just move the `youtube-dl.exe` file to NadekoBot/system
+- [ffmpeg-32bit] | [ffmpeg-64bit] - Download the **appropriate version** for your system (32 bit if you're running a 32 bit OS, or 64 if you're running a 64bit OS). Unzip it, and move `ffmpeg.exe` to a path that's in your PATH environment variable. If you don't know what that is, then just move the `ffmpeg.exe` file to NadekoBot/system
+- [youtube-dl] - Click to download the file. Then put `youtube-dl.exe` in a path that's in your PATH environment variable. If you don't know what that is, then just move the `youtube-dl.exe` file to NadekoBot/system
 
 [Updater]: https://dl.nadeko.bot/
 [Notepad++]: https://notepad-plus-plus.org/
@@ -67,5 +67,6 @@ You can still install them manually:
 [Visual C++ 2010 (x86)]: https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe
 [Visual C++ 2017 (x64)]: https://aka.ms/vs/15/release/vc_redist.x64.exe
 [SourceGuide]: ../from-source
-[ffmpeg]: https://ffmpeg.zeranoe.com/builds/
-[youtube-dl]: https://rg3.github.io/youtube-dl/download.html
+[ffmpeg-32bit]: https://cdn.nadeko.bot/dl/ffmpeg-32.zip
+[ffmpeg-64bit]: https://cdn.nadeko.bot/dl/ffmpeg-64.zip
+[youtube-dl]: https://yt-dl.org/downloads/latest/youtube-dl.exe
