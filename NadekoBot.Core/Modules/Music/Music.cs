@@ -8,6 +8,7 @@ using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
+using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.Music.Common;
 using NadekoBot.Modules.Music.Common.Exceptions;
 using NadekoBot.Modules.Music.Extensions;
@@ -29,16 +30,19 @@ namespace NadekoBot.Modules.Music
         private readonly IBotCredentials _creds;
         private readonly IGoogleApiService _google;
         private readonly DbService _db;
+        private readonly LogCommandService _logService;
 
         public Music(DiscordSocketClient client,
             IBotCredentials creds,
             IGoogleApiService google,
-            DbService db)
+            DbService db,
+            LogCommandService logService)
         {
             _client = client;
             _creds = creds;
             _google = google;
             _db = db;
+            _logService = logService;
         }
 
         //private Task Client_UserVoiceStateUpdated(SocketUser iusr, SocketVoiceState oldState, SocketVoiceState newState)
@@ -71,7 +75,7 @@ namespace NadekoBot.Modules.Music
         //            }
 
         //            ////if some other user moved
-        //            //if ((player.VoiceChannel == newState.VoiceChannel && //if joined first, and player paused, unpause 
+        //            //if ((player.VoiceChannel == newState.VoiceChannel && //if joined first, and player paused, unpause
         //            //        player.Paused &&
         //            //        newState.VoiceChannel.Users.Count >= 2) ||  // keep in mind bot is in the channel (+1)
         //            //    (player.VoiceChannel == oldState.VoiceChannel && // if left last, and player unpaused, pause
@@ -128,9 +132,9 @@ namespace NadekoBot.Modules.Music
                         var queuedMessage = await mp.OutputTextChannel.EmbedAsync(embed).ConfigureAwait(false);
                         if (mp.Stopped)
                         {
-                            (await ReplyErrorLocalizedAsync("queue_stopped", Format.Code(Prefix + "play")).ConfigureAwait(false)).DeleteAfter(10);
+                            (await ReplyErrorLocalizedAsync("queue_stopped", Format.Code(Prefix + "play")).ConfigureAwait(false)).DeleteAfter(10, _logService);
                         }
-                        queuedMessage?.DeleteAfter(10);
+                        queuedMessage?.DeleteAfter(10, _logService);
                     }
                     catch
                     {
@@ -176,7 +180,7 @@ namespace NadekoBot.Modules.Music
             try { await InternalQueue(mp, songInfo, false, forcePlay: forceplay).ConfigureAwait(false); } catch (QueueFullException) { return; }
             if ((await ctx.Guild.GetCurrentUserAsync().ConfigureAwait(false)).GetPermissions((IGuildChannel)ctx.Channel).ManageMessages)
             {
-                ctx.Message.DeleteAfter(10);
+                ctx.Message.DeleteAfter(10, _logService);
             }
         }
 
@@ -189,7 +193,7 @@ namespace NadekoBot.Modules.Music
             try { await InternalQueue(mp, songInfo, false, true).ConfigureAwait(false); } catch (QueueFullException) { return; }
             if ((await ctx.Guild.GetCurrentUserAsync().ConfigureAwait(false)).GetPermissions((IGuildChannel)ctx.Channel).ManageMessages)
             {
-                ctx.Message.DeleteAfter(10);
+                ctx.Message.DeleteAfter(10, _logService);
             }
         }
 
@@ -216,6 +220,7 @@ namespace NadekoBot.Modules.Music
                     || (index -= 1) < 0
                     || index >= videos.Length)
                 {
+                    _logService.AddDeleteIgnore(msg.Id);
                     try { await msg.DeleteAsync().ConfigureAwait(false); } catch { }
                     return;
                 }
@@ -226,6 +231,7 @@ namespace NadekoBot.Modules.Music
             }
             finally
             {
+                _logService.AddDeleteIgnore(msg.Id);
                 try { await msg.DeleteAsync().ConfigureAwait(false); } catch { }
             }
         }

@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Extensions;
+using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.Gambling.Services;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,13 @@ namespace NadekoBot.Modules.Games
         [Group]
         public class PlantPickCommands : NadekoSubmodule<PlantPickService>
         {
+            private readonly LogCommandService logService;
+
+            public PlantPickCommands(LogCommandService logService)
+            {
+                this.logService = logService;
+            }
+
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             public async Task Pick(string pass = null)
@@ -34,7 +42,12 @@ namespace NadekoBot.Modules.Games
 
                 if (((SocketGuild)ctx.Guild).CurrentUser.GuildPermissions.ManageMessages)
                 {
-                    try { await ctx.Message.DeleteAsync().ConfigureAwait(false); } catch { }
+                    try
+                    {
+                        logService.AddDeleteIgnore(ctx.Message.Id);
+                        await ctx.Message.DeleteAsync().ConfigureAwait(false);
+                    }
+                    catch { }
                 }
             }
 
@@ -59,6 +72,7 @@ namespace NadekoBot.Modules.Games
 
                 if (((SocketGuild)ctx.Guild).CurrentUser.GuildPermissions.ManageMessages)
                 {
+                    logService.AddDeleteIgnore(ctx.Message.Id);
                     await ctx.Message.DeleteAsync().ConfigureAwait(false);
                 }
             }

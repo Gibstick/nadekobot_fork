@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NadekoBot.Common;
 using NadekoBot.Common.Collections;
 using NadekoBot.Core.Services;
+using NadekoBot.Modules.Administration.Services;
 using Newtonsoft.Json;
 using NLog;
 using SixLabors.Fonts;
@@ -41,7 +42,7 @@ namespace NadekoBot.Extensions
 
         public static List<ulong> GetGuildIds(this DiscordSocketClient client)
             => client.Guilds.Select(x => x.Id).ToList();
-        
+
         /// <summary>
         /// Generates a string in the format HHH:mm if timespan is <= 2m.
         /// Generates a string in the format 00:mm:ss if timespan is less than 2m.
@@ -54,7 +55,7 @@ namespace NadekoBot.Extensions
                 return $"{span:mm}m {span:ss}s";
             return $"{(int) span.TotalHours:D2}h {span:mm}m";
         }
-        
+
         public static bool TryGetUrlPath(this string input, out string path)
         {
             var match = UrlRegex.Match(input);
@@ -191,11 +192,15 @@ namespace NadekoBot.Extensions
             dict.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.202 Safari/535.1");
         }
 
-        public static IMessage DeleteAfter(this IUserMessage msg, int seconds)
+        public static IMessage DeleteAfter(this IUserMessage msg, int seconds, LogCommandService logService = null)
         {
             Task.Run(async () =>
             {
                 await Task.Delay(seconds * 1000).ConfigureAwait(false);
+                if(logService != null)
+                {
+                    logService.AddDeleteIgnore(msg.Id);
+                }
                 try { await msg.DeleteAsync().ConfigureAwait(false); }
                 catch { }
             });
