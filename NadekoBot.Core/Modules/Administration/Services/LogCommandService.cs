@@ -372,7 +372,7 @@ namespace NadekoBot.Modules.Administration.Services
             return Task.CompletedTask;
         }
 
-        private void MuteCommands_UserMuted(IGuildUser usr, IUser mod, MuteType muteType)
+        private void MuteCommands_UserMuted(IGuildUser usr, IUser mod, MuteType muteType, string reason)
         {
             var _ = Task.Run(async () =>
             {
@@ -416,7 +416,7 @@ namespace NadekoBot.Modules.Administration.Services
             });
         }
 
-        private void MuteCommands_UserUnmuted(IGuildUser usr, IUser mod, MuteType muteType)
+        private void MuteCommands_UserUnmuted(IGuildUser usr, IUser mod, MuteType muteType, string reason)
         {
             var _ = Task.Run(async () =>
             {
@@ -451,6 +451,9 @@ namespace NadekoBot.Modules.Administration.Services
                         .WithTitle($"{usr.Username}#{usr.Discriminator} | {usr.Id}")
                         .WithFooter(fb => fb.WithText($"{CurrentTime(usr.Guild)}"))
                         .WithOkColor();
+
+                    if (!string.IsNullOrWhiteSpace(reason))
+                        embed.WithDescription(reason);
 
                     await logChannel.EmbedAsync(embed).ConfigureAwait(false);
                 }

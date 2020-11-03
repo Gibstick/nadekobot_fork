@@ -45,7 +45,7 @@ namespace NadekoBot.Modules.Administration.Services
                     .ThenInclude(x => x.IgnoredChannels)
                     .Where(x => ids.Contains(x.GuildId))
                     .ToList();
-                
+
                 foreach (var gc in configs)
                 {
                     Initialize(gc);
@@ -73,12 +73,12 @@ namespace NadekoBot.Modules.Administration.Services
         {
             using (var uow = _db.GetDbContext())
             {
-                var gcWithData = uow.GuildConfigs.ForId(gc.GuildId, 
+                var gcWithData = uow.GuildConfigs.ForId(gc.GuildId,
                     x => x
                         .Include(x => x.AntiRaidSetting)
                         .Include(x => x.AntiSpamSetting)
                         .ThenInclude(x => x.IgnoredChannels));
-                
+
                 Initialize(gcWithData);
             }
             return Task.CompletedTask;
@@ -187,10 +187,11 @@ namespace NadekoBot.Modules.Administration.Services
                     case PunishmentAction.Mute:
                         try
                         {
+                            var muteReason = $"{pt} Protection";
                             if (muteTime <= 0)
-                                await _mute.MuteUser(gu, _client.CurrentUser).ConfigureAwait(false);
+                                await _mute.MuteUser(gu, _client.CurrentUser, reason: muteReason).ConfigureAwait(false);
                             else
-                                await _mute.TimedMute(gu, _client.CurrentUser, TimeSpan.FromSeconds(muteTime)).ConfigureAwait(false);
+                                await _mute.TimedMute(gu, _client.CurrentUser, TimeSpan.FromSeconds(muteTime), reason: muteReason).ConfigureAwait(false);
                         }
                         catch (Exception ex) { _log.Warn(ex, "I can't apply punishement"); }
                         break;
@@ -212,7 +213,7 @@ namespace NadekoBot.Modules.Administration.Services
                             catch
                             {
                                 await gu.Guild.RemoveBanAsync(gu).ConfigureAwait(false);
-                                // try it twice, really don't want to ban user if 
+                                // try it twice, really don't want to ban user if
                                 // only kick has been specified as the punishement
                             }
                         }
