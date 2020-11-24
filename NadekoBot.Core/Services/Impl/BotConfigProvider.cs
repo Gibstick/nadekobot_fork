@@ -2,6 +2,7 @@
 using NadekoBot.Common;
 using NadekoBot.Core.Services.Database.Models;
 using System;
+using System.Reflection;
 
 namespace NadekoBot.Core.Services.Impl
 {
@@ -234,6 +235,14 @@ namespace NadekoBot.Core.Services.Impl
                 uow.SaveChanges();
             }
             return true;
+        }
+
+        public string GetValue(string name)
+        {
+            var value = typeof(BotConfig)
+                .GetProperty(name, BindingFlags.IgnoreCase| BindingFlags.Public | BindingFlags.Instance)
+                .GetValue(BotConfig);
+            return value?.ToString() ?? "-";
         }
     }
 }

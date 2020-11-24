@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -108,7 +108,7 @@ namespace NadekoBot.Modules.Administration.Services
                             await _mute.TimedBan(user, TimeSpan.FromMinutes(p.Time), "Warned too many times.").ConfigureAwait(false);
                         break;
                     case PunishmentAction.Softban:
-                        await guild.AddBanAsync(user, 7, reason: "Warned too many times").ConfigureAwait(false);
+                        await guild.AddBanAsync(user, 7, reason: "Softban | Warned too many times").ConfigureAwait(false);
                         try
                         {
                             await guild.RemoveBanAsync(user).ConfigureAwait(false);

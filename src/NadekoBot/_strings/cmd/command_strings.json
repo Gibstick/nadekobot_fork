@@ -2922,7 +2922,7 @@
   },
   "botconfigedit": {
     "Cmd": "botconfigedit bce",
-    "Desc": "Sets one of available bot config settings to a specified value. Use the command without any parameters to get a list of available settings.",
+    "Desc": "Sets one of available bot config settings to a specified value. Use the command without any parameters to get a list of available settings, and their current values.",
     "Usage": [
       "{0}bce CurrencyName b1nzy",
       "{0}bce"
@@ -3422,7 +3422,7 @@
     "usage": [
       "{0}edit 7479498384 Hi :^)",
       "{0}edit #other-channel 771562360594628608 New message!",
-      "{0}edit #other-channel 771562360594628608 {\"description\":\"hello\"}"
+      "{0}edit #other-channel 771562360594628608 {{\"description\":\"hello\"}}"
     ]
   },
   "delete": {
