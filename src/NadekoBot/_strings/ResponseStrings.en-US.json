@@ -798,6 +798,7 @@
   "gambling_shop_list_item_not_unique": "That item is already added.",
   "gambling_shop_purchase": "Purchase on {0} server",
   "gambling_shop_role_not_found": "Role which is being sold no longer exists.",
+  "gambling_shop_role_already_bought": "You already bought this role.",
   "gambling_shop_role_purchase": "You've successfully purchased {0} role.",
   "gambling_shop_role_purchase_error": "Error assigning role. Your purchase has been refunded.",
   "gambling_unique_items_left": "{0} unique items left.",
