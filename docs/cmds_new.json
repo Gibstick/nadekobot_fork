@@ -151,17 +151,54 @@
     },
     {
       "Aliases": [
-        ".edit"
+        ".nsfwtoggle",
+        ".nsfw",
+        ".nsfwtgl"
       ],
-      "Description": "Edits bot's message, you have to specify message ID and new text. Supports embeds.",
+      "Description": "Toggles the NSFW parameter of the current text channel.",
       "Usage": [
-        ".edit 7479498384 Hi :^)"
+        ".nsfwtoggle"
       ],
       "Submodule": "Administration",
       "Module": "Administration",
       "Options": null,
       "Requirements": [
-        "ManageMessages Server Permission"
+        "ManageChannels Server Permission"
+      ]
+    },
+    {
+      "Aliases": [
+        ".edit"
+      ],
+      "Description": "Edits bot's message, you have to specify message ID and new text. You can optionally specify target channel. Supports embeds.",
+      "Usage": [
+        ".edit 7479498384 Hi :^)",
+        ".edit #other-channel 771562360594628608 New message!",
+        ".edit #other-channel 771562360594628608 {\"description\":\"hello\"}"
+      ],
+      "Submodule": "Administration",
+      "Module": "Administration",
+      "Options": null,
+      "Requirements": [
+        "ManageMessages Channel Permission"
+      ]
+    },
+    {
+      "Aliases": [
+        ".delete",
+        ".del"
+      ],
+      "Description": "Deletes a single message given the channel and message ID. If channel is ommited, message will be searched for in the current channel. You can also specify time parameter after which the message will be deleted (up to 7 days). This timer won't persist through bot restarts.",
+      "Usage": [
+        ".del #chat 771562360594628608",
+        ".del 771562360594628608",
+        ".del 771562360594628608 5m"
+      ],
+      "Submodule": "Administration",
+      "Module": "Administration",
+      "Options": null,
+      "Requirements": [
+        "ManageMessages Channel Permission"
       ]
     },
     {
@@ -273,11 +310,11 @@
     },
     {
       "Aliases": [
-        ".deleteexp"
+        ".deletexp"
       ],
-      "Description": "deleteexp",
+      "Description": "Deletes everything from UserXpStats, Clubs and sets users' TotalXP to 0.",
       "Usage": [
-        "deleteexp"
+        ".deletexp"
       ],
       "Submodule": "DangerousCommands",
       "Module": "Administration",
@@ -430,10 +467,12 @@
       "Aliases": [
         ".mute"
       ],
-      "Description": "Mutes a mentioned user both from speaking and chatting. You can also specify time string for how long the user should be muted.",
+      "Description": "Mutes a mentioned user both from speaking and chatting. You can also specify time string for how long the user should be muted. You can optionally specify a reason.",
       "Usage": [
         ".mute @Someone",
-        ".mute 1h30m @Someone"
+        ".mute @Someone too noisy",
+        ".mute 1h30m @Someone",
+        ".mute 1h30m @Someone too noisy"
       ],
       "Submodule": "MuteCommands",
       "Module": "Administration",
@@ -463,9 +502,10 @@
       "Aliases": [
         ".chatmute"
       ],
-      "Description": "Prevents a mentioned user from chatting in text channels.",
+      "Description": "Prevents a mentioned user from chatting in text channels. You can optionally specify a reason.",
       "Usage": [
-        ".chatmute @Someone"
+        ".chatmute @Someone",
+        ".chatmute @Someone stop writing"
       ],
       "Submodule": "MuteCommands",
       "Module": "Administration",
@@ -493,9 +533,10 @@
       "Aliases": [
         ".voicemute"
       ],
-      "Description": "Prevents a mentioned user from speaking in voice channels.",
+      "Description": "Prevents a mentioned user from speaking in voice channels. User has to be in a voice channel in order for the command to have an effect. You can optionally specify a reason.",
       "Usage": [
-        ".voicemute @Someone"
+        ".voicemute @Someone",
+        ".voicemute @Someone stop talking"
       ],
       "Submodule": "MuteCommands",
       "Module": "Administration",
@@ -5024,7 +5065,7 @@
       "Aliases": [
         ".memelist"
       ],
-      "Description": "Pulls a list of memes you can use with `.memegen` from http://memegen.link/templates/",
+      "Description": "Shows a list of template keys (and their repspective names) used for `.memegen`.",
       "Usage": [
         ".memelist"
       ],
@@ -5037,9 +5078,10 @@
       "Aliases": [
         ".memegen"
       ],
-      "Description": "Generates a meme from memelist with top and bottom text.",
+      "Description": "Generates a meme from memelist with specified text. Separate multiple text values with semicolons. Provide no meme text to see an example meme with that template.",
       "Usage": [
-        ".memegen biw \"gets iced coffee\" \"in the winter\""
+        ".memegen biw gets iced coffee;in the winter",
+        ".memegen ntot"
       ],
       "Submodule": "MemegenCommands",
       "Module": "Searches",
@@ -5571,7 +5613,7 @@
         ".botconfigedit",
         ".bce"
       ],
-      "Description": "Sets one of available bot config settings to a specified value. Use the command without any parameters to get a list of available settings.",
+      "Description": "Sets one of available bot config settings to a specified value. Use the command without any parameters to get a list of available settings, and their current values.",
       "Usage": [
         ".bce CurrencyName b1nzy",
         ".bce"
@@ -6312,6 +6354,84 @@
     },
     {
       "Aliases": [
+        ".clubtransfer"
+      ],
+      "Description": "Transfers the ownership of the club to another member of the club.",
+      "Usage": [
+        ".clubtransfer @b1nzy"
+      ],
+      "Submodule": "Club",
+      "Module": "Xp",
+      "Options": null,
+      "Requirements": []
+    },
+    {
+      "Aliases": [
+        ".clubadmin"
+      ],
+      "Description": "Assigns (or unassigns) staff role to the member of the club. Admins can ban, kick and accept applications.",
+      "Usage": [
+        ".clubadmin @b1nzy"
+      ],
+      "Submodule": "Club",
+      "Module": "Xp",
+      "Options": null,
+      "Requirements": []
+    },
+    {
+      "Aliases": [
+        ".clubcreate"
+      ],
+      "Description": "Creates a club. You must be at least level 5 and not be in the club already.",
+      "Usage": [
+        ".clubcreate b1nzy's friends"
+      ],
+      "Submodule": "Club",
+      "Module": "Xp",
+      "Options": null,
+      "Requirements": []
+    },
+    {
+      "Aliases": [
+        ".clubicon"
+      ],
+      "Description": "Sets the club icon.",
+      "Usage": [
+        ".clubicon https://i.imgur.com/htfDMfU.png"
+      ],
+      "Submodule": "Club",
+      "Module": "Xp",
+      "Options": null,
+      "Requirements": []
+    },
+    {
+      "Aliases": [
+        ".clubinfo"
+      ],
+      "Description": "Shows information about the club.",
+      "Usage": [
+        ".clubinfo b1nzy's friends#123"
+      ],
+      "Submodule": "Club",
+      "Module": "Xp",
+      "Options": null,
+      "Requirements": []
+    },
+    {
+      "Aliases": [
+        ".clubbans"
+      ],
+      "Description": "Shows the list of users who have banned from your club. Paginated. You must be club owner to use this command.",
+      "Usage": [
+        ".clubbans 2"
+      ],
+      "Submodule": "Club",
+      "Module": "Xp",
+      "Options": null,
+      "Requirements": []
+    },
+    {
+      "Aliases": [
         ".clubapps"
       ],
       "Description": "Shows the list of users who have applied to your club. Paginated. You must be club owner to use this command.",
@@ -6447,84 +6567,6 @@
       "Description": "Shows club rankings on the specified page.",
       "Usage": [
         ".clublb 2"
-      ],
-      "Submodule": "Club",
-      "Module": "Xp",
-      "Options": null,
-      "Requirements": []
-    },
-    {
-      "Aliases": [
-        ".clubtransfer"
-      ],
-      "Description": "Transfers the ownership of the club to another member of the club.",
-      "Usage": [
-        ".clubtransfer @b1nzy"
-      ],
-      "Submodule": "Club",
-      "Module": "Xp",
-      "Options": null,
-      "Requirements": []
-    },
-    {
-      "Aliases": [
-        ".clubadmin"
-      ],
-      "Description": "Assigns (or unassigns) staff role to the member of the club. Admins can ban, kick and accept applications.",
-      "Usage": [
-        ".clubadmin"
-      ],
-      "Submodule": "Club",
-      "Module": "Xp",
-      "Options": null,
-      "Requirements": []
-    },
-    {
-      "Aliases": [
-        ".clubcreate"
-      ],
-      "Description": "Creates a club. You must be at least level 5 and not be in the club already.",
-      "Usage": [
-        ".clubcreate b1nzy's friends"
-      ],
-      "Submodule": "Club",
-      "Module": "Xp",
-      "Options": null,
-      "Requirements": []
-    },
-    {
-      "Aliases": [
-        ".clubicon"
-      ],
-      "Description": "Sets the club icon.",
-      "Usage": [
-        ".clubicon https://i.imgur.com/htfDMfU.png"
-      ],
-      "Submodule": "Club",
-      "Module": "Xp",
-      "Options": null,
-      "Requirements": []
-    },
-    {
-      "Aliases": [
-        ".clubinfo"
-      ],
-      "Description": "Shows information about the club.",
-      "Usage": [
-        ".clubinfo b1nzy's friends#123"
-      ],
-      "Submodule": "Club",
-      "Module": "Xp",
-      "Options": null,
-      "Requirements": []
-    },
-    {
-      "Aliases": [
-        ".clubbans"
-      ],
-      "Description": "Shows the list of users who have banned from your club. Paginated. You must be club owner to use this command.",
-      "Usage": [
-        ".clubbans 2"
       ],
       "Submodule": "Club",
       "Module": "Xp",
