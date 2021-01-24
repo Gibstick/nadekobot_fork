@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using NadekoBot.Extensions;
-using NadekoBot.Core.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using NadekoBot.Common.Attributes;
@@ -14,13 +13,12 @@ namespace NadekoBot.Modules.Administration
         [Group]
         public class AutoAssignRoleCommands : NadekoSubmodule<AutoAssignRoleService>
         {
-
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageRoles)]
             public async Task AutoAssignRole([Leftover] IRole role = null)
             {
-                var guser = (IGuildUser)ctx.User;
+                var guser = (IGuildUser) ctx.User;
                 if (role != null)
                 {
                     if (role.Id == ctx.Guild.EveryoneRole.Id)
