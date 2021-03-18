@@ -21,6 +21,8 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord.Net;
+using NadekoBot.Core.Common;
 
 namespace NadekoBot
 {
@@ -189,7 +191,7 @@ namespace NadekoBot
                 var commandHandler = Services.GetService<CommandHandler>();
                 //what the fluff
                 commandHandler.AddServices(s);
-                LoadTypeReaders(typeof(NadekoBot).Assembly);
+                _ = LoadTypeReaders(typeof(NadekoBot).Assembly);
 
                 sw.Stop();
                 _log.Info($"All services loaded in {sw.Elapsed.TotalSeconds:F2}s");
@@ -219,15 +221,7 @@ namespace NadekoBot
                 var x = (TypeReader)Activator.CreateInstance(ft, Client, CommandService);
                 var baseType = ft.BaseType;
                 var typeArgs = baseType.GetGenericArguments();
-                try
-                {
-                    CommandService.AddTypeReader(typeArgs[0], x);
-                }
-                catch (Exception ex)
-                {
-                    _log.Error(ex);
-                    throw;
-                }
+                CommandService.AddTypeReader(typeArgs[0], x);
                 toReturn.Add(x);
             }
 
@@ -264,8 +258,22 @@ namespace NadekoBot
 
             //connect
             _log.Info("Shard {0} logging in ...", Client.ShardId);
-            await Client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
-            await Client.StartAsync().ConfigureAwait(false);
+            try
+            {
+                await Client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
+                await Client.StartAsync().ConfigureAwait(false);
+            }
+            catch (HttpException ex)
+            {
+                LoginErrorHandler.Handle(_log, ex);
+                Helpers.ReadErrorAndExit(3);
+            }
+            catch (Exception ex)
+            {
+                LoginErrorHandler.Handle(_log, ex);
+                Helpers.ReadErrorAndExit(4);
+            }
+
             Client.Ready += SetClientReady;
             await clientReady.Task.ConfigureAwait(false);
             Client.Ready -= SetClientReady;
@@ -308,8 +316,8 @@ namespace NadekoBot
             }
             catch (Exception ex)
             {
-                _log.Error(ex);
-                throw;
+                _log.Error(ex.ToString());
+                Helpers.ReadErrorAndExit(9);
             }
 
             sw.Stop();
@@ -372,9 +380,7 @@ namespace NadekoBot
             catch
             {
                 _log.Error("You must run the application as an ADMINISTRATOR.");
-                if (!Console.IsInputRedirected)
-                    Console.ReadKey();
-                Environment.Exit(2);
+                Helpers.ReadErrorAndExit(2);
             }
         }
 
@@ -385,13 +391,11 @@ namespace NadekoBot
                 try
                 {
                     var p = Process.GetProcessById(parentProcessId);
-                    if (p == null)
-                        return;
                     p.WaitForExit();
                 }
                 finally
                 {
-                    Environment.Exit(10);
+                    Environment.Exit(7);
                 }
             })).Start();
         }
