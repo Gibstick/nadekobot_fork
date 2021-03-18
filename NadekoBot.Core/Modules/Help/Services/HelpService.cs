@@ -38,7 +38,7 @@ namespace NadekoBot.Modules.Help.Services
                 if (guild == null)
                 {
                     if (CREmbed.TryParse(_bc.BotConfig.DMHelpString, out var embed))
-                        return msg.Channel.EmbedAsync(embed.ToEmbed(), embed.PlainText?.SanitizeMentions() ?? "");
+                        return msg.Channel.EmbedAsync(embed);
 
                     return msg.Channel.SendMessageAsync(_bc.BotConfig.DMHelpString);
                 }
