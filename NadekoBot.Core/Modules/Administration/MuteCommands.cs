@@ -33,8 +33,15 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageRoles)]
-            public async Task SetMuteRole([Leftover] IRole role)
+            public async Task MuteRole([Leftover] IRole role = null)
             {
+                if (role is null)
+                {
+                    var muteRole = await _service.GetMuteRole(ctx.Guild).ConfigureAwait(false);
+                    await ReplyConfirmLocalizedAsync("mute_role", Format.Code(muteRole.Name)).ConfigureAwait(false);
+                    return;
+                }
+                
                 if (Context.User.Id != Context.Guild.OwnerId &&
                     role.Position >= ((SocketGuildUser) Context.User).Roles.Max(x => x.Position))
                 {

@@ -1,4 +1,4 @@
-{
+﻿{
   "h": {
     "Cmd": "help h",
     "Desc": "Either shows a help for a single command, or DMs you help link if no parameters are specified.",
@@ -2007,11 +2007,12 @@
       "{0}konachan yuri"
     ]
   },
-  "setmuterole": {
-    "Cmd": "setmuterole",
-    "Desc": "Sets a name of the role which will be assigned to people who should be muted. Default is nadeko-mute.",
+  "muterole": {
+    "Cmd": "muterole setmuterole",
+    "Desc": "Sets a name of the role which will be assigned to people who should be muted. Provide no arguments to see currently set mute role. Default is nadeko-mute.",
     "Usage": [
-      "{0}setmuterole Silenced"
+      "{0}muterole",
+      "{0}muterole Silenced"
     ]
   },
   "adsarm": {
