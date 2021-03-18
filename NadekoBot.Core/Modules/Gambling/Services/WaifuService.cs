@@ -48,11 +48,33 @@ namespace NadekoBot.Modules.Gambling.Services
                 // owner has to be the owner of the waifu
                 if (waifu == null || waifu.ClaimerId != ownerUser.Id)
                     return false;
-
-                if (!await _cs.RemoveAsync(owner.Id, "Waifu Transfer",
-                    waifu.Price / 10, gamble: true))
+                
+                // if waifu likes the person, gotta pay the penalty
+                if (waifu.AffinityId == ownerUser.Id)
                 {
-                    return false;
+                    if (!await _cs.RemoveAsync(owner.Id,
+                        "Waifu Transfer - affinity penalty", 
+                        (int)(waifu.Price * 0.6),
+                        true))
+                    {
+                        // unable to pay 60% penalty
+                        return false;
+                    }
+
+                    waifu.Price = (int)(waifu.Price * 0.7); // half of 60% = 30% price reduction
+                    if (waifu.Price < _bc.BotConfig.MinWaifuPrice)
+                        waifu.Price = _bc.BotConfig.MinWaifuPrice;
+                }
+                else // if not, pay 10% fee
+                {
+                    if (!await _cs.RemoveAsync(owner.Id, "Waifu Transfer", waifu.Price / 10, gamble: true))
+                    {
+                        return false;
+                    }
+
+                    waifu.Price = (int) (waifu.Price * 0.95); // half of 10% = 5% price reduction
+                    if (waifu.Price < _bc.BotConfig.MinWaifuPrice)
+                        waifu.Price = _bc.BotConfig.MinWaifuPrice;
                 }
 
                 //new claimerId is the id of the new owner
@@ -75,17 +97,19 @@ namespace NadekoBot.Modules.Gambling.Services
                     return _bc.BotConfig.MinWaifuPrice;
 
                 var divorces = uow._context.WaifuUpdates.Count(x => x.Old != null &&
-                        x.Old.UserId == user.Id &&
-                        x.UpdateType == WaifuUpdateType.Claimed &&
-                        x.New == null);
+                                                                    x.Old.UserId == user.Id &&
+                                                                    x.UpdateType == WaifuUpdateType.Claimed &&
+                                                                    x.New == null);
                 var affs = uow._context.WaifuUpdates
-                        .AsQueryable()
-                        .Where(w => w.User.UserId == user.Id && w.UpdateType == WaifuUpdateType.AffinityChanged && w.New != null)
-                        .ToList()
-                        .GroupBy(x => x.New)
-                        .Count();
+                    .AsQueryable()
+                    .Where(w => w.User.UserId == user.Id && w.UpdateType == WaifuUpdateType.AffinityChanged &&
+                                w.New != null)
+                    .ToList()
+                    .GroupBy(x => x.New)
+                    .Count();
 
-                return (int)Math.Ceiling(waifu.Price * 1.25f) + ((divorces + affs + 2) * _bc.BotConfig.DivorcePriceMultiplier);
+                return (int) Math.Ceiling(waifu.Price * 1.25f) +
+                       ((divorces + affs + 2) * _bc.BotConfig.DivorcePriceMultiplier);
             }
         }
 
@@ -100,15 +124,15 @@ namespace NadekoBot.Modules.Gambling.Services
                 var affs = uow._context.WaifuUpdates
                     .AsQueryable()
                     .Where(w => w.User.UserId == user.Id
-                        && w.UpdateType == WaifuUpdateType.AffinityChanged
-                        && w.New != null);
+                                && w.UpdateType == WaifuUpdateType.AffinityChanged
+                                && w.New != null);
 
                 var divorces = uow._context.WaifuUpdates
                     .AsQueryable()
                     .Where(x => x.Old != null &&
-                        x.Old.UserId == user.Id &&
-                        x.UpdateType == WaifuUpdateType.Claimed &&
-                        x.New == null);
+                                x.Old.UserId == user.Id &&
+                                x.UpdateType == WaifuUpdateType.Claimed &&
+                                x.New == null);
 
                 //reset changes of heart to 0
                 uow._context.WaifuUpdates.RemoveRange(affs);
@@ -126,6 +150,7 @@ namespace NadekoBot.Modules.Gambling.Services
 
                 uow.SaveChanges();
             }
+
             return true;
         }
 
@@ -231,7 +256,6 @@ namespace NadekoBot.Modules.Gambling.Services
                 var now = DateTime.UtcNow;
                 if (w?.Affinity?.UserId == target?.Id)
                 {
-
                 }
                 else if (!_cache.TryAddAffinityCooldown(user.Id, out remaining))
                 {
@@ -309,7 +333,7 @@ namespace NadekoBot.Modules.Gambling.Services
                     if (w.Affinity?.UserId == user.Id)
                     {
                         await _cs.AddAsync(w.Waifu.UserId, "Waifu Compensation", amount, gamble: true);
-                        w.Price = (int)Math.Floor(w.Price * 0.75f);
+                        w.Price = (int) Math.Floor(w.Price * 0.75f);
                         result = DivorceResult.SucessWithPenalty;
                     }
                     else
@@ -318,6 +342,7 @@ namespace NadekoBot.Modules.Gambling.Services
 
                         result = DivorceResult.Success;
                     }
+
                     var oldClaimer = w.Claimer;
                     w.Claimer = null;
 
@@ -357,16 +382,18 @@ namespace NadekoBot.Modules.Gambling.Services
                         Waifu = uow.DiscordUsers.GetOrCreate(giftedWaifu),
                     });
                 }
+
                 w.Items.Add(itemObj);
                 if (w.Claimer?.UserId == from)
                 {
-                    w.Price += (int)(itemObj.Price * 0.95);
+                    w.Price += (int) (itemObj.Price * 0.95);
                 }
                 else
                     w.Price += itemObj.Price / 2;
 
                 await uow.SaveChangesAsync();
             }
+
             return true;
         }
 

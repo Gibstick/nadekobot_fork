@@ -72,9 +72,28 @@ namespace NadekoBot.Modules.Gambling
                     msg = " " + msg;
                 await ctx.Channel.SendConfirmAsync(ctx.User.Mention + msg);
             }
+            
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [Priority(0)]
+            public async Task WaifuTransfer(ulong waifuId, IUser newOwner)
+            {
+                if (!await _service.WaifuTransfer(ctx.User, waifuId, newOwner)
+                )
+                {
+                    await ReplyErrorLocalizedAsync("waifu_transfer_fail");
+                    return;
+                }
+
+                await ReplyConfirmLocalizedAsync("waifu_transfer_success",
+                    Format.Bold(waifuId.ToString()),
+                    Format.Bold(ctx.User.ToString()),
+                    Format.Bold(newOwner.ToString()));
+            }
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
+            [Priority(1)]
             public async Task WaifuTransfer(IUser waifu, IUser newOwner)
             {
                 if (!await _service.WaifuTransfer(ctx.User, waifu.Id, newOwner)
