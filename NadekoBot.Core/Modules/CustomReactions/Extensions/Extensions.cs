@@ -118,9 +118,9 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
 
                 rep.Replace(crembed);
 
-                return await channel.EmbedAsync(crembed).ConfigureAwait(false);
+                return await channel.EmbedAsync(crembed, sanitizeAll: true).ConfigureAwait(false);
             }
-            return await channel.SendMessageAsync((await cr.ResponseWithContextAsync(ctx, client, cr.ContainsAnywhere).ConfigureAwait(false)).SanitizeMentions()).ConfigureAwait(false);
+            return await channel.SendMessageAsync((await cr.ResponseWithContextAsync(ctx, client, cr.ContainsAnywhere).ConfigureAwait(false)).SanitizeAllMentions()).ConfigureAwait(false);
         }
 
         public static WordPosition GetWordPosition(this string str, string word)

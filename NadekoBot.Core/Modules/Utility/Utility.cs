@@ -186,7 +186,7 @@ namespace NadekoBot.Modules.Utility
                 {
 
                     await channel.SendConfirmAsync(GetText("roles_page", page, Format.Bold(target.ToString())),
-                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions()).ConfigureAwait(false);
+                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions(true)).ConfigureAwait(false);
                 }
             }
             else
@@ -199,7 +199,7 @@ namespace NadekoBot.Modules.Utility
                 else
                 {
                     await channel.SendConfirmAsync(GetText("roles_all_page", page),
-                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions()).ConfigureAwait(false);
+                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions(true)).ConfigureAwait(false);
                 }
             }
         }

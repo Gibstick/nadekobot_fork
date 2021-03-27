@@ -147,7 +147,7 @@ namespace NadekoBot.Modules.Games.Services
             {
                 Source = user.ToString(),
                 Extra = $"Text added on {DateTime.UtcNow} by {user}.",
-                Text = text.SanitizeMentions(),
+                Text = text.SanitizeMentions(true),
             });
 
             File.WriteAllText(TypingArticlesPath, JsonConvert.SerializeObject(TypingArticles));
