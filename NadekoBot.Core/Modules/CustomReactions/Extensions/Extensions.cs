@@ -120,7 +120,7 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
 
                 return await channel.EmbedAsync(crembed, sanitize).ConfigureAwait(false);
             }
-            return await channel.SendMessageAsync((await cr.ResponseWithContextAsync(ctx, client, cr.ContainsAnywhere).ConfigureAwait(false)).SanitizeAllMentions()).ConfigureAwait(false);
+            return await channel.SendMessageAsync((await cr.ResponseWithContextAsync(ctx, client, cr.ContainsAnywhere).ConfigureAwait(false)).SanitizeMentions(sanitize)).ConfigureAwait(false);
         }
 
         public static WordPosition GetWordPosition(this string str, string word)
