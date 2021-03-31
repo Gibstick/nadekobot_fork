@@ -37,6 +37,8 @@ namespace NadekoBot.Modules.Administration
                     await ReplyErrorLocalizedAsync("hierarchy").ConfigureAwait(false);
                     return;
                 }
+
+                var dmFailed = false;
                 try
                 {
                     await (await user.GetOrCreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(new EmbedBuilder().WithErrorColor()
@@ -47,7 +49,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch
                 {
-
+                    dmFailed = true;
                 }
 
                 WarningPunishment punishment;
@@ -58,18 +60,38 @@ namespace NadekoBot.Modules.Administration
                 catch (Exception ex)
                 {
                     _log.Warn(ex.Message);
-                    await ReplyErrorLocalizedAsync("cant_apply_punishment").ConfigureAwait(false);
+                    var errorEmbed = new EmbedBuilder()
+                        .WithErrorColor()
+                        .WithDescription(GetText("cant_apply_punishment"));
+                    
+                    if (dmFailed)
+                    {
+                        errorEmbed.WithFooter("⚠️ " + GetText("unable_to_dm_user"));
+                    }
+                    
+                    await ctx.Channel.EmbedAsync(errorEmbed);
                     return;
                 }
 
+                var embed = new EmbedBuilder()
+                    .WithOkColor();
                 if (punishment == null)
                 {
-                    await ReplyConfirmLocalizedAsync("user_warned", Format.Bold(user.ToString())).ConfigureAwait(false);
+                    embed.WithDescription(GetText("user_warned",
+                        Format.Bold(user.ToString())));
                 }
                 else
                 {
-                    await ReplyConfirmLocalizedAsync("user_warned_and_punished", Format.Bold(user.ToString()), Format.Bold(punishment.Punishment.ToString())).ConfigureAwait(false);
+                    embed.WithDescription(GetText("user_warned_and_punished", Format.Bold(user.ToString()),
+                        Format.Bold(punishment.Punishment.ToString())));
                 }
+
+                if (dmFailed)
+                {
+                    embed.WithFooter("⚠️ " + GetText("unable_to_dm_user"));
+                }
+
+                await ctx.Channel.EmbedAsync(embed);
             }
 
             public class WarnExpireOptions : INadekoCommandOptions
