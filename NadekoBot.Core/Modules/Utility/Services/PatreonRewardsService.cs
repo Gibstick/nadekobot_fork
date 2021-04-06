@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using NadekoBot.Extensions;
 
 namespace NadekoBot.Modules.Utility.Services
@@ -205,10 +206,10 @@ namespace NadekoBot.Modules.Utility.Services
         {
             try
             {
-                var user = _client.GetUser(userId);
+                var user = (IUser)_client.GetUser(userId) ?? await _client.Rest.GetUserAsync(userId);
                 if (user is null)
                     return;
-
+                
                 var channel = await user.GetOrCreateDMChannelAsync();
                 await channel.SendConfirmAsync(message);
             }
