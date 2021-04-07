@@ -30,7 +30,7 @@ namespace NadekoBot.Modules.Games.Services
         private readonly NadekoStrings _strs;
 
         public PollService(DiscordSocketClient client, NadekoStrings strings, DbService db,
-            NadekoStrings strs, IUnitOfWork uow)
+            NadekoStrings strs)
         {
             _log = LogManager.GetCurrentClassLogger();
             _client = client;
@@ -38,14 +38,17 @@ namespace NadekoBot.Modules.Games.Services
             _db = db;
             _strs = strs;
 
-            ActivePolls = uow.Polls.GetAllPolls()
-                .ToDictionary(x => x.GuildId, x =>
-                {
-                    var pr = new PollRunner(db, x);
-                    pr.OnVoted += Pr_OnVoted;
-                    return pr;
-                })
-                .ToConcurrent();
+            using (var uow = db.GetDbContext())
+            {
+                ActivePolls = uow.Polls.GetAllPolls()
+                    .ToDictionary(x => x.GuildId, x =>
+                    {
+                        var pr = new PollRunner(db, x);
+                        pr.OnVoted += Pr_OnVoted;
+                        return pr;
+                    })
+                    .ToConcurrent();
+            }
         }
 
         public Poll CreatePoll(ulong guildId, ulong channelId, string input)

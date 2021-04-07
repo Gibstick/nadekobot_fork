@@ -365,7 +365,7 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [BotPerm(GuildPerm.BanMembers)]
-            [Priority(0)]
+            [Priority(1)]
             public async Task Ban(StoopidTime time, IUser user, [Leftover] string msg = null)
             {
                 if (time.Time > TimeSpan.FromDays(49))
@@ -412,7 +412,7 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [BotPerm(GuildPerm.BanMembers)]
-            [Priority(2)]
+            [Priority(0)]
             public async Task Ban(ulong userId, [Leftover] string msg = null)
             {
                 var user = await ctx.Guild.GetUserAsync(userId);
@@ -435,7 +435,7 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [BotPerm(GuildPerm.BanMembers)]
-            [Priority(1)]
+            [Priority(2)]
             public async Task Ban(IGuildUser user, [Leftover] string msg = null)
             {
                 if (ctx.User.Id != user.Guild.OwnerId && (user.GetRoles().Select(r => r.Position).Max() >= ((IGuildUser)ctx.User).GetRoles().Select(r => r.Position).Max()))
