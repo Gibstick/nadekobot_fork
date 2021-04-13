@@ -449,11 +449,11 @@ namespace NadekoBot.Modules.Administration
                 try
                 {
                     var defaultMessage = GetText("bandm", Format.Bold(ctx.Guild.Name), msg);
-                    var toDmUser = _service.GetBanUserDmEmbed(Context, user, defaultMessage, msg, null);
-                    if (!(toDmUser is null))
+                    var embed = _service.GetBanUserDmEmbed(Context, user, defaultMessage, msg, null);
+                    if (!(embed is null))
                     {
                         var userChannel = await user.GetOrCreateDMChannelAsync();
-                        await userChannel.EmbedAsync(toDmUser);
+                        await userChannel.EmbedAsync(embed);
                     }
                 }
                 catch
@@ -530,13 +530,13 @@ namespace NadekoBot.Modules.Administration
             {
                 var dmChannel = await ctx.User.GetOrCreateDMChannelAsync();
                 var defaultMessage = GetText("bandm", Format.Bold(ctx.Guild.Name), reason);
-                var embed = _service.GetBanUserDmEmbed(Context,
+                var crEmbed = _service.GetBanUserDmEmbed(Context,
                     (IGuildUser)Context.User,
                     defaultMessage,
                     reason,
                     duration);
 
-                if (embed is null)
+                if (crEmbed is null)
                 {
                     await ConfirmLocalizedAsync("bandm_disabled");
                 }
@@ -544,7 +544,7 @@ namespace NadekoBot.Modules.Administration
                 {
                     try
                     {
-                        await dmChannel.EmbedAsync(embed);
+                        await dmChannel.EmbedAsync(crEmbed);
                     }
                     catch (Exception)
                     {
