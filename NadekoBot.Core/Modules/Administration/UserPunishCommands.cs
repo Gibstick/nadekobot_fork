@@ -497,7 +497,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 
                 _service.SetBanTemplate(Context.Guild.Id, message);
-                await ctx.Channel.SendConfirmAsync("👌");
+                await ctx.OkAsync();
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -507,7 +507,7 @@ namespace NadekoBot.Modules.Administration
             public async Task BanMsgReset()
             {
                 _service.SetBanTemplate(Context.Guild.Id, null);
-                await ctx.Channel.SendConfirmAsync("👌");
+                await ctx.OkAsync();
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -551,8 +551,8 @@ namespace NadekoBot.Modules.Administration
                         await ReplyErrorLocalizedAsync("unable_to_dm_user");
                         return;
                     }
-                    var confirmMessage = await Context.Channel.SendConfirmAsync("👌");
-                    confirmMessage.DeleteAfter(3);
+
+                    await Context.OkAsync();
                 }
             }
 

@@ -308,8 +308,7 @@ namespace NadekoBot.Modules.Administration
                 return;
             }
 
-            var conf = await ReplyAsync("👌").ConfigureAwait(false);
-            conf.DeleteAfter(3);
+            await ctx.OkAsync();
         }
     }
 }

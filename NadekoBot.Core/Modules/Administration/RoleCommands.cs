@@ -89,8 +89,7 @@ namespace NadekoBot.Modules.Administration
                     }).ToList(),
                 }))
                 {
-                    await ctx.Channel.SendConfirmAsync(":ok:")
-                        .ConfigureAwait(false);
+                    await ctx.OkAsync();
                 }
                 else
                 {
