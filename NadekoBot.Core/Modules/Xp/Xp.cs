@@ -122,6 +122,36 @@ namespace NadekoBot.Modules.Xp
             Global = 1,
         }
 
+        private string GetNotifLocationString(XpNotificationLocation loc)
+        {
+            if (loc == XpNotificationLocation.Channel)
+            {
+                return GetText("xpn_notif_channel");
+            }
+
+            if (loc == XpNotificationLocation.Dm)
+            {
+                return GetText("xpn_notif_dm");
+            }
+
+            return GetText("xpn_notif_disabled");
+        }
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        public async Task XpNotify()
+        {
+            var globalSetting = _service.GetNotificationType(ctx.User);
+            var serverSetting = _service.GetNotificationType(ctx.User.Id, ctx.Guild.Id);
+
+            var embed = new EmbedBuilder()
+                .WithOkColor()
+                .AddField(GetText("xpn_setting_global"), GetNotifLocationString(globalSetting))
+                .AddField(GetText("xpn_setting_server"), GetNotifLocationString(serverSetting));
+
+            await Context.Channel.EmbedAsync(embed);
+        }
+
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
         public async Task XpNotify(NotifyPlace place, XpNotificationLocation type)
@@ -130,6 +160,7 @@ namespace NadekoBot.Modules.Xp
                 await _service.ChangeNotificationType(ctx.User.Id, ctx.Guild.Id, type).ConfigureAwait(false);
             else
                 await _service.ChangeNotificationType(ctx.User, type).ConfigureAwait(false);
+            
             await ctx.OkAsync().ConfigureAwait(false);
         }
 
