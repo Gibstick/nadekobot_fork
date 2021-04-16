@@ -38,6 +38,7 @@ namespace NadekoBot.Modules.Administration
                 // otherwise, moderator has to have a higher role
                 if (botMaxRole <= targetMaxRole || (Context.User.Id != ownerId && targetMaxRole >= modMaxRole))
                 {
+                    //  not working properly if target is owner
                     await ReplyErrorLocalizedAsync("hierarchy");
                     return false;
                 }
@@ -430,7 +431,7 @@ namespace NadekoBot.Modules.Administration
             [Priority(0)]
             public async Task Ban(ulong userId, [Leftover] string msg = null)
             {
-                var user = await ctx.Guild.GetUserAsync(userId);
+                var user = await ((DiscordSocketClient)Context.Client).Rest.GetGuildUserAsync(Context.Guild.Id, userId);
                 if (user is null)
                 {
                     await ctx.Guild.AddBanAsync(userId, 7, ctx.User.ToString() + " | " + msg);
@@ -618,7 +619,24 @@ namespace NadekoBot.Modules.Administration
             [UserPerm(GuildPerm.KickMembers)]
             [UserPerm(GuildPerm.ManageMessages)]
             [BotPerm(GuildPerm.BanMembers)]
-            public async Task Softban(IGuildUser user, [Leftover] string msg = null)
+            public Task Softban(IGuildUser user, [Leftover] string msg = null)
+                => SoftbanInternal(user, msg);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.KickMembers)]
+            [UserPerm(GuildPerm.ManageMessages)]
+            [BotPerm(GuildPerm.BanMembers)]
+            public async Task Softban(ulong userId, [Leftover] string msg = null)
+            {
+                var user = await ((DiscordSocketClient)Context.Client).Rest.GetGuildUserAsync(Context.Guild.Id, userId);
+                if (user is null)
+                    return;
+
+                await SoftbanInternal(user);
+            }
+            
+            private async Task SoftbanInternal(IGuildUser user, [Leftover] string msg = null)
             {
                 if (!await CheckRoleHierarchy(user))
                     return;
@@ -656,7 +674,25 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.KickMembers)]
             [BotPerm(GuildPerm.KickMembers)]
-            public async Task Kick(IGuildUser user, [Leftover] string msg = null)
+            [Priority(1)]
+            public Task Kick(IGuildUser user, [Leftover] string msg = null)
+                => KickInternal(user, msg);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.KickMembers)]
+            [BotPerm(GuildPerm.KickMembers)]
+            [Priority(0)]
+            public async Task Kick(ulong userId, [Leftover] string msg = null)
+            {
+                var user = await ((DiscordSocketClient)Context.Client).Rest.GetGuildUserAsync(Context.Guild.Id, userId);
+                if (user is null)
+                    return;
+                
+                await KickInternal(user, msg);
+            }
+
+            public async Task KickInternal(IGuildUser user, string msg = null)
             {
                 if (!await CheckRoleHierarchy(user))
                     return;
