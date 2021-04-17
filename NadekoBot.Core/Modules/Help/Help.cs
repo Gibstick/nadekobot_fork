@@ -268,11 +268,6 @@ namespace NadekoBot.Modules.Help
         {
             await ReplyConfirmLocalizedAsync("donate", PatreonUrl, PaypalUrl).ConfigureAwait(false);
         }
-
-        private string GetRemarks(string[] arr)
-        {
-            return string.Join(" or ", arr.Select(x => Format.Code(x)));
-        }
     }
 
     public class CommandTextEqualityComparer : IEqualityComparer<CommandInfo>
