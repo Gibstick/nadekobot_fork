@@ -17,6 +17,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using NadekoBot.Core.Common.TypeReaders.Models;
 
 namespace NadekoBot.Modules.Utility
 {
@@ -115,42 +116,101 @@ namespace NadekoBot.Modules.Utility
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageMessages)]
-            [NadekoOptions(typeof(Repeater.Options))]
-            [Priority(0)]
-            public Task Repeat(params string[] options)
-                => Repeat(null, options);
+            public async Task RepeatRedundant(int index)
+            {
+                if (!_service.RepeaterReady)
+                    return;
+                
+                if (!_service.Repeaters.TryGetValue(ctx.Guild.Id, out var guildRepeaters))
+                    return;
+                
+                var repeaterList = guildRepeaters.ToList();
+
+                if (--index < 0 || index >= repeaterList.Count)
+                {
+                    await ReplyErrorLocalizedAsync("index_out_of_range").ConfigureAwait(false);
+                    return;
+                }
+
+                var repeater = repeaterList[index].Value.Repeater;
+                var newValue = repeater.NoRedundant = !repeater.NoRedundant;
+                using (var uow = _db.GetDbContext())
+                {
+                    var guildConfig = uow.GuildConfigs.ForId(ctx.Guild.Id, set => set.Include(gc => gc.GuildRepeaters));
+
+                    var item = guildConfig.GuildRepeaters.FirstOrDefault(r => r.Id == repeater.Id);
+                    if (item != null)
+                    {
+                        item.NoRedundant = newValue;
+                    }
+
+                    await uow.SaveChangesAsync();
+                }
+
+                if (newValue)
+                {
+                    await ReplyConfirmLocalizedAsync("repeater_redundant_no", index + 1);
+                }
+                else
+                {
+                    await ReplyConfirmLocalizedAsync("repeater_redundant_yes" ,index + 1);
+                }
+            }
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageMessages)]
-            [NadekoOptions(typeof(Repeater.Options))]
+            [Priority(-1)]
+            public Task Repeat([Leftover]string message)
+                => Repeat(null, null, message);
+            
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.ManageMessages)]
+            [Priority(0)]
+            public Task Repeat(StoopidTime interval, [Leftover]string message)
+                => Repeat(null, interval, message);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.ManageMessages)]
             [Priority(1)]
-            public async Task Repeat(GuildDateTime dt, params string[] options)
+            public Task Repeat(GuildDateTime dt, [Leftover] string message)
+                => Repeat(dt, null, message);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.ManageMessages)]
+            [Priority(2)]
+            public async Task Repeat(GuildDateTime dt, StoopidTime interval, [Leftover]string message)
             {
                 if (!_service.RepeaterReady)
                     return;
 
-                var (opts, _) = OptionsParser.ParseFrom(new Repeater.Options(), options);
-
-                if (string.IsNullOrWhiteSpace(opts.Message) || opts.Interval >= 50001)
-                    return;
-
                 var startTimeOfDay = dt?.InputTimeUtc.TimeOfDay;
-                
                 // if interval not null, that means user specified it (don't change it)
                 
                 // if interval is null set the default to:
-                // if time of day is specified: 24 * 60 (24h)
-                // else 5 
-                var realInterval = opts.Interval ?? (startTimeOfDay is null ? 5 : 24 * 60);
+                // if time of day is specified: 1 day
+                // else 5 minutes
+                var realInterval = interval?.Time ?? (startTimeOfDay is null 
+                    ? TimeSpan.FromMinutes(5) 
+                    : TimeSpan.FromDays(1));
                 
+                if (string.IsNullOrWhiteSpace(message)
+                    || (interval != null &&
+                        (interval.Time > TimeSpan.FromMinutes(25000) || interval.Time < TimeSpan.FromMinutes(1))))
+                {
+                    return;
+                }
+
                 var toAdd = new Repeater()
                 {
                     ChannelId = ctx.Channel.Id,
                     GuildId = ctx.Guild.Id,
-                    Interval = TimeSpan.FromMinutes(realInterval),
-                    Message = ((IGuildUser) ctx.User).GuildPermissions.MentionEveryone ? opts.Message : opts.Message.SanitizeMentions(true),
-                    NoRedundant = opts.NoRedundant,
+                    Interval = realInterval,
+                    Message = ((IGuildUser) ctx.User).GuildPermissions.MentionEveryone ? message : message.SanitizeMentions(true),
+                    NoRedundant = false,
                     StartTimeOfDay = startTimeOfDay,
                 };
 
