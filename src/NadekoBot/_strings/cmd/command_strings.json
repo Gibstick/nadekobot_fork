@@ -14,6 +14,13 @@
       "{0}hgit"
     ]
   },
+  "gencmdlist": {
+    "Cmd": "gencmdlist",
+    "Desc": "Generates the command list and sends it to the chat. Optionally also uploads it to DO spaces (not supported).",
+    "Usage": [
+      "{0}gencmdlist"
+    ]
+  },
   "donate": {
     "Cmd": "donate",
     "Desc": "Instructions for helping the project financially.",
