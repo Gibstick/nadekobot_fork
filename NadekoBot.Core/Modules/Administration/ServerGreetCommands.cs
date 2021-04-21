@@ -191,7 +191,7 @@ namespace NadekoBot.Modules.Administration
                 var enabled = _service.GetGreetEnabled(Context.Guild.Id);
                 if (!enabled)
                 {
-                    await ReplyConfirmLocalizedAsync("greetmsg_enable", $"`{Prefix}bye`").ConfigureAwait(false);
+                    await ReplyConfirmLocalizedAsync("greetmsg_enable", $"`{Prefix}greet`").ConfigureAwait(false);
                 }
             }
 
