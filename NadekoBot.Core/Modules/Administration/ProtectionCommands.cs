@@ -7,6 +7,7 @@ using NadekoBot.Modules.Administration.Common;
 using NadekoBot.Modules.Administration.Services;
 using System.Linq;
 using System.Threading.Tasks;
+using NadekoBot.Core.Common.TypeReaders.Models;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -33,8 +34,27 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.Administrator)]
-            public async Task AntiRaid(int userThreshold, int seconds = 10, PunishmentAction action = PunishmentAction.Mute)
+            [Priority(1)]
+            public Task AntiRaid(int userThreshold, int seconds,
+                PunishmentAction action, [Leftover] StoopidTime punishTime)
+                => InternalAntiRaid(userThreshold, seconds, action, punishTime: punishTime);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.Administrator)]
+            [Priority(2)]
+            public Task AntiRaid(int userThreshold, int seconds, PunishmentAction action)
+                => InternalAntiRaid(userThreshold, seconds, action);
+            
+            private async Task InternalAntiRaid(int userThreshold, int seconds = 10,
+                PunishmentAction action = PunishmentAction.Mute, StoopidTime punishTime = null)
             {
+                if (action == PunishmentAction.AddRole)
+                {
+                    await ReplyErrorLocalizedAsync("punishment_unsupported", action);
+                    return;
+                }
+                
                 if (userThreshold < 2 || userThreshold > 30)
                 {
                     await ReplyErrorLocalizedAsync("raid_cnt", 2, 30).ConfigureAwait(false);
@@ -47,7 +67,8 @@ namespace NadekoBot.Modules.Administration
                     return;
                 }
 
-                var stats = await _service.StartAntiRaidAsync(ctx.Guild.Id, userThreshold, seconds, action).ConfigureAwait(false);
+                var stats = await _service.StartAntiRaidAsync(ctx.Guild.Id, userThreshold, seconds,
+                    action, (int?)punishTime?.Time.TotalMinutes ?? 0).ConfigureAwait(false);
 
                 await ctx.Channel.SendConfirmAsync(GetText("prot_enable", "Anti-Raid"), $"{ctx.User.Mention} {GetAntiRaidString(stats)}")
                         .ConfigureAwait(false);
@@ -56,7 +77,6 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.Administrator)]
-            [Priority(1)]
             public Task AntiSpam()
             {
                 if (_service.TryStopAntiSpam(ctx.Guild.Id))
@@ -68,20 +88,44 @@ namespace NadekoBot.Modules.Administration
                     return ReplyErrorLocalizedAsync("anti_spam_not_running");
                 }
             }
-
+            
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.Administrator)]
             [Priority(0)]
-            public async Task AntiSpam(int messageCount, PunishmentAction action = PunishmentAction.Mute, int time = 0)
+            public Task AntiSpam(int messageCount, PunishmentAction action, [Leftover] IRole role)
+            {
+                if (action != PunishmentAction.AddRole)
+                    return Task.CompletedTask;
+
+                return InternalAntiSpam(messageCount, action, null, role);
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.Administrator)]
+            [Priority(1)]
+            public Task AntiSpam(int messageCount, PunishmentAction action, [Leftover] StoopidTime punishTime)
+                => InternalAntiSpam(messageCount, action, punishTime, null);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.Administrator)]
+            [Priority(2)]
+            public Task AntiSpam(int messageCount, PunishmentAction action)
+                => InternalAntiSpam(messageCount, action);
+
+            public async Task InternalAntiSpam(int messageCount, PunishmentAction action,
+                StoopidTime timeData = null, IRole role = null)
             {
                 if (messageCount < 2 || messageCount > 10)
                     return;
 
+                var time = (int?) timeData?.Time.TotalMinutes ?? 0;
                 if (time < 0 || time > 60 * 60 * 12)
                     return;
 
-                var stats = await _service.StartAntiSpamAsync(ctx.Guild.Id, messageCount, time, action).ConfigureAwait(false);
+                var stats = await _service.StartAntiSpamAsync(ctx.Guild.Id, messageCount, action, time, role?.Id).ConfigureAwait(false);
 
                 await ctx.Channel.SendConfirmAsync(GetText("prot_enable", "Anti-Spam"),
                     $"{ctx.User.Mention} {GetAntiSpamString(stats)}").ConfigureAwait(false);

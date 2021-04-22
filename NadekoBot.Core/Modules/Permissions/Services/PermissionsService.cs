@@ -17,6 +17,8 @@ namespace NadekoBot.Modules.Permissions.Services
 {
     public class PermissionService : ILateBlocker, INService
     {
+        public int Priority { get; } = 0;
+        
         private readonly DbService _db;
         private readonly CommandHandler _cmd;
         private readonly NadekoStrings _strings;

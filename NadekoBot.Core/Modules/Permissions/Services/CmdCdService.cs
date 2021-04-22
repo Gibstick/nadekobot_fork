@@ -16,6 +16,8 @@ namespace NadekoBot.Modules.Permissions.Services
         public ConcurrentDictionary<ulong, ConcurrentHashSet<CommandCooldown>> CommandCooldowns { get; }
         public ConcurrentDictionary<ulong, ConcurrentHashSet<ActiveCooldown>> ActiveCooldowns { get; } = new ConcurrentDictionary<ulong, ConcurrentHashSet<ActiveCooldown>>();
 
+        public int Priority { get; } = 0;
+            
         public CmdCdService(NadekoBot bot)
         {
             CommandCooldowns = new ConcurrentDictionary<ulong, ConcurrentHashSet<CommandCooldown>>(
