@@ -13,6 +13,7 @@ using NadekoBot.Common;
 using NLog;
 using CommandLine;
 using System.Collections.Generic;
+using NadekoBot.Modules.Administration.Services;
 
 namespace NadekoBot.Modules.Help.Services
 {
@@ -22,12 +23,15 @@ namespace NadekoBot.Modules.Help.Services
         private readonly CommandHandler _ch;
         private readonly NadekoStrings _strings;
         private readonly Logger _log;
+        private readonly DiscordPermOverrideService _dpos;
 
-        public HelpService(IBotConfigProvider bc, CommandHandler ch, NadekoStrings strings)
+        public HelpService(IBotConfigProvider bc, CommandHandler ch, NadekoStrings strings,
+            DiscordPermOverrideService dpos)
         {
             _bc = bc;
             _ch = ch;
             _strings = strings;
+            _dpos = dpos;
             _log = LogManager.GetCurrentClassLogger();
         }
 
@@ -66,7 +70,8 @@ namespace NadekoBot.Modules.Help.Services
                     .WithValue($"{com.RealSummary(prefix)}")
                     .WithIsInline(true));
 
-            var reqs = GetCommandRequirements(com);
+            _dpos.TryGetOverrides(guild?.Id ?? 0, com.Name, out var overrides);
+            var reqs = GetCommandRequirements(com, overrides);
             if(reqs.Any())
             {
                 em.AddField(GetText("requires", guild),
@@ -119,27 +124,51 @@ namespace NadekoBot.Modules.Help.Services
             return strs;
         }
 
-        public static string[] GetCommandRequirements(CommandInfo cmd) =>
-            cmd.Preconditions
-                  .Where(ca => ca is OwnerOnlyAttribute || ca is RequireUserPermissionAttribute)
-                  .Select(ca =>
-                  {
-                      if (ca is OwnerOnlyAttribute)
-                      {
-                          return "Bot Owner Only";
-                      }
+        
+        public static string[] GetCommandRequirements(CommandInfo cmd, ChannelPerm? overrides = null)
+        {
+            var toReturn = new List<string>();
 
-                      var cau = (RequireUserPermissionAttribute)ca;
-                      if (cau.GuildPermission != null)
-                      {
-                          return (cau.GuildPermission.ToString() + " Server Permission")
-                                       .Replace("Guild", "Server", StringComparison.InvariantCulture);
-                      }
+            if(cmd.Preconditions.Any(x => x is OwnerOnlyAttribute))
+                toReturn.Add("Bot Owner Only");
+            
+            var userPerm = (UserPermAttribute)cmd.Preconditions
+                .FirstOrDefault(ca => ca is UserPermAttribute);
 
-                      return (cau.ChannelPermission + " Channel Permission")
-                                       .Replace("Guild", "Server", StringComparison.InvariantCulture);
-                  })
-                .ToArray();
+            string userPermString = string.Empty;
+            if (!(userPerm is null))
+            {
+                if (userPerm.UserPermissionAttribute.ChannelPermission is ChannelPermission cPerm)
+                    userPermString = GetPreconditionString((ChannelPerm) cPerm);
+                if (userPerm.UserPermissionAttribute.GuildPermission is GuildPermission gPerm)
+                    userPermString = GetPreconditionString((GuildPerm) gPerm);
+            }
+
+            if (overrides is null)
+            {
+                if(!string.IsNullOrWhiteSpace(userPermString))
+                    toReturn.Add(userPermString);
+            }
+            else
+            {
+                toReturn.Add(Format.Strikethrough(userPermString));
+                toReturn.Add(GetPreconditionString(overrides.Value));
+            }
+
+            return toReturn.ToArray();
+        }
+
+        public static string GetPreconditionString(ChannelPerm perm)
+        {
+            return (perm.ToString() + " Channel Permission")
+                .Replace("Guild", "Server", StringComparison.InvariantCulture);
+        }
+
+        public static string GetPreconditionString(GuildPerm perm)
+        {
+            return (perm.ToString() + " Server Permission")
+                .Replace("Guild", "Server", StringComparison.InvariantCulture);
+        }
 
         private string GetText(string text, IGuild guild, params object[] replacements) =>
             _strings.GetText(text, guild?.Id, "Help".ToLowerInvariant(), replacements);

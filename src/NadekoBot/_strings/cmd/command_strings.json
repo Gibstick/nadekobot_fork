@@ -958,9 +958,9 @@
       "{0}. sayhi Hi"
     ]
   },
-  "showquote": {
+  "quoteprint": {
     "Cmd": "..",
-    "Desc": "Shows a random quote with a specified name.",
+    "Desc": "Prints a random quote with a specified name.",
     "Usage": [
       "{0}.. abc"
     ]
@@ -3311,6 +3311,28 @@
     "desc": "Deletes everything from UserXpStats, Clubs and sets users' TotalXP to 0.",
     "usage": [
       "{0}deletexp"
+    ]
+  },
+  "discordpermoverride": {
+    "cmd": "dpo",
+    "desc": "Overrides required user permissions that the command has with the specified ones. You can only use channel permissions. This action will make the bot ignore permission requirements which command has by default. Provide no permissions to reset to default.",
+    "usage": [
+      "{0}dpo .prune ManageMessages ManageChannel",
+      "{0}dpo .prune"
+    ]
+  },
+  "discordpermoverridelist": {
+    "cmd": "dpol dpoli",
+    "desc": "Lists all discord permission overrides on this server.",
+    "usage": [
+      "{0}dpol"
+    ]
+  },
+  "discordpermoverridereset": {
+    "cmd": "dpor",
+    "desc": "Resets ALL currently set discord permission overrides on this server. This will make all commands have ",
+    "usage": [
+      "{0}dpoc"
     ]
   },
   "rafflecur": {
