@@ -263,7 +263,7 @@ namespace NadekoBot.Modules.Help
         
         [NadekoCommand, Usage, Description, Aliases]
         [OwnerOnly]
-        public async Task GenCmdList([Leftover] string? path = null)
+        public async Task GenCmdList([Leftover] string path = null)
         {
             _ = ctx.Channel.TriggerTypingAsync();
 
