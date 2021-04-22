@@ -174,7 +174,7 @@ namespace Discord
         //
         // Summary:
         //     Allows management and editing of channels.
-        ManageChannels = 16,
+        ManageChannel = 16,
         //
         // Summary:
         //     Allows for the addition of reactions to messages.

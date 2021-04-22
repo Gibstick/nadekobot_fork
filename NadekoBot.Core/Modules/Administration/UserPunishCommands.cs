@@ -616,16 +616,14 @@ namespace NadekoBot.Modules.Administration
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.KickMembers)]
-            [UserPerm(GuildPerm.ManageMessages)]
+            [UserPerm(GuildPerm.KickMembers | GuildPerm.ManageMessages)]
             [BotPerm(GuildPerm.BanMembers)]
             public Task Softban(IGuildUser user, [Leftover] string msg = null)
                 => SoftbanInternal(user, msg);
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.KickMembers)]
-            [UserPerm(GuildPerm.ManageMessages)]
+            [UserPerm(GuildPerm.KickMembers | GuildPerm.ManageMessages)]
             [BotPerm(GuildPerm.BanMembers)]
             public async Task Softban(ulong userId, [Leftover] string msg = null)
             {
