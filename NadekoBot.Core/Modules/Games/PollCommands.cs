@@ -42,6 +42,7 @@ namespace NadekoBot.Modules.Games
                 {
                     await ctx.Channel
                         .EmbedAsync(new EmbedBuilder()
+                            .WithOkColor()
                             .WithTitle(GetText("poll_created", ctx.User.ToString()))
                             .WithDescription(
                                 Format.Bold(poll.Question) + "\n\n" +
