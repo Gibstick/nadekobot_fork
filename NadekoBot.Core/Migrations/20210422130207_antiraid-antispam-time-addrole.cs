@@ -16,6 +16,9 @@ namespace NadekoBot.Migrations
                 table: "AntiRaidSetting",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.Sql("DELETE FROM AntiSpamSetting WHERE MuteTime < 60;");
+            migrationBuilder.Sql("UPDATE AntiSpamSetting SET MuteTime=MuteTime / 60;");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
