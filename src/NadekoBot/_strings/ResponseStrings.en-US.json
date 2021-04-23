@@ -132,6 +132,7 @@
   "administration_prot_enable": "{0} Enabled",
   "administration_prot_error": "Error. I need ManageRoles permission",
   "administration_prot_none": "No protection enabled.",
+  "administration_prot_cant_use_time": "You can't specify duration for this punishment action.",
   "administration_anti_raid_not_running": "Anti-Raid feature is not enabled.",
   "administration_anti_spam_not_running": "Anti-Spam feature is not enabled.",
   "administration_raid_cnt": "User threshold must be between {0} and {1}.",

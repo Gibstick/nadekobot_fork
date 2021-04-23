@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using Discord.Commands;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Core.Services.Database.Models;
@@ -66,11 +67,29 @@ namespace NadekoBot.Modules.Administration
                     await ReplyErrorLocalizedAsync("raid_time", 2, 300).ConfigureAwait(false);
                     return;
                 }
+                
+                if (!(punishTime is null))
+                {
+                    if (!_service.IsDurationAllowed(action))
+                    {
+                        await ReplyErrorLocalizedAsync("prot_cant_use_time");
+                    }
+                }
+                
+                var time = (int?) punishTime?.Time.TotalMinutes ?? 0;
+                if (time < 0 || time > 60 * 24)
+                    return;
 
                 var stats = await _service.StartAntiRaidAsync(ctx.Guild.Id, userThreshold, seconds,
-                    action, (int?)punishTime?.Time.TotalMinutes ?? 0).ConfigureAwait(false);
+                    action, time).ConfigureAwait(false);
 
-                await ctx.Channel.SendConfirmAsync(GetText("prot_enable", "Anti-Raid"), $"{ctx.User.Mention} {GetAntiRaidString(stats)}")
+                if (stats == null)
+                {
+                    return;
+                }
+
+                await ctx.Channel.SendConfirmAsync(GetText("prot_enable", "Anti-Raid"),
+                        $"{ctx.User.Mention} {GetAntiRaidString(stats)}")
                         .ConfigureAwait(false);
             }
 
@@ -121,8 +140,16 @@ namespace NadekoBot.Modules.Administration
                 if (messageCount < 2 || messageCount > 10)
                     return;
 
+                if (!(timeData is null))
+                {
+                    if (!_service.IsDurationAllowed(action))
+                    {
+                        await ReplyErrorLocalizedAsync("prot_cant_use_time");
+                    }
+                }
+
                 var time = (int?) timeData?.Time.TotalMinutes ?? 0;
-                if (time < 0 || time > 60 * 60 * 12)
+                if (time < 0 || time > 60 * 24)
                     return;
 
                 var stats = await _service.StartAntiSpamAsync(ctx.Guild.Id, messageCount, action, time, role?.Id).ConfigureAwait(false);
@@ -185,10 +212,9 @@ namespace NadekoBot.Modules.Administration
                     ignoredString = "none";
 
                 string add = "";
-                if (settings.Action == PunishmentAction.Mute
-                    && settings.MuteTime > 0)
+                if (settings.MuteTime > 0)
                 {
-                    add = " (" + settings.MuteTime + "s)";
+                    add = $" ({TimeSpan.FromMinutes(settings.MuteTime):hh\\hmm\\m})";
                 }
 
                 return GetText("spam_stats",
@@ -197,10 +223,20 @@ namespace NadekoBot.Modules.Administration
                         ignoredString);
             }
 
-            private string GetAntiRaidString(AntiRaidStats stats) => GetText("raid_stats",
-                Format.Bold(stats.AntiRaidSettings.UserThreshold.ToString()),
-                Format.Bold(stats.AntiRaidSettings.Seconds.ToString()),
-                Format.Bold(stats.AntiRaidSettings.Action.ToString()));
+            private string GetAntiRaidString(AntiRaidStats stats)
+            {
+                var actionString = Format.Bold(stats.AntiRaidSettings.Action.ToString());
+
+                if (stats.AntiRaidSettings.PunishDuration > 0)
+                {
+                    actionString += $" **({TimeSpan.FromMinutes(stats.AntiRaidSettings.PunishDuration):hh\\hmm\\m})**";
+                }
+                
+                return GetText("raid_stats",
+                    Format.Bold(stats.AntiRaidSettings.UserThreshold.ToString()),
+                    Format.Bold(stats.AntiRaidSettings.Seconds.ToString()),
+                    actionString);
+            }
         }
     }
 }
