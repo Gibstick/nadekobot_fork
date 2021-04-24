@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace NadekoBot.Core.Services.Database.Repositories.Impl
 {

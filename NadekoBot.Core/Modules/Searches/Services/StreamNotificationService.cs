@@ -10,7 +10,6 @@ using NadekoBot.Core.Modules.Searches.Common;
 using NadekoBot.Core.Modules.Searches.Common.StreamNotifications;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -25,7 +24,7 @@ namespace NadekoBot.Modules.Searches.Services
     public class StreamNotificationService : INService
     {
         private readonly DbService _db;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly Random _rng = new NadekoRandom();
         private readonly DiscordSocketClient _client;
         private readonly NotifChecker _streamTracker;
@@ -44,7 +43,7 @@ namespace NadekoBot.Modules.Searches.Services
         private readonly Timer _notifCleanupTimer;
 
         public StreamNotificationService(DbService db, DiscordSocketClient client,
-            NadekoStrings strings, IDataCache cache, IBotCredentials creds, IHttpClientFactory httpFactory,
+            IBotStrings strings, IDataCache cache, IBotCredentials creds, IHttpClientFactory httpFactory,
             NadekoBot bot)
         {
             _log = LogManager.GetCurrentClassLogger();
@@ -465,11 +464,8 @@ namespace NadekoBot.Modules.Searches.Services
             return embed;
         }
 
-        private string GetText(ulong guildId, string key, params object[] replacements) =>
-            _strings.GetText(key,
-                guildId,
-                "Searches".ToLowerInvariant(),
-                replacements);
+        private string GetText(ulong guildId, string key, params object[] replacements)
+            => _strings.GetText(key, guildId, replacements);
 
         public bool ToggleStreamOffline(ulong guildId)
         {

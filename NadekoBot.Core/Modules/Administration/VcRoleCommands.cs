@@ -27,7 +27,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 else
                 {
-                    await ReplyErrorLocalizedAsync("not_found").ConfigureAwait(false);
+                    await ReplyErrorLocalizedAsync("vcrole_not_found").ConfigureAwait(false);
                 }
             }
 

@@ -32,7 +32,7 @@ namespace NadekoBot.Modules.Games.Services
 
         private readonly Timer _t;
         private readonly CommandHandler _cmd;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly IImageCache _images;
         private readonly Logger _log;
         private readonly NadekoRandom _rng;
@@ -70,7 +70,7 @@ namespace NadekoBot.Modules.Games.Services
         }
 
         public GamesService(CommandHandler cmd, IBotConfigProvider bc, NadekoBot bot,
-            NadekoStrings strings, IDataCache data, CommandHandler cmdHandler,
+            IBotStrings strings, IDataCache data, CommandHandler cmdHandler,
             ICurrencyService cs, FontProvider fonts, IHttpClientFactory httpFactory)
         {
             _bc = bc;
@@ -155,6 +155,6 @@ namespace NadekoBot.Modules.Games.Services
         private ConcurrentDictionary<ulong, object> _locks { get; } = new ConcurrentDictionary<ulong, object>();
 
         private string GetText(ITextChannel ch, string key, params object[] rep)
-            => _strings.GetText(key, ch.GuildId, "Games".ToLowerInvariant(), rep);
+            => _strings.GetText(key, ch.GuildId, rep);
     }
 }

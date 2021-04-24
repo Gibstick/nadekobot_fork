@@ -6,7 +6,6 @@ using NadekoBot.Common.Attributes;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Modules.Gambling.Common;
 using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Database;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Gambling.Services;

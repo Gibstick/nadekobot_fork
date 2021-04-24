@@ -7,12 +7,10 @@ using Discord.WebSocket;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Modules.Games.Common;
 using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Impl;
 using NLog;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Common.Collections;
 using NadekoBot.Extensions;
-using NadekoBot.Core.Services.Database;
 
 namespace NadekoBot.Modules.Games.Services
 {
@@ -25,12 +23,12 @@ namespace NadekoBot.Modules.Games.Services
 
         private readonly Logger _log;
         private readonly DiscordSocketClient _client;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly DbService _db;
-        private readonly NadekoStrings _strs;
+        private readonly IBotStrings _strs;
 
-        public PollService(DiscordSocketClient client, NadekoStrings strings, DbService db,
-            NadekoStrings strs)
+        public PollService(DiscordSocketClient client, IBotStrings strings, DbService db,
+            IBotStrings strs)
         {
             _log = LogManager.GetCurrentClassLogger();
             _client = client;
@@ -106,7 +104,8 @@ namespace NadekoBot.Modules.Games.Services
 
         private async Task Pr_OnVoted(IUserMessage msg, IGuildUser usr)
         {
-            var toDelete = await msg.Channel.SendConfirmAsync(_strs.GetText("poll_voted", usr.Guild.Id, "Games".ToLowerInvariant(), Format.Bold(usr.ToString())))
+            var toDelete = await msg.Channel.SendConfirmAsync(_strs.GetText("poll_voted", 
+                    usr.Guild.Id, Format.Bold(usr.ToString())))
                 .ConfigureAwait(false);
             toDelete.DeleteAfter(5);
             try { await msg.DeleteAsync().ConfigureAwait(false); } catch { }

@@ -56,7 +56,7 @@ namespace NadekoBot.Modules.NSFW
                 // return the error
                 if (img == null && !listOfProviders.Any())
                 {
-                    await ReplyErrorLocalizedAsync("not_found").ConfigureAwait(false);
+                    await ReplyErrorLocalizedAsync("no_results").ConfigureAwait(false);
                     return;
                 }
 
@@ -253,7 +253,7 @@ namespace NadekoBot.Modules.NSFW
                 var linksEnum = images?.Where(l => l != null).ToArray();
                 if (images == null || !linksEnum.Any())
                 {
-                    await ReplyErrorLocalizedAsync("not_found").ConfigureAwait(false);
+                    await ReplyErrorLocalizedAsync("no_results").ConfigureAwait(false);
                     return;
                 }
 
@@ -379,7 +379,7 @@ namespace NadekoBot.Modules.NSFW
             imgObj = await _service.DapiSearch(tag, type, ctx.Guild?.Id, forceExplicit).ConfigureAwait(false);
 
             if (imgObj == null)
-                await ReplyErrorLocalizedAsync("not_found").ConfigureAwait(false);
+                await ReplyErrorLocalizedAsync("no_results").ConfigureAwait(false);
             else
             {
                 var embed = new EmbedBuilder().WithOkColor()

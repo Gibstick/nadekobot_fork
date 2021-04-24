@@ -1,7 +1,5 @@
-﻿using NadekoBot.Modules.Searches.Common;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace NadekoBot.Core.Services

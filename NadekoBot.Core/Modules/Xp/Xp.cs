@@ -1,8 +1,6 @@
-﻿using CommandLine;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.Caching.Memory;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Services;
@@ -10,10 +8,8 @@ using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Xp.Common;
 using NadekoBot.Modules.Xp.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace NadekoBot.Modules.Xp

@@ -8,7 +8,6 @@ using NadekoBot.Extensions;
 using NadekoBot.Core.Services.Database.Models;
 using NLog;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using NadekoBot.Common;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Modules.Utility.Services;

@@ -11,7 +11,6 @@ using NadekoBot.Extensions;
 using NadekoBot.Modules.Permissions.Common;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NadekoBot.Core.Services.Impl;
 
 namespace NadekoBot.Modules.Permissions.Services
 {
@@ -21,13 +20,13 @@ namespace NadekoBot.Modules.Permissions.Services
         
         private readonly DbService _db;
         private readonly CommandHandler _cmd;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
 
         //guildid, root permission
         public ConcurrentDictionary<ulong, PermissionCache> Cache { get; } =
             new ConcurrentDictionary<ulong, PermissionCache>();
 
-        public PermissionService(DiscordSocketClient client, DbService db, CommandHandler cmd, NadekoStrings strings)
+        public PermissionService(DiscordSocketClient client, DbService db, CommandHandler cmd, IBotStrings strings)
         {
             _db = db;
             _cmd = cmd;
@@ -119,7 +118,18 @@ namespace NadekoBot.Modules.Permissions.Services
                 if (!resetCommand && !pc.Permissions.CheckPermissions(msg, commandName, moduleName, out int index))
                 {
                     if (pc.Verbose)
-                        try { await channel.SendErrorAsync(_strings.GetText("trigger", guild.Id, "Permissions".ToLowerInvariant(), index + 1, Format.Bold(pc.Permissions[index].GetCommand(_cmd.GetPrefix(guild), (SocketGuild)guild)))).ConfigureAwait(false); } catch { }
+                    {
+                        try
+                        {
+                            await channel.SendErrorAsync(_strings.GetText("perm_prevent", guild.Id, index + 1,
+                                    Format.Bold(pc.Permissions[index].GetCommand(_cmd.GetPrefix(guild), (SocketGuild) guild))))
+                                .ConfigureAwait(false);
+                        }
+                        catch
+                        {
+                        }
+                    }
+
                     return true;
                 }
 

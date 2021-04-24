@@ -1,7 +1,6 @@
 ﻿using NadekoBot.Core.Services.Database.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace NadekoBot.Core.Services.Database.Repositories.Impl

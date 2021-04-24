@@ -9,7 +9,6 @@ using NadekoBot.Extensions;
 using NadekoBot.Modules.Permissions.Common;
 using NadekoBot.Modules.Permissions.Services;
 using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Impl;
 using NLog;
 using NadekoBot.Modules.Games.Common.ChatterBot;
 using System.Net.Http;
@@ -22,7 +21,7 @@ namespace NadekoBot.Modules.Games.Services
         private readonly Logger _log;
         private readonly PermissionService _perms;
         private readonly CommandHandler _cmd;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly IBotCredentials _creds;
         private readonly IHttpClientFactory _httpFactory;
 
@@ -32,7 +31,7 @@ namespace NadekoBot.Modules.Games.Services
         public ModuleBehaviorType BehaviorType => ModuleBehaviorType.Executor;
 
         public ChatterBotService(DiscordSocketClient client, PermissionService perms,
-            NadekoBot bot, CommandHandler cmd, NadekoStrings strings, IHttpClientFactory factory,
+            NadekoBot bot, CommandHandler cmd, IBotStrings strings, IHttpClientFactory factory,
             IBotCredentials creds)
         {
             _client = client;
@@ -124,7 +123,7 @@ namespace NadekoBot.Modules.Games.Services
                 {
                     if (pc.Verbose)
                     {
-                        var returnMsg = _strings.GetText("trigger", guild.Id, "Permissions".ToLowerInvariant(), index + 1, Format.Bold(pc.Permissions[index].GetCommand(_cmd.GetPrefix(guild), (SocketGuild)guild)));
+                        var returnMsg = _strings.GetText("trigger", guild.Id, index + 1, Format.Bold(pc.Permissions[index].GetCommand(_cmd.GetPrefix(guild), (SocketGuild)guild)));
                         try { await usrMsg.Channel.SendErrorAsync(returnMsg).ConfigureAwait(false); } catch { }
                         _log.Info(returnMsg);
                     }

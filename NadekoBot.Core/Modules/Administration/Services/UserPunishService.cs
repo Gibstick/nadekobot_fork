@@ -15,7 +15,6 @@ using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using Newtonsoft.Json;
 using NLog;
-using NLog.Fluent;
 
 namespace NadekoBot.Modules.Administration.Services
 {

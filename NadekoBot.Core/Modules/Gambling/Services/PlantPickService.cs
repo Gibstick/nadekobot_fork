@@ -29,7 +29,7 @@ namespace NadekoBot.Modules.Gambling.Services
     public class PlantPickService : INService
     {
         private readonly DbService _db;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly IImageCache _images;
         private readonly FontProvider _fonts;
         private readonly IBotConfigProvider _bc;
@@ -43,7 +43,7 @@ namespace NadekoBot.Modules.Gambling.Services
         public ConcurrentDictionary<ulong, DateTime> LastGenerations { get; } = new ConcurrentDictionary<ulong, DateTime>();
         private readonly SemaphoreSlim pickLock = new SemaphoreSlim(1, 1);
 
-        public PlantPickService(DbService db, CommandHandler cmd, NadekoBot bot, NadekoStrings strings,
+        public PlantPickService(DbService db, CommandHandler cmd, NadekoBot bot, IBotStrings strings,
             IDataCache cache, FontProvider fonts, IBotConfigProvider bc, ICurrencyService cs,
             CommandHandler cmdHandler, DiscordSocketClient client)
         {
@@ -74,7 +74,7 @@ namespace NadekoBot.Modules.Gambling.Services
         }
 
         private string GetText(ulong gid, string key, params object[] rep)
-            => _strings.GetText(key, gid, "Games".ToLowerInvariant(), rep);
+            => _strings.GetText(key, gid, rep);
 
         public bool ToggleCurrencyGeneration(ulong gid, ulong cid)
         {

@@ -8,12 +8,10 @@ using System.Linq;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Impl;
 using NadekoBot.Common;
 using NLog;
 using CommandLine;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using NadekoBot.Modules.Administration.Services;
 
 namespace NadekoBot.Modules.Help.Services
@@ -22,11 +20,11 @@ namespace NadekoBot.Modules.Help.Services
     {
         private readonly IBotConfigProvider _bc;
         private readonly CommandHandler _ch;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly Logger _log;
         private readonly DiscordPermOverrideService _dpos;
 
-        public HelpService(IBotConfigProvider bc, CommandHandler ch, NadekoStrings strings,
+        public HelpService(IBotConfigProvider bc, CommandHandler ch, IBotStrings strings,
             DiscordPermOverrideService dpos)
         {
             _bc = bc;
@@ -174,6 +172,6 @@ namespace NadekoBot.Modules.Help.Services
         }
 
         private string GetText(string text, IGuild guild, params object[] replacements) =>
-            _strings.GetText(text, guild?.Id, "Help".ToLowerInvariant(), replacements);
+            _strings.GetText(text, guild?.Id, replacements);
     }
 }

@@ -11,6 +11,7 @@ using NadekoBot.Modules.Administration.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NadekoBot.Core.Services;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -21,11 +22,13 @@ namespace NadekoBot.Modules.Administration
         {
             private readonly DiscordSocketClient _client;
             private readonly NadekoBot _bot;
+            private readonly IBotStrings _strings;
 
-            public SelfCommands(DiscordSocketClient client, NadekoBot bot)
+            public SelfCommands(DiscordSocketClient client, NadekoBot bot, IBotStrings strings)
             {
                 _client = client;
                 _bot = bot;
+                _strings = strings;
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -503,6 +506,15 @@ namespace NadekoBot.Modules.Administration
             {
                 _service.ReloadBotConfig();
                 await ReplyConfirmLocalizedAsync("bot_config_reloaded").ConfigureAwait(false);
+            }
+            
+            [NadekoCommand, Usage, Description, Aliases]
+            [OwnerOnly]
+            public async Task StringsReload()
+            {
+                // todo add publisher to this. something like v3 eventpusher
+                _strings.Reload();
+                await ReplyConfirmLocalizedAsync("bot_strings_reloaded").ConfigureAwait(false);
             }
 
             private static UserStatus SettableUserStatusToUserStatus(SettableUserStatus sus)

@@ -1,9 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using NadekoBot.Core.Services.Database.Models;
-using NLog;
-
-namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications.Providers
+﻿namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications.Providers
 {
     // public class TwitchProvider : IProvider
     // {

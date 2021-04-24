@@ -1,6 +1,4 @@
-﻿using CommandLine;
-using NadekoBot.Core.Common;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NadekoBot.Core.Services.Database.Models

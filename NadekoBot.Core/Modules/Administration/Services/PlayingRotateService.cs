@@ -10,7 +10,6 @@ using NadekoBot.Modules.Music.Services;
 using Discord;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using NadekoBot.Common;
 
 namespace NadekoBot.Modules.Administration.Services
 {

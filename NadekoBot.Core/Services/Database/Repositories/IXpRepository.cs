@@ -1,5 +1,4 @@
 ﻿using NadekoBot.Core.Services.Database.Models;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace NadekoBot.Core.Services.Database.Repositories
