@@ -19,7 +19,7 @@ namespace NadekoBot.Core.Services.Impl
         public CultureInfo DefaultCultureInfo { get; private set; }
 
         private static readonly Dictionary<string, CommandData> _commandData = JsonConvert.DeserializeObject<Dictionary<string, CommandData>>(
-                File.ReadAllText("./_strings/commands/commands.en-US.json"));
+                File.ReadAllText("./config/strings/commands/commands.en-US.json"));
 
         public Localization(IBotConfigProvider bcp, NadekoBot bot, DbService db)
         {

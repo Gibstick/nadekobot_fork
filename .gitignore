@@ -2,6 +2,7 @@
 
 patreon_rewards.json
 command_errors*.txt
+_output/
 
 src/NadekoBot/Command Errors*.txt
 
