@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using NLog;
+using YamlDotNet.Serialization;
 
 namespace NadekoBot.Core.Services
 {
@@ -58,13 +59,46 @@ namespace NadekoBot.Core.Services
                     $" Key '{key}' is not properly formatted. Please report this.";
             }
         }
+
+        public CommandStrings GetCommandStrings(string commandName, ulong? guildId = null)
+            => GetCommandStrings(commandName, _localization.GetCultureInfo(guildId));
         
-        // public string[] GetUsages(string commandName, ulong guildId)
-        //     => GetUsages(commandName, _localization.GetCultureInfo(guildId));
+        public CommandStrings GetCommandStrings(string commandName, CultureInfo cultureInfo)
+        {
+            var cmdStrings =  _stringsProvider.GetCommandStrings(cultureInfo.Name, commandName);
+            if (cmdStrings is null)
+            {
+                if (cultureInfo.Name == _usCultureInfo.Name
+                    || (cmdStrings = _stringsProvider.GetCommandStrings(_usCultureInfo.Name, commandName)) == null)
+                {
+                    _log.Warn($"'{commandName}' doesn't exist in 'en-US' command strings. Please report this.");
+                    return new CommandStrings()
+                    {
+                        Args = new[] {""},
+                        Desc = "?"
+                    };
+                }
+
+                // _log.Warn($"'{commandName}' command strings don't exist in {cultureInfo.Name} culture." +
+                //           $"This message is safe to ignore, however you can ask in Nadeko support server how you can" +
+                //           $" contribute command translations");
+                return cmdStrings;
+            }
+
+            return cmdStrings;
+        }
 
         public void Reload()
         {
             _stringsProvider.Reload();
         }
+    }
+
+    public class CommandStrings
+    {
+        [YamlMember(Alias = "desc")]
+        public string Desc { get; set; }
+        [YamlMember(Alias = "args")]
+        public string[] Args { get; set; }
     }
 }

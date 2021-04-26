@@ -49,7 +49,7 @@ namespace NadekoBot.Modules.Administration
                 if (cmdText.StartsWith(Prefix + "die", StringComparison.InvariantCulture))
                     return;
 
-                var guser = ((IGuildUser)ctx.User);
+                var guser = (IGuildUser)ctx.User;
                 var cmd = new StartupCommand()
                 {
                     CommandText = cmdText,
@@ -85,7 +85,7 @@ namespace NadekoBot.Modules.Administration
                 if (interval < 5)
                     return;
 
-                var guser = ((IGuildUser)ctx.User);
+                var guser = (IGuildUser)ctx.User;
                 var cmd = new StartupCommand()
                 {
                     CommandText = cmdText,
@@ -105,7 +105,7 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [OwnerOnly]
-            public async Task StartupCommands(int page = 1)
+            public async Task StartupCommandsList(int page = 1)
             {
                 if (page-- < 1)
                     return;

@@ -2,8 +2,8 @@
 
 namespace NadekoBot.Core.Modules.Searches.Services
 {
-    public class YtTrackService : INService
-    {
+    // public class YtTrackService : INService
+    // {
         // private readonly IGoogleApiService _google;
         // private readonly IHttpClientFactory httpClientFactory;
         // private readonly DiscordSocketClient _client;
@@ -133,5 +133,5 @@ namespace NadekoBot.Core.Modules.Searches.Services
         //
         //     return true;
         // }
-    }
+    // }
 }

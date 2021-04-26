@@ -14,6 +14,7 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
         public List<CurrencyTransaction> GetPageFor(ulong userId, int page)
         {
             return _set.AsQueryable()
+                .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.DateAdded)
                 .Skip(15 * page)

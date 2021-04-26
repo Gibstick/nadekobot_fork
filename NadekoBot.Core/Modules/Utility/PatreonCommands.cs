@@ -20,18 +20,6 @@ namespace NadekoBot.Modules.Utility
             {
                 _creds = creds;
             }
-            
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.DM)]
-            [OwnerOnly]
-            public async Task PatreonRewardsReload()
-            {
-                if (string.IsNullOrWhiteSpace(_creds.PatreonAccessToken))
-                    return;
-                await _service.RefreshPledges().ConfigureAwait(false);
-
-                await ctx.OkAsync();
-            }
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.DM)]

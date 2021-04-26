@@ -26,23 +26,23 @@ namespace NadekoBot.Modules.Help
     {
         public const string PatreonUrl = "https://patreon.com/nadekobot";
         public const string PaypalUrl = "https://paypal.me/Kwoth";
-        private readonly IBotCredentials _creds;
         private readonly CommandService _cmds;
         private readonly GlobalPermissionService _perms;
         private readonly IServiceProvider _services;
         private readonly DiscordSocketClient _client;
+        private readonly IBotStrings _strings;
 
         private readonly AsyncLazy<ulong> _lazyClientId;
 
-        public Help(IBotCredentials creds, GlobalPermissionService perms, CommandService cmds,
-            IServiceProvider services, DiscordSocketClient client)
+        public Help(GlobalPermissionService perms, CommandService cmds,
+            IServiceProvider services, DiscordSocketClient client, IBotStrings strings)
         {
-            _creds = creds;
             _cmds = cmds;
             _perms = perms;
             _services = services;
             _client = client;
-            
+            _strings = strings;
+
             _lazyClientId = new AsyncLazy<ulong>(async () => (await _client.GetApplicationInfoAsync()).Id);
         }
 
@@ -76,7 +76,7 @@ namespace NadekoBot.Modules.Help
         public async Task Modules()
         {
             var embed = new EmbedBuilder().WithOkColor()
-                .WithFooter(efb => efb.WithText("ℹ️" + GetText("modules_footer", Prefix)))
+                .WithFooter(efb => efb.WithText("ℹ️ " + GetText("modules_footer", Prefix)))
                 .WithTitle(GetText("list_of_modules"))
                 .WithDescription(string.Join("\n",
                                      _cmds.Modules.GroupBy(m => m.GetTopLevelModule())
@@ -220,46 +220,6 @@ namespace NadekoBot.Modules.Help
             var embed = _service.GetCommandHelp(com, ctx.Guild);
             await channel.EmbedAsync(embed).ConfigureAwait(false);
         }
-
-        [NadekoCommand, Usage, Description, Aliases]
-        [RequireContext(ContextType.Guild)]
-        [OwnerOnly]
-        public async Task Hgit()
-        {
-            Dictionary<string, List<object>> cmdData = new Dictionary<string, List<object>>();
-            foreach (var com in _cmds.Commands
-                .OrderBy(com => com.Module.GetTopLevelModule().Name)
-                .GroupBy(c => c.Aliases.First())
-                .Select(g => g.First()))
-            {
-                var module = com.Module.GetTopLevelModule();
-                List<string> optHelpStr = null;
-                var opt = ((NadekoOptionsAttribute)com.Attributes.FirstOrDefault(x => x is NadekoOptionsAttribute))?.OptionType;
-                if (opt != null)
-                {
-                    optHelpStr = HelpService.GetCommandOptionHelpList(opt);
-                }
-                var obj = new
-                {
-                    Aliases = com.Aliases.Select(x => Prefix + x).ToArray(),
-                    Description = string.Format(com.Summary, Prefix),
-                    Usage = JsonConvert.DeserializeObject<string[]>(com.Remarks).Select(x => string.Format(x, Prefix)).ToArray(),
-                    Submodule = com.Module.Name,
-                    Module = com.Module.GetTopLevelModule().Name,
-                    Options = optHelpStr,
-                    Requirements = HelpService.GetCommandRequirements(com),
-                };
-                if (cmdData.TryGetValue(module.Name, out var cmds))
-                    cmds.Add(obj);
-                else
-                    cmdData.Add(module.Name, new List<object>
-                    {
-                        obj
-                    });
-            }
-            File.WriteAllText("../../docs/cmds_new.json", JsonConvert.SerializeObject(cmdData, Formatting.Indented));
-            await ReplyConfirmLocalizedAsync("commandlist_regen").ConfigureAwait(false);
-        }
         
         [NadekoCommand, Usage, Description, Aliases]
         [OwnerOnly]
@@ -288,10 +248,9 @@ namespace NadekoBot.Modules.Help
                             
                             return new CommandJsonObject
                             {
-                                Aliases = com.Aliases.Select(x => Prefix + x).ToArray(),
-                                Description = string.Format(com.Summary, Prefix),
-                                Usage = JsonConvert.DeserializeObject<string[]>(com.Remarks)
-                                    .Select(x => string.Format(x, Prefix)).ToArray(),
+                                Aliases = com.Aliases.Select(alias => Prefix + alias).ToArray(),
+                                Description = com.RealSummary(_strings, Prefix),
+                                Usage = com.RealRemarksArr(_strings, Prefix),
                                 Submodule = com.Module.Name,
                                 Module = com.Module.GetTopLevelModule().Name,
                                 Options = optHelpStr,
