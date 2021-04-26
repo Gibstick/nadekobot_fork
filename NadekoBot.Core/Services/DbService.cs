@@ -12,20 +12,12 @@ namespace NadekoBot.Core.Services
         private readonly DbContextOptions<NadekoContext> options;
         private readonly DbContextOptions<NadekoContext> migrateOptions;
 
-        // private static readonly ILoggerFactory _loggerFactory = new LoggerFactory(new[] {
-        //     new ConsoleLoggerProvider((category, level)
-        //         => category == DbLoggerCategory.Database.Command.Name
-        //            && level >= LogLevel.Information, true)
-        //     });
-
         public DbService(IBotCredentials creds)
         {
             var builder = new SqliteConnectionStringBuilder(creds.Db.ConnectionString);
             builder.DataSource = Path.Combine(AppContext.BaseDirectory, builder.DataSource);
 
-            var optionsBuilder = new DbContextOptionsBuilder<NadekoContext>()
-                //.UseLoggerFactory(_loggerFactory)
-                ;
+            var optionsBuilder = new DbContextOptionsBuilder<NadekoContext>();
             optionsBuilder.UseSqlite(builder.ToString());
             options = optionsBuilder.Options;
 

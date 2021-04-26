@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using NadekoBot.Core.Services.Database;
 
 namespace NadekoBot.Modules.Gambling
 {
@@ -195,7 +196,7 @@ namespace NadekoBot.Modules.Gambling
             var trs = new List<CurrencyTransaction>();
             using (var uow = _db.GetDbContext())
             {
-                trs = uow.CurrencyTransactions.GetPageFor(userId, page);
+                trs = uow._context.CurrencyTransactions.GetPageFor(userId, page);
             }
 
             var embed = new EmbedBuilder()
