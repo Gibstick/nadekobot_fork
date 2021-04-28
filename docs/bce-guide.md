@@ -49,11 +49,6 @@ A number of seconds that the bot is guaranteed not to spawn any flowers again af
 Name of your currency. Mostly people aren't creative with this and just call them "Credit" or "Dollar". You can do better :^)  
 **Default is NadekoFlower**
 
-## CurrencyPluralName
-
-Plural name of your currency (if you have currency name called "dollar" then put this to "dollars". I'm not sure if this is even used anywhere in the bot anymore.  
-**Default is NadekoFlowers**
-
 ## CurrencySign
 
 Emoji of your currency. You can use server emojis, though occasionally it will fail to send it correctly on other servers.  

@@ -13,18 +13,21 @@ namespace Nadeko.Tests
 {
     public class CommandStringsTests
     {
+        private const string responsesPath = "../../../../src/NadekoBot/data/strings/responses";
+        private const string commandsPath = "../../../../src/NadekoBot/data/strings/commands";
+        private const string aliasesPath = "../../../../src/NadekoBot/data/aliases.yml";
         [Test]
         public void AllCommandNamesHaveStrings()
         {
             var stringsSource = new LocalFileStringsSource(
-                "../../../../src/NadekoBot/config/strings/responses",
-                "../../../../src/NadekoBot/config/strings/commands");
+                responsesPath,
+                commandsPath);
             var strings = new LocalBotStringsProvider(stringsSource);
 
             var culture = new CultureInfo("en-US");
 
             var isSuccess = true;
-            foreach (var entry in CommandNameLoadHelper.LoadCommandNames("../../../../src/NadekoBot/config/aliases.yml"))
+            foreach (var entry in CommandNameLoadHelper.LoadCommandNames(aliasesPath))
             {
                 var commandName = entry.Value[0];
 
@@ -45,7 +48,9 @@ namespace Nadeko.Tests
                 .Where(type => type.IsClass && !type.IsAbstract)
                 .Where(type => typeof(NadekoTopLevelModule).IsAssignableFrom(type) // if its a top level module
                                || !(type.GetCustomAttribute<GroupAttribute>(true) is null)) // or a submodule
-                .SelectMany(x => x.GetMethods().Where(mi => mi.CustomAttributes.Any(ca => ca.AttributeType == typeof(NadekoCommandAttribute))))
+                .SelectMany(x => x.GetMethods()
+                        .Where(mi => mi.CustomAttributes
+                            .Any(ca => ca.AttributeType == typeof(NadekoCommandAttribute))))
                 .Select(x => x.Name.ToLowerInvariant())
                 .ToArray();
 
@@ -53,7 +58,7 @@ namespace Nadeko.Tests
         public void AllCommandMethodsHaveNames()
         {
             var allAliases = CommandNameLoadHelper.LoadCommandNames(
-                "../../../../src/NadekoBot/config/aliases.yml");
+                aliasesPath);
 
             var methodNames = GetCommandMethodNames();
 
@@ -73,8 +78,7 @@ namespace Nadeko.Tests
         [Test]
         public void NoObsoleteAliases()
         {
-            var allAliases = CommandNameLoadHelper.LoadCommandNames(
-                "../../../../src/NadekoBot/config/aliases.yml");
+            var allAliases = CommandNameLoadHelper.LoadCommandNames(aliasesPath);
 
             var methodNames = GetCommandMethodNames()
                 .ToHashSet();
@@ -98,14 +102,12 @@ namespace Nadeko.Tests
         [Test]
         public void NoObsoleteCommandStrings()
         {
-            var stringsSource = new LocalFileStringsSource(
-                "../../../../src/NadekoBot/config/strings/responses",
-                "../../../../src/NadekoBot/config/strings/commands");
+            var stringsSource = new LocalFileStringsSource(responsesPath, commandsPath);
 
             var culture = new CultureInfo("en-US");
 
             var isSuccess = true;
-            var allCommandNames = CommandNameLoadHelper.LoadCommandNames("../../../../src/NadekoBot/config/aliases.yml");
+            var allCommandNames = CommandNameLoadHelper.LoadCommandNames(aliasesPath);
             var enUsCommandNames = allCommandNames
                 .Select(x => x.Value[0]) // first alias is command name
                 .ToHashSet();
