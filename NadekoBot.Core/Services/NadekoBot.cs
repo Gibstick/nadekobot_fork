@@ -174,6 +174,9 @@ namespace NadekoBot
                 .AddSingleton<IBotStringsProvider, LocalBotStringsProvider>()
                 .AddSingleton<IBotStrings, BotStrings>()
                 .AddSingleton<IBotConfigProvider, BotConfigProvider>()
+                .AddSingleton<ISeria, JsonSeria>()
+                .AddSingleton<BotSettingsService>()
+                .AddSingleton<BotSettingsMigrator>()
                 .AddMemoryCache();
 
             s.AddHttpClient();
@@ -187,6 +190,9 @@ namespace NadekoBot
             //initialize Services
             Services = s.BuildServiceProvider();
             var commandHandler = Services.GetService<CommandHandler>();
+            var bsMigrator = Services.GetService<BotSettingsMigrator>();
+            bsMigrator.EnsureMigrated();
+            
             //what the fluff
             commandHandler.AddServices(s);
             _ = LoadTypeReaders(typeof(NadekoBot).Assembly);
@@ -287,7 +293,7 @@ namespace NadekoBot
 
         private Task Client_JoinedGuild(SocketGuild arg)
         {
-            _log.Info("Joined server: {0} [{1}]", arg?.Name, arg?.Id);
+            _log.Info($"Joined server: {0} [{1}]", arg?.Name, arg?.Id);
             var _ = Task.Run(async () =>
             {
                 GuildConfig gc;

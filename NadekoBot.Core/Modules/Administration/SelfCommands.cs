@@ -32,15 +32,6 @@ namespace NadekoBot.Modules.Administration
             }
 
             [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.DM)]
-            [OwnerOnly]
-            public async Task UpdatesCheck(UpdateCheckType type)
-            {
-                _service.SetUpdateCheck(type);
-                await ReplyConfirmLocalizedAsync("updates_check_set", type.ToString()).ConfigureAwait(false);
-            }
-
-            [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.Administrator)]
             [OwnerOnly]
