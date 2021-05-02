@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord.Net;
 using NadekoBot.Core.Common;
+using NadekoBot.Core.Common.Configs;
 
 namespace NadekoBot
 {
@@ -37,20 +38,13 @@ namespace NadekoBot
         private readonly DbService _db;
         public ImmutableArray<GuildConfig> AllGuildConfigs { get; private set; }
 
-        /* I don't know how to make this not be static
-         * and keep the convenience of .WithOkColor
-         * and .WithErrorColor extensions methods.
-         * I don't want to pass botconfig every time I
-         * want to send a confirm or error message, so
-         * I'll keep this for now */
+        /* Will have to be removed soon, it's been way too long */
         public static Color OkColor { get; set; }
         public static Color ErrorColor { get; set; }
 
         public TaskCompletionSource<bool> Ready { get; private set; } = new TaskCompletionSource<bool>();
 
         public IServiceProvider Services { get; private set; }
-
-        private readonly BotConfig _botConfig;
         public IDataCache Cache { get; private set; }
 
         public int GuildCount =>
@@ -98,14 +92,6 @@ namespace NadekoBot
                 CaseSensitiveCommands = false,
                 DefaultRunMode = RunMode.Sync,
             });
-
-            using (var uow = _db.GetDbContext())
-            {
-                _botConfig = uow.BotConfig.GetOrCreate();
-                OkColor = new Color(Convert.ToUInt32(_botConfig.OkColor, 16));
-                ErrorColor = new Color(Convert.ToUInt32(_botConfig.ErrorColor, 16));
-                uow.SaveChanges();
-            }
 
             SetupShard(parentProcessId);
 
@@ -175,8 +161,10 @@ namespace NadekoBot
                 .AddSingleton<IBotStrings, BotStrings>()
                 .AddSingleton<IBotConfigProvider, BotConfigProvider>()
                 .AddSingleton<ISeria, JsonSeria>()
+                .AddSingleton<ISettingsSeria, YamlSeria>()
                 .AddSingleton<BotSettingsService>()
                 .AddSingleton<BotSettingsMigrator>()
+                .AddSingleton<IPubSub, RedisPubSub>()
                 .AddMemoryCache();
 
             s.AddHttpClient();

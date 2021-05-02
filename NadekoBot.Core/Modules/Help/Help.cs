@@ -27,6 +27,7 @@ namespace NadekoBot.Modules.Help
         public const string PatreonUrl = "https://patreon.com/nadekobot";
         public const string PaypalUrl = "https://paypal.me/Kwoth";
         private readonly CommandService _cmds;
+        private readonly BotSettingsService _bss;
         private readonly GlobalPermissionService _perms;
         private readonly IServiceProvider _services;
         private readonly DiscordSocketClient _client;
@@ -34,10 +35,11 @@ namespace NadekoBot.Modules.Help
 
         private readonly AsyncLazy<ulong> _lazyClientId;
 
-        public Help(GlobalPermissionService perms, CommandService cmds,
+        public Help(GlobalPermissionService perms, CommandService cmds, BotSettingsService bss,
             IServiceProvider services, DiscordSocketClient client, IBotStrings strings)
         {
             _cmds = cmds;
+            _bss = bss;
             _perms = perms;
             _services = services;
             _client = client;
@@ -48,7 +50,8 @@ namespace NadekoBot.Modules.Help
 
         public async Task<(string plainText, EmbedBuilder embed)> GetHelpStringEmbed()
         {
-            if (string.IsNullOrWhiteSpace(Bc.BotConfig.HelpString) || Bc.BotConfig.HelpString == "-")
+            var botSettings = _bss.Data;
+            if (string.IsNullOrWhiteSpace(botSettings.HelpText) || botSettings.HelpText == "-")
                 return default;
             
             var clientId = await _lazyClientId.Value;
@@ -60,10 +63,10 @@ namespace NadekoBot.Modules.Help
 
             var app = await _client.GetApplicationInfoAsync();
 
-            if (!CREmbed.TryParse(Bc.BotConfig.HelpString, out var embed))
+            if (!CREmbed.TryParse(botSettings.HelpText, out var embed))
             {
                 var eb = new EmbedBuilder().WithOkColor()
-                    .WithDescription(String.Format(Bc.BotConfig.HelpString, clientId, Prefix));
+                    .WithDescription(String.Format(botSettings.HelpText, clientId, Prefix));
                 return ("", eb);
             }
 

@@ -1636,7 +1636,7 @@ streamrolewhitelist:
 botconfigedit:
   desc: "Sets one of available bot config settings to a specified value. Use the command without any parameters to get a list of available settings, and their current values."
   args:
-  - "CurrencyName coins"
+  - "color.ok 00ff00"
   - ""
 nsfwtagbl:
   desc: "Toggles whether the tag is blacklisted or not in nsfw searches. Provide no parameters to see the list of blacklisted tags."

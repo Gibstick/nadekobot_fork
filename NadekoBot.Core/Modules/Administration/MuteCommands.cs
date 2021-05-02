@@ -70,7 +70,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    _log.Warn(ex.ToString());
                     await ReplyErrorLocalizedAsync("mute_error").ConfigureAwait(false);
                 }
             }
@@ -129,7 +129,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    _log.Warn(ex.ToString());
                     await ReplyErrorLocalizedAsync("mute_error").ConfigureAwait(false);
                 }
             }

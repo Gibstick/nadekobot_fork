@@ -331,7 +331,7 @@ namespace NadekoBot.Modules.Xp
                 {
                     var user = users[i];
                     embed.AddField(
-                        $"#{(i + 1 + page * 9)} {(user.ToString())}",
+                        $"#{i + 1 + page * 9} {(user.ToString())}",
                         $"{GetText("level_x", new LevelStats(users[i].TotalXp).Level)} - {users[i].TotalXp}xp");
                 }
             }
