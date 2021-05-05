@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using NadekoBot.Common.Yml;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using YamlDotNet.Core;
-using YamlDotNet.Core.Tokens;
 using YamlDotNet.Serialization;
 
 namespace NadekoBot.Core.Common.Configs
