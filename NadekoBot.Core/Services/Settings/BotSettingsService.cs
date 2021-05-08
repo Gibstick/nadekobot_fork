@@ -11,6 +11,8 @@ namespace NadekoBot.Core.Services
     /// </summary>
     public sealed class BotSettingsService : SettingsServiceBase<BotSettings>
     {
+        public override string Name { get; } = "bot";
+        
         private const string FilePath = "data/bot.yml";
         private static TypedKey<BotSettings> changeKey = new TypedKey<BotSettings>("config.bot.updated");
         

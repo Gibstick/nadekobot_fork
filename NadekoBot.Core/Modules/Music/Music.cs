@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 namespace NadekoBot.Modules.Music
 {
     [NoPublicBot]
-    public class Music : NadekoTopLevelModule<MusicService>
+    public class Music : NadekoModule<MusicService>
     {
         private readonly DiscordSocketClient _client;
         private readonly IBotCredentials _creds;

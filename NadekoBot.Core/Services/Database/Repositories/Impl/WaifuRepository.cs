@@ -163,10 +163,7 @@ VALUES ({null}, {null}, {1}, (SELECT Id FROM DiscordUser WHERE UserId={userId}))
                         .Select(x => x.Waifu.Username + "#" + x.Waifu.Discriminator)
                         .ToList(),
 
-                    Items = _context.Set<WaifuItem>()
-                        .AsQueryable()
-                        .Where(x => x.WaifuInfoId == w.Id)
-                        .ToList(),
+                    Items = w.Items,
                 })
             .FirstOrDefault();
 

@@ -8,6 +8,7 @@ using NadekoBot.Modules.Gambling.Services;
 using NadekoBot.Core.Modules.Gambling.Common;
 using NadekoBot.Core.Common;
 using System.Collections.Immutable;
+using NadekoBot.Core.Modules.Gambling.Services;
 
 namespace NadekoBot.Modules.Gambling
 {
@@ -28,7 +29,8 @@ namespace NadekoBot.Modules.Gambling
             private readonly ICurrencyService _cs;
             private readonly DbService _db;
 
-            public WheelOfFortuneCommands(ICurrencyService cs, DbService db)
+            public WheelOfFortuneCommands(ICurrencyService cs, DbService db, GamblingConfigService configService)
+                : base(configService)
             {
                 _cs = cs;
                 _db = db;
@@ -42,14 +44,14 @@ namespace NadekoBot.Modules.Gambling
 
                 if (!await _cs.RemoveAsync(ctx.User.Id, "Wheel Of Fortune - bet", amount, gamble: true).ConfigureAwait(false))
                 {
-                    await ReplyErrorLocalizedAsync("not_enough", Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                    await ReplyErrorLocalizedAsync("not_enough", CurrencySign).ConfigureAwait(false);
                     return;
                 }
 
                 var result = await _service.WheelOfFortuneSpinAsync(ctx.User.Id, amount).ConfigureAwait(false);
 
                 await ctx.Channel.SendConfirmAsync(
-Format.Bold($@"{ctx.User.ToString()} won: {result.Amount + Bc.BotConfig.CurrencySign}
+Format.Bold($@"{ctx.User.ToString()} won: {result.Amount + CurrencySign}
 
    『{Wof.Multipliers[1]}』   『{Wof.Multipliers[0]}』   『{Wof.Multipliers[7]}』
 

@@ -7,17 +7,19 @@ using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.Gambling.Services;
 using System.Linq;
 using System.Threading.Tasks;
+using NadekoBot.Core.Modules.Gambling.Common;
+using NadekoBot.Core.Modules.Gambling.Services;
 
 namespace NadekoBot.Modules.Games
 {
     public partial class Games
     {
         [Group]
-        public class PlantPickCommands : NadekoSubmodule<PlantPickService>
+        public class PlantPickCommands : GamblingSubmodule<PlantPickService>
         {
             private readonly LogCommandService logService;
 
-            public PlantPickCommands(LogCommandService logService)
+            public PlantPickCommands(LogCommandService logService, GamblingConfigService gss) : base(gss)
             {
                 this.logService = logService;
             }
@@ -35,7 +37,7 @@ namespace NadekoBot.Modules.Games
 
                 if (picked > 0)
                 {
-                    var msg = await ReplyConfirmLocalizedAsync("picked", picked + Bc.BotConfig.CurrencySign)
+                    var msg = await ReplyConfirmLocalizedAsync("picked", picked + CurrencySign)
                        .ConfigureAwait(false);
                     msg.DeleteAfter(10);
                 }
@@ -66,7 +68,7 @@ namespace NadekoBot.Modules.Games
                 var success = await _service.PlantAsync(ctx.Guild.Id, ctx.Channel, ctx.User.Id, ctx.User.ToString(), amount, pass);
                 if (!success)
                 {
-                    await ReplyErrorLocalizedAsync("not_enough", Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                    await ReplyErrorLocalizedAsync("not_enough", CurrencySign).ConfigureAwait(false);
                     return;
                 }
 

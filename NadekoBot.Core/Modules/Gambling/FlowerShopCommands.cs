@@ -4,25 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Common.Collections;
+using NadekoBot.Core.Modules.Gambling.Common;
+using NadekoBot.Core.Modules.Gambling.Services;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
+using NadekoBot.Modules.Gambling.Services;
 
 namespace NadekoBot.Modules.Gambling
 {
     public partial class Gambling
     {
         [Group]
-        public class FlowerShopCommands : NadekoSubmodule
+        public class FlowerShopCommands : GamblingSubmodule<GamblingService>
         {
             private readonly DbService _db;
             private readonly ICurrencyService _cs;
-            private readonly DiscordSocketClient _client;
 
             public enum Role
             {
@@ -34,11 +35,11 @@ namespace NadekoBot.Modules.Gambling
                 List
             }
 
-            public FlowerShopCommands(DbService db, ICurrencyService cs, DiscordSocketClient client)
+            public FlowerShopCommands(DbService db, ICurrencyService cs, GamblingConfigService config)
+                : base(config) 
             {
                 _db = db;
                 _cs = cs;
-                _client = client;
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -63,12 +64,12 @@ namespace NadekoBot.Modules.Gambling
                         return new EmbedBuilder().WithErrorColor()
                             .WithDescription(GetText("shop_none"));
                     var embed = new EmbedBuilder().WithOkColor()
-                        .WithTitle(GetText("shop", Bc.BotConfig.CurrencySign));
+                        .WithTitle(GetText("shop", CurrencySign));
 
                     for (int i = 0; i < theseEntries.Length; i++)
                     {
                         var entry = theseEntries[i];
-                        embed.AddField(efb => efb.WithName($"#{curPage * 9 + i + 1} - {entry.Price}{Bc.BotConfig.CurrencySign}").WithValue(EntryToString(entry)).WithIsInline(true));
+                        embed.AddField(efb => efb.WithName($"#{curPage * 9 + i + 1} - {entry.Price}{CurrencySign}").WithValue(EntryToString(entry)).WithIsInline(true));
                     }
                     return embed;
                 }, entries.Count, 9, true).ConfigureAwait(false);
@@ -136,7 +137,7 @@ namespace NadekoBot.Modules.Gambling
                     }
                     else
                     {
-                        await ReplyErrorLocalizedAsync("not_enough", Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                        await ReplyErrorLocalizedAsync("not_enough", CurrencySign).ConfigureAwait(false);
                         return;
                     }
                 }
@@ -197,7 +198,7 @@ namespace NadekoBot.Modules.Gambling
                     }
                     else
                     {
-                        await ReplyErrorLocalizedAsync("not_enough", Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                        await ReplyErrorLocalizedAsync("not_enough", CurrencySign).ConfigureAwait(false);
                         return;
                     }
                 }

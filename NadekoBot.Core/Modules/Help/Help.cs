@@ -22,7 +22,7 @@ using Discord.WebSocket;
 
 namespace NadekoBot.Modules.Help
 {
-    public class Help : NadekoTopLevelModule<HelpService>
+    public class Help : NadekoModule<HelpService>
     {
         public const string PatreonUrl = "https://patreon.com/nadekobot";
         public const string PaypalUrl = "https://paypal.me/Kwoth";

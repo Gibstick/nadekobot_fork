@@ -17,7 +17,7 @@ namespace NadekoBot.Modules.Games
     - Shiritori
     - Simple RPG adventure
     */
-    public partial class Games : NadekoTopLevelModule<GamesService>
+    public partial class Games : NadekoModule<GamesService>
     {
         private readonly IImageCache _images;
         private readonly IHttpClientFactory _httpFactory;

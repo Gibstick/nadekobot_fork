@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace NadekoBot.Modules.NSFW
 {
     // thanks to halitalf for adding autoboob and autobutt features :D
-    public class NSFW : NadekoTopLevelModule<SearchesService>
+    public class NSFW : NadekoModule<SearchesService>
     {
         private static readonly ConcurrentHashSet<ulong> _hentaiBombBlacklist = new ConcurrentHashSet<ulong>();
         private readonly IHttpClientFactory _httpFactory;

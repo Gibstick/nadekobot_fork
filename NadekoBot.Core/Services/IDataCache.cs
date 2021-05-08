@@ -25,5 +25,7 @@ namespace NadekoBot.Core.Services
         void SetEconomy(string data);
 
         Task<TOut> GetOrAddCachedDataAsync<TParam, TOut>(string key, Func<TParam, Task<TOut>> factory, TParam param, TimeSpan expiry) where TOut : class;
+        DateTime GetLastCurrencyDecay();
+        void SetLastCurrencyDecay();
     }
 }

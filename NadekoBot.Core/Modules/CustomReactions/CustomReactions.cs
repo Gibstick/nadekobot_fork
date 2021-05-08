@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace NadekoBot.Modules.CustomReactions
 {
-    public class CustomReactions : NadekoTopLevelModule<CustomReactionsService>
+    public class CustomReactions : NadekoModule<CustomReactionsService>
     {
         private readonly IBotCredentials _creds;
         private readonly DbService _db;

@@ -19,7 +19,7 @@ using NadekoBot.Core.Common;
 
 namespace NadekoBot.Modules.Utility
 {
-    public partial class Utility : NadekoTopLevelModule
+    public partial class Utility : NadekoModule
     {
         private readonly DiscordSocketClient _client;
         private readonly IStatsService _stats;

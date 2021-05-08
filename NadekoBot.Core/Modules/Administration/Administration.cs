@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace NadekoBot.Modules.Administration
 {
-    public partial class Administration : NadekoTopLevelModule<AdministrationService>
+    public partial class Administration : NadekoModule<AdministrationService>
     {
         public enum List
         {
