@@ -46,7 +46,7 @@ namespace Nadeko.Tests
             => typeof(NadekoBot.NadekoBot).Assembly
                 .GetExportedTypes()
                 .Where(type => type.IsClass && !type.IsAbstract)
-                .Where(type => typeof(NadekoTopLevelModule).IsAssignableFrom(type) // if its a top level module
+                .Where(type => typeof(NadekoModule).IsAssignableFrom(type) // if its a top level module
                                || !(type.GetCustomAttribute<GroupAttribute>(true) is null)) // or a submodule
                 .SelectMany(x => x.GetMethods()
                         .Where(mi => mi.CustomAttributes
