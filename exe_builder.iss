@@ -37,7 +37,6 @@ Source: "src\NadekoBot\bin\Release\{#platform}\{#target}\publish\*"; DestDir: "{
 ;            and i don't want them to have to backup and then copy-merge into data folder themselves, or lose their currency images due to overwrite.
 Source: "src\NadekoBot\bin\Release\{#platform}\{#target}\publish\*"; DestDir: "{app}\{#sysfolder}"; Permissions: users-full; Flags: recursesubdirs ignoreversion onlyifdestfileexists createallsubdirs; Excludes: "*.pdb, *.db, data\*, credentials.json";
 Source: "src\NadekoBot\bin\Release\{#platform}\{#target}\publish\data\*"; DestDir: "{app}\{#sysfolder}\data"; Permissions: users-full; Flags: recursesubdirs onlyifdoesntexist createallsubdirs;
-Source: "src\NadekoBot\bin\Release\{#platform}\{#target}\publish\config\*"; DestDir: "{app}\{#sysfolder}\config"; Permissions: users-full; Flags: recursesubdirs onlyifdoesntexist createallsubdirs;
 
 [Dirs]
 Name:"{app}\{#sysfolder}\data"; Permissions: everyone-modify

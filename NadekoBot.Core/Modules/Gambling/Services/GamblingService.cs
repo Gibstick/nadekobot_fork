@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Core.Modules.Gambling.Services;
-using NadekoBot.Core.Services.Database.Repositories;
 
 namespace NadekoBot.Modules.Gambling.Services
 {
@@ -19,7 +18,6 @@ namespace NadekoBot.Modules.Gambling.Services
     {
         private readonly DbService _db;
         private readonly ICurrencyService _cs;
-        private readonly IBotConfigProvider _bc;
         private readonly NadekoBot _bot;
         private readonly Logger _log;
         private readonly DiscordSocketClient _client;
@@ -31,12 +29,11 @@ namespace NadekoBot.Modules.Gambling.Services
 
         private readonly Timer _decayTimer;
 
-        public GamblingService(DbService db, NadekoBot bot, ICurrencyService cs, IBotConfigProvider bc,
+        public GamblingService(DbService db, NadekoBot bot, ICurrencyService cs,
             DiscordSocketClient client, IDataCache cache, GamblingConfigService gss)
         {
             _db = db;
             _cs = cs;
-            _bc = bc;
             _bot = bot;
             _log = LogManager.GetCurrentClassLogger();
             _client = client;
