@@ -150,7 +150,7 @@ namespace NadekoBot.Modules.Utility
             
             [NadekoCommand, Usage, Description, Aliases]
             [OwnerOnly]
-            public async Task Config(string name = null, string prop = null, string value = null)
+            public async Task Config(string name = null, string prop = null, [Leftover] string value = null)
             {
                 var configNames = _settingServices.Select(x => x.Name);
                 
