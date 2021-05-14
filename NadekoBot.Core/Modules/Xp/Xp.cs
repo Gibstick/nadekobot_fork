@@ -48,11 +48,7 @@ namespace NadekoBot.Modules.Xp
             if (page < 0 || page > 100)
                 return Task.CompletedTask;
 
-            var embed = new EmbedBuilder()
-                .WithTitle(GetText("level_up_rewards"))
-                .WithOkColor();
-
-            var rewards = _service.GetRoleRewards(ctx.Guild.Id)
+            var allRewards = _service.GetRoleRewards(ctx.Guild.Id)
                 .OrderBy(x => x.Level)
                 .Select(x =>
                 {
@@ -65,16 +61,32 @@ namespace NadekoBot.Modules.Xp
                 .Concat(_service.GetCurrencyRewards(ctx.Guild.Id)
                     .OrderBy(x => x.Level)
                     .Select(x => (x.Level, Format.Bold(x.Amount + _gss.Data.Currency.Sign))))
-                    .GroupBy(x => x.Level)
-                    .OrderBy(x => x.Key)
-                    .Skip(page * 9)
+                .GroupBy(x => x.Level)
+                .OrderBy(x => x.Key)
+                .ToList();
+
+            return Context.SendPaginatedConfirmAsync(page, cur =>
+            {
+                var embed = new EmbedBuilder()
+                    .WithTitle(GetText("level_up_rewards"))
+                    .WithOkColor();
+                
+                var localRewards = allRewards
+                    .Skip(cur * 9)
                     .Take(9)
-                    .ForEach(x => embed.AddField(GetText("level_x", x.Key), string.Join("\n", x.Select(y => y.Item2))));
+                    .ToList();
 
-            if (!rewards.Any())
-                return ctx.Channel.EmbedAsync(embed.WithDescription(GetText("no_level_up_rewards")));
+                if (!localRewards.Any())
+                    return embed.WithDescription(GetText("no_level_up_rewards"));
 
-            return ctx.Channel.EmbedAsync(embed);
+                foreach (var reward in localRewards)
+                {
+                    embed.AddField(GetText("level_x", reward.Key),
+                        string.Join("\n", reward.Select(y => y.Item2)));
+                }
+                
+                return embed;
+            }, allRewards.Count, 9);
         }
 
         [NadekoCommand, Usage, Description, Aliases]
