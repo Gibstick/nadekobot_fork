@@ -4,7 +4,7 @@ using NadekoBot.Common.Yml;
 
 namespace NadekoBot.Core.Modules.Gambling.Common
 {
-    public class GamblingConfig
+    public sealed class GamblingConfig
     {
         public GamblingConfig()
         {

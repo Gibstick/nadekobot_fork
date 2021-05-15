@@ -1,6 +1,6 @@
 ﻿using NadekoBot.Core.Services.Database.Models;
 
-namespace NadekoBot.Modules.Xp.Common
+namespace NadekoBot.Modules.Xp
 {
     public class FullUserStats
     {
@@ -11,16 +11,15 @@ namespace NadekoBot.Modules.Xp.Common
         public int GlobalRanking { get; }
         public int GuildRanking { get; }
 
-        public FullUserStats(DiscordUser usr,
-            UserXpStats fullGuildStats, LevelStats global,
+        public FullUserStats(DiscordUser usr, UserXpStats fullGuildStats, LevelStats global,
             LevelStats guild, int globalRanking, int guildRanking)
         {
-            this.User = usr;
-            this.Global = global;
-            this.Guild = guild;
-            this.GlobalRanking = globalRanking;
-            this.GuildRanking = guildRanking;
-            this.FullGuildStats = fullGuildStats;
+            User = usr;
+            Global = global;
+            Guild = guild;
+            GlobalRanking = globalRanking;
+            GuildRanking = guildRanking;
+            FullGuildStats = fullGuildStats;
         }
     }
 }

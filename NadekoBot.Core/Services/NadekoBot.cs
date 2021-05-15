@@ -24,7 +24,6 @@ using System.Threading.Tasks;
 using Discord.Net;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Common.Configs;
-using NadekoBot.Core.Modules.Gambling.Services;
 
 namespace NadekoBot
 {
@@ -76,11 +75,7 @@ namespace NadekoBot
 
             Client = new DiscordSocketClient(new DiscordSocketConfig
             {
-#if GLOBAL_NADEKO
-                MessageCacheSize = 0,
-#else
                 MessageCacheSize = 50,
-#endif
                 LogLevel = LogSeverity.Warning,
                 ConnectionTimeout = int.MaxValue,
                 TotalShards = Credentials.TotalShards,
@@ -158,19 +153,13 @@ namespace NadekoBot
                 .AddSingleton(this)
                 .AddSingleton(Cache)
                 .AddSingleton(Cache.Redis)
-                .AddSingleton<IStringsSource, LocalFileStringsSource>()
-                .AddSingleton<IBotStringsProvider, LocalBotStringsProvider>()
-                .AddSingleton<IBotStrings, BotStrings>()
                 .AddSingleton<IBotConfigProvider, BotConfigProvider>()
                 .AddSingleton<ISeria, JsonSeria>()
-                .AddSingleton<ISettingsSeria, YamlSeria>()
-                .AddSingleton<BotSettingsService>()
-                .AddSingleton<ISettingsService>(x => x.GetService<BotSettingsService>())
-                .AddSingleton<BotSettingsMigrator>()
-                .AddSingleton<GamblingConfigService>()
-                .AddSingleton<ISettingsService>(x => x.GetService<GamblingConfigService>())
-                .AddSingleton<GamblingSettingsMigrator>()
                 .AddSingleton<IPubSub, RedisPubSub>()
+                .AddSingleton<ISettingsSeria, YamlSeria>()
+                .AddBotStringsServices()
+                .AddConfigServices()
+                .AddConfigMigrators()
                 .AddMemoryCache();
 
             s.AddHttpClient();
@@ -187,10 +176,11 @@ namespace NadekoBot
 
             if (Client.ShardId == 0)
             {
-                var bsMigrator = Services.GetService<BotSettingsMigrator>();
-                var gambMigrator = Services.GetService<GamblingSettingsMigrator>();
-                bsMigrator.EnsureMigrated();
-                gambMigrator.EnsureMigrated();
+                var migrators = Services.GetServices<IConfigMigrator>();
+                foreach (var migrator in migrators)
+                {
+                    migrator.EnsureMigrated();
+                }
             }
 
             //what the fluff
@@ -336,19 +326,6 @@ namespace NadekoBot
 
             var _ = await CommandService.AddModulesAsync(this.GetType().GetTypeInfo().Assembly, Services)
                 .ConfigureAwait(false);
-
-            bool isPublicNadeko = false;
-#if GLOBAL_NADEKO
-            isPublicNadeko = true;
-#endif
-            //unload modules which are not available on the public bot
-
-            if (isPublicNadeko)
-                CommandService
-                    .Modules
-                    .ToArray()
-                    .Where(x => x.Preconditions.Any(y => y.GetType() == typeof(NoPublicBotAttribute)))
-                    .ForEach(x => CommandService.RemoveModuleAsync(x));
 
             HandleStatusChanges();
             StartSendingData();

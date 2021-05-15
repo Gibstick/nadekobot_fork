@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NadekoBot.Migrations
 {
-    public partial class botsettingsmigration : Migration
+    public partial class xpconfigandcleanup : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +13,7 @@ namespace NadekoBot.Migrations
             // but if the user had the database, the snapshot default value
             // (true) will be used
             migrationBuilder.AddColumn<bool>(
-                name: "HasMigratedBotSettings",
+                name: "HasMigratedXpSettings",
                 table: "BotConfig",
                 nullable: false,
                 defaultValue: false);
@@ -21,7 +22,7 @@ namespace NadekoBot.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "HasMigratedBotSettings",
+                name: "HasMigratedXpSettings",
                 table: "BotConfig");
         }
     }

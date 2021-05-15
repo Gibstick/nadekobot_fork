@@ -9,13 +9,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace NadekoBot.Core.Services
 {
-    public class BotSettingsMigrator
+    public sealed class BotConfigMigrator : IConfigMigrator
     {
         private readonly Logger _log;
         private readonly DbService _db;
         private readonly BotSettingsService _bss;
 
-        public BotSettingsMigrator(DbService dbService, BotSettingsService bss)
+        public BotConfigMigrator(DbService dbService, BotSettingsService bss)
         {
             _log = LogManager.GetCurrentClassLogger();
             _db = dbService;

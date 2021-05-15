@@ -7,7 +7,7 @@ using YamlDotNet.Serialization;
 
 namespace NadekoBot.Core.Common.Configs
 {
-    public class BotSettings
+    public sealed class BotSettings
     {
         [Comment(@"DO NOT CHANGE")]
         public int Version { get; set; }

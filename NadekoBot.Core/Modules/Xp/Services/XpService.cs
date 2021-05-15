@@ -2,12 +2,10 @@ using Discord;
 using Discord.WebSocket;
 using NadekoBot.Common;
 using NadekoBot.Common.Collections;
-using NadekoBot.Core.Modules.Xp.Common;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
-using NadekoBot.Modules.Xp.Common;
 using Newtonsoft.Json;
 using NLog;
 using SixLabors.Fonts;
@@ -23,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using NadekoBot.Core.Modules.Xp;
 using StackExchange.Redis;
 using Image = SixLabors.ImageSharp.Image;
 
@@ -38,7 +37,6 @@ namespace NadekoBot.Modules.Xp.Services
 
         private readonly DbService _db;
         private readonly CommandHandler _cmd;
-        private readonly IBotConfigProvider _bc;
         private readonly IImageCache _images;
         private readonly Logger _log;
         private readonly IBotStrings _strings;
@@ -46,32 +44,29 @@ namespace NadekoBot.Modules.Xp.Services
         private readonly FontProvider _fonts;
         private readonly IBotCredentials _creds;
         private readonly ICurrencyService _cs;
+        private readonly Task updateXpTask;
+        private readonly IHttpClientFactory _httpFactory;
+        private readonly XpConfigService _xpConfig;
+        
         public const int XP_REQUIRED_LVL_1 = 36;
 
-        private readonly ConcurrentDictionary<ulong, ConcurrentHashSet<ulong>> _excludedRoles
-            = new ConcurrentDictionary<ulong, ConcurrentHashSet<ulong>>();
+        private readonly ConcurrentDictionary<ulong, ConcurrentHashSet<ulong>> _excludedRoles;
 
-        private readonly ConcurrentDictionary<ulong, ConcurrentHashSet<ulong>> _excludedChannels
-            = new ConcurrentDictionary<ulong, ConcurrentHashSet<ulong>>();
+        private readonly ConcurrentDictionary<ulong, ConcurrentHashSet<ulong>> _excludedChannels;
 
-        private readonly ConcurrentHashSet<ulong> _excludedServers
-            = new ConcurrentHashSet<ulong>();
+        private readonly ConcurrentHashSet<ulong> _excludedServers;
 
         private readonly ConcurrentQueue<UserCacheItem> _addMessageXp
             = new ConcurrentQueue<UserCacheItem>();
-
-        private readonly Task updateXpTask;
-        private readonly IHttpClientFactory _httpFactory;
         private XpTemplate _template;
         private readonly DiscordSocketClient _client;
 
-        public XpService(DiscordSocketClient client, CommandHandler cmd, IBotConfigProvider bc,
-            NadekoBot bot, DbService db, IBotStrings strings, IDataCache cache,
-            FontProvider fonts, IBotCredentials creds, ICurrencyService cs, IHttpClientFactory http)
+        public XpService(DiscordSocketClient client, CommandHandler cmd, NadekoBot bot, DbService db,
+            IBotStrings strings, IDataCache cache, FontProvider fonts, IBotCredentials creds,
+            ICurrencyService cs, IHttpClientFactory http, XpConfigService xpConfig)
         {
             _db = db;
             _cmd = cmd;
-            _bc = bc;
             _images = cache.LocalImages;
             _log = LogManager.GetCurrentClassLogger();
             _strings = strings;
@@ -80,6 +75,9 @@ namespace NadekoBot.Modules.Xp.Services
             _creds = creds;
             _cs = cs;
             _httpFactory = http;
+            _xpConfig = xpConfig;
+            _excludedServers = new ConcurrentHashSet<ulong>();
+            _excludedChannels = new ConcurrentDictionary<ulong, ConcurrentHashSet<ulong>>();
             _client = client;
 
             InternalReloadXpTemplate();
@@ -541,7 +539,7 @@ namespace NadekoBot.Modules.Xp.Services
             var key = $"{_creds.RedisKey()}_user_xp_vc_join_{user.Id}";
             var value = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            _cache.Redis.GetDatabase().StringSet(key, value, TimeSpan.FromMinutes(_bc.BotConfig.MaxXpMinutes), When.NotExists);
+            _cache.Redis.GetDatabase().StringSet(key, value, TimeSpan.FromMinutes(_xpConfig.Data.VoiceMaxMinutes), When.NotExists);
         }
 
         private void UserLeftVoiceChannel(SocketGuildUser user, SocketVoiceChannel channel)
@@ -559,7 +557,7 @@ namespace NadekoBot.Modules.Xp.Services
             var dateStart = DateTimeOffset.FromUnixTimeSeconds(startUnixTime);
             var dateEnd = DateTimeOffset.UtcNow;
             var minutes = (dateEnd - dateStart).TotalMinutes;
-            var xp = _bc.BotConfig.VoiceXpPerMinute * minutes;
+            var xp = _xpConfig.Data.VoiceXpPerMinute * minutes;
             var actualXp = (int) Math.Floor(xp);
 
             if (actualXp > 0)
@@ -608,7 +606,7 @@ namespace NadekoBot.Modules.Xp.Services
                     Guild = user.Guild,
                     Channel = arg.Channel,
                     User = user,
-                    XpAmount = _bc.BotConfig.XpPerMessage
+                    XpAmount = _xpConfig.Data.XpPerMessage
                 });
             });
             return Task.CompletedTask;
@@ -667,7 +665,7 @@ namespace NadekoBot.Modules.Xp.Services
 
             return r.StringSet(key,
                 true,
-                TimeSpan.FromMinutes(_bc.BotConfig.XpMinutesTimeout),
+                TimeSpan.FromMinutes(_xpConfig.Data.MessageXpCooldown),
                 StackExchange.Redis.When.NotExists);
         }
 

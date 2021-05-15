@@ -5,7 +5,6 @@ using NadekoBot.Common.Attributes;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
-using NadekoBot.Modules.Xp.Common;
 using NadekoBot.Modules.Xp.Services;
 using System.Collections.Generic;
 using System.Linq;
