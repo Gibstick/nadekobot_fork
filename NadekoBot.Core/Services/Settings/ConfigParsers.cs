@@ -6,7 +6,7 @@ namespace NadekoBot.Core.Services
     /// <summary>
     /// Custom setting value parsers for types which don't have them by default
     /// </summary>
-    public static class SettingParsers
+    public static class ConfigParsers
     {
         /// <summary>
         /// Default string parser. Passes input to output and returns true.
@@ -32,7 +32,7 @@ namespace NadekoBot.Core.Services
         }
     }
 
-    public static class SettingPrinters
+    public static class ConfigPrinters
     {
         public static string ToString<TAny>(TAny input)
             => input.ToString();

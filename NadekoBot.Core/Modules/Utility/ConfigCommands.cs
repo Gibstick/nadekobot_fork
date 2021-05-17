@@ -17,12 +17,12 @@ namespace NadekoBot.Modules.Utility
     {
         public class ConfigCommands : NadekoSubmodule
         {
-            private readonly BotSettingsService _bss;
+            private readonly BotConfigService _bss;
             private readonly SelfService _selfService;
             
             private readonly IEnumerable<IConfigService> _settingServices;
 
-            public ConfigCommands(BotSettingsService bss, SelfService selfService, IEnumerable<IConfigService> settingServices)
+            public ConfigCommands(BotConfigService bss, SelfService selfService, IEnumerable<IConfigService> settingServices)
             {
                 _settingServices = settingServices;
                 _bss = bss;

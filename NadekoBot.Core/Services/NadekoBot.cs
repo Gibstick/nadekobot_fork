@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord.Net;
 using Microsoft.EntityFrameworkCore;
+using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Common.Configs;
 using NadekoBot.Modules.Administration.Services;

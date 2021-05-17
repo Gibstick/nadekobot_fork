@@ -18,7 +18,7 @@ namespace NadekoBot.Modules.Administration.Services
     {
         private readonly Timer _t;
         private readonly Logger _log;
-        private readonly BotSettingsService _bss;
+        private readonly BotConfigService _bss;
         private readonly Replacer _rep;
         private readonly DbService _db;
         private readonly NadekoBot _bot;
@@ -29,7 +29,7 @@ namespace NadekoBot.Modules.Administration.Services
         }
 
         public PlayingRotateService(DiscordSocketClient client, DbService db, NadekoBot bot,
-            MusicService music, BotSettingsService bss)
+            MusicService music, BotConfigService bss)
         {
             _db = db;
             _bot = bot;
