@@ -36,8 +36,6 @@ namespace NadekoBot.Modules.Administration
                 if (input.Length % 2 != 0)
                     return;
 
-                var g = (SocketGuild)ctx.Guild;
-
                 var grp = 0;
                 var results = input
                     .GroupBy(x => grp++ / 2)
@@ -71,7 +69,7 @@ namespace NadekoBot.Modules.Administration
                     {
                         RetryMode = RetryMode.Retry502 | RetryMode.RetryRatelimit
                     }).ConfigureAwait(false);
-                    await Task.Delay(100).ConfigureAwait(false);
+                    await Task.Delay(500).ConfigureAwait(false);
                 }
 
                 if (_service.Add(ctx.Guild.Id, new ReactionRoleMessage()
@@ -153,7 +151,7 @@ namespace NadekoBot.Modules.Administration
             [UserPerm(GuildPerm.ManageRoles)]
             public async Task ReactionRolesRemove(int index)
             {
-                if (index < 1 || index > 5 ||
+                if (index < 1 ||
                     !_service.Get(ctx.Guild.Id, out var rrs) ||
                     !rrs.Any() || rrs.Count < index)
                 {

@@ -158,9 +158,6 @@ namespace NadekoBot.Extensions
                 throw new ArgumentNullException(nameof(name));
         }
 
-        public static ConcurrentDictionary<TKey, TValue> ToConcurrent<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> dict)
-            => new ConcurrentDictionary<TKey, TValue>(dict);
-
         public static bool IsAuthor(this IMessage msg, IDiscordClient client)
             => msg.Author?.Id == client.CurrentUser.Id;
 
@@ -312,46 +309,6 @@ namespace NadekoBot.Extensions
             return imageStream;
         }
 
-        /// <summary>
-        /// Randomize element order by performing the Fisher-Yates shuffle
-        /// </summary>
-        /// <typeparam name="T">Item type</typeparam>
-        /// <param name="items">Items to shuffle</param>
-        public static IReadOnlyList<T> Shuffle<T>(this IEnumerable<T> items)
-        {
-            using (var provider = RandomNumberGenerator.Create())
-            {
-                var list = items.ToList();
-                var n = list.Count;
-                while (n > 1)
-                {
-                    var box = new byte[(n / Byte.MaxValue) + 1];
-                    int boxSum;
-                    do
-                    {
-                        provider.GetBytes(box);
-                        boxSum = box.Sum(b => b);
-                    }
-                    while (!(boxSum < n * ((Byte.MaxValue * box.Length) / n)));
-                    var k = (boxSum % n);
-                    n--;
-                    var value = list[k];
-                    list[k] = list[n];
-                    list[n] = value;
-                }
-                return list;
-            }
-        }
-
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> elems, Action<T> exec)
-        {
-            foreach (var elem in elems)
-            {
-                exec(elem);
-            }
-            return elems;
-        }
-
         public static Stream ToStream(this IEnumerable<byte> bytes, bool canWrite = false)
         {
             var ms = new MemoryStream(bytes as byte[] ?? bytes.ToArray(), canWrite);
@@ -368,52 +325,6 @@ namespace NadekoBot.Extensions
                                 .ConfigureAwait(false);
 
             return await ownerPrivate.SendMessageAsync(message).ConfigureAwait(false);
-        }
-
-        public static Image<Rgba32> Merge(this IEnumerable<Image<Rgba32>> images)
-        {
-            return images.Merge(out _);
-        }
-        public static Image<Rgba32> Merge(this IEnumerable<Image<Rgba32>> images, out IImageFormat format)
-        {
-            format = PngFormat.Instance;
-            void DrawFrame(Image<Rgba32>[] imgArray, Image<Rgba32> imgFrame, int frameNumber)
-            {
-                var xOffset = 0;
-                for (int i = 0; i < imgArray.Length; i++)
-                {
-                    var frame = imgArray[i].Frames.CloneFrame(frameNumber % imgArray[i].Frames.Count);
-                    imgFrame.Mutate(x => x.DrawImage(frame, new Point(xOffset, 0), new GraphicsOptions()));
-                    xOffset += imgArray[i].Bounds().Width;
-                }
-            }
-
-            var imgs = images.ToArray();
-            int frames = images.Max(x => x.Frames.Count);
-
-            var width = imgs.Sum(img => img.Width);
-            var height = imgs.Max(img => img.Height);
-            var canvas = new Image<Rgba32>(width, height);
-            if (frames == 1)
-            {
-                DrawFrame(imgs, canvas, 0);
-                return canvas;
-            }
-
-            format = GifFormat.Instance;
-            for (int j = 0; j < frames; j++)
-            {
-                using (var imgFrame = new Image<Rgba32>(width, height))
-                {
-                    DrawFrame(imgs, imgFrame, j);
-
-                    var frameToAdd = imgFrame.Frames[0];
-                    frameToAdd.Metadata.GetGifMetadata().DisposalMethod = GifDisposalMethod.RestoreToBackground;
-                    canvas.Frames.AddFrame(frameToAdd);
-                }
-            }
-            canvas.Frames.RemoveFrame(0);
-            return canvas;
         }
 
         public static void LogAndReset(this Stopwatch sw, string name = "")
