@@ -35,8 +35,8 @@ namespace NadekoBot.Modules.Gambling
                 List
             }
 
-            public FlowerShopCommands(DbService db, ICurrencyService cs, GamblingConfigService config)
-                : base(config) 
+            public FlowerShopCommands(DbService db, ICurrencyService cs, GamblingConfigService gamblingConf)
+                : base(gamblingConf) 
             {
                 _db = db;
                 _cs = cs;

@@ -22,29 +22,31 @@ namespace NadekoBot.Core.Services
 
         public void EnsureMigrated()
         {
-            using (var uow = _db.GetDbContext())
-            {
-                var conn = uow._context.Database.GetDbConnection();
-                Migrate(conn);
-            }
+            using var uow = _db.GetDbContext();
+            using var conn = uow._context.Database.GetDbConnection();
+            Migrate(conn);
         }
 
         private void Migrate(DbConnection conn)
         {
-            using var checkTableCommand = conn.CreateCommand();
+            using (var checkTableCommand = conn.CreateCommand())
+            {
+                // make sure table still exists
+                checkTableCommand.CommandText =
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='BotConfig';";
+                var checkReader = checkTableCommand.ExecuteReader();
+                if (!checkReader.HasRows)
+                    return;
+            }
 
-            // make sure table still exists
-            checkTableCommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='BotConfig';";
-            var checkReader = checkTableCommand.ExecuteReader();
-            if (!checkReader.HasRows)
-                return;
-
-            using var checkMigratedCommand = conn.CreateCommand();
-            checkMigratedCommand.CommandText =
-                "UPDATE BotConfig SET HasMigratedGamblingSettings = 1 WHERE HasMigratedGamblingSettings = 0;";
-            var changedRows = checkMigratedCommand.ExecuteNonQuery();
-            if (changedRows == 0)
-                return;
+            using (var checkMigratedCommand = conn.CreateCommand())
+            {
+                checkMigratedCommand.CommandText =
+                    "UPDATE BotConfig SET HasMigratedGamblingSettings = 1 WHERE HasMigratedGamblingSettings = 0;";
+                var changedRows = checkMigratedCommand.ExecuteNonQuery();
+                if (changedRows == 0)
+                    return;
+            }
 
             _log.Info("Migrating gambling settings...");
 
@@ -60,9 +62,11 @@ FROM BotConfig";
                 return;
 
 
-            using var itemsCommand = conn.CreateCommand();
-            itemsCommand.CommandText = WaifuItemUpdateQuery;
-            itemsCommand.ExecuteNonQuery();
+            using (var itemsCommand = conn.CreateCommand())
+            {
+                itemsCommand.CommandText = WaifuItemUpdateQuery;
+                itemsCommand.ExecuteNonQuery();
+            }
 
 
             _gss.ModifyConfig(ModifyAction(reader));

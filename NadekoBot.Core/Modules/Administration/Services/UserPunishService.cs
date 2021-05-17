@@ -13,6 +13,7 @@ using NadekoBot.Core.Common.TypeReaders.Models;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
+using NadekoBot.Modules.Permissions.Services;
 using Newtonsoft.Json;
 using NLog;
 
@@ -22,13 +23,15 @@ namespace NadekoBot.Modules.Administration.Services
     {
         private readonly MuteService _mute;
         private readonly DbService _db;
+        private readonly BlacklistService _blacklistService;
         private readonly Logger _log;
         private readonly Timer _warnExpiryTimer;
 
-        public UserPunishService(MuteService mute, DbService db)
+        public UserPunishService(MuteService mute, DbService db, BlacklistService blacklistService)
         {
             _mute = mute;
             _db = db;
+            _blacklistService = blacklistService;
             _log = LogManager.GetCurrentClassLogger();
 
             _warnExpiryTimer = new Timer(async _ =>
@@ -347,29 +350,15 @@ WHERE GuildId={guildId}
 
             //if user is null, means that person couldn't be found
             var missing = bans
-                .Where(x => !x.Id.HasValue)
-                .Count();
+                .Count(x => !x.Id.HasValue);
 
             //get only data for found users
             var found = bans
                 .Where(x => x.Id.HasValue)
                 .Select(x => x.Id.Value)
-                .ToArray();
+                .ToList();
 
-            using (var uow = _db.GetDbContext())
-            {
-                var bc = uow.BotConfig.GetOrCreate(set => set.Include(x => x.Blacklist));
-                //blacklist the users
-                bc.Blacklist.AddRange(found.Select(x =>
-                    new BlacklistItem
-                    {
-                        ItemId = x,
-                        Type = BlacklistType.User,
-                    }));
-                //clear their currencies
-                uow.DiscordUsers.RemoveFromMany(found.Select(x => x).ToList());
-                uow.SaveChanges();
-            }
+            _blacklistService.BlacklistUsers(found);
 
             return (bans, missing);
         }

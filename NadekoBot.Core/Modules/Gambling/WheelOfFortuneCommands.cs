@@ -29,8 +29,8 @@ namespace NadekoBot.Modules.Gambling
             private readonly ICurrencyService _cs;
             private readonly DbService _db;
 
-            public WheelOfFortuneCommands(ICurrencyService cs, DbService db, GamblingConfigService configService)
-                : base(configService)
+            public WheelOfFortuneCommands(ICurrencyService cs, DbService db, GamblingConfigService gamblingConfService)
+                : base(gamblingConfService)
             {
                 _cs = cs;
                 _db = db;

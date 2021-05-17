@@ -1,4 +1,4 @@
-﻿using NadekoBot.Core.Services.Database.Models;
+﻿using NadekoBot.Modules.Games.Common;
 
 namespace NadekoBot.Modules.Gambling.Common.AnimalRacing
 {

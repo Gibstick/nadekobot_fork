@@ -22,8 +22,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.Net;
+using Microsoft.EntityFrameworkCore;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Common.Configs;
+using NadekoBot.Modules.Administration.Services;
+using NLog.Fluent;
 
 namespace NadekoBot
 {
@@ -153,10 +156,9 @@ namespace NadekoBot
                 .AddSingleton(this)
                 .AddSingleton(Cache)
                 .AddSingleton(Cache.Redis)
-                .AddSingleton<IBotConfigProvider, BotConfigProvider>()
                 .AddSingleton<ISeria, JsonSeria>()
                 .AddSingleton<IPubSub, RedisPubSub>()
-                .AddSingleton<ISettingsSeria, YamlSeria>()
+                .AddSingleton<IConfigSeria, YamlSeria>()
                 .AddBotStringsServices()
                 .AddConfigServices()
                 .AddConfigMigrators()
@@ -170,17 +172,14 @@ namespace NadekoBot
 
             s.LoadFrom(Assembly.GetAssembly(typeof(CommandHandler)));
 
+            s.AddSingleton<IReadyExecutor>(x => x.GetService<SelfService>());
             //initialize Services
             Services = s.BuildServiceProvider();
             var commandHandler = Services.GetService<CommandHandler>();
 
             if (Client.ShardId == 0)
             {
-                var migrators = Services.GetServices<IConfigMigrator>();
-                foreach (var migrator in migrators)
-                {
-                    migrator.EnsureMigrated();
-                }
+                ApplyConfigMigrations();
             }
 
             //what the fluff
@@ -189,6 +188,23 @@ namespace NadekoBot
 
             sw.Stop();
             _log.Info($"All services loaded in {sw.Elapsed.TotalSeconds:F2}s");
+        }
+
+        private void ApplyConfigMigrations()
+        {
+            // execute all migrators
+            var migrators = Services.GetServices<IConfigMigrator>();
+            foreach (var migrator in migrators)
+            {
+                migrator.EnsureMigrated();
+            }
+            
+            // and then drop the bot config table
+            
+            // var conn = _db.GetDbContext()._context.Database.GetDbConnection();
+            // using var deleteBotConfig = conn.CreateCommand();
+            // deleteBotConfig.CommandText = "DROP TABLE IF EXISTS BotConfig;";
+            // deleteBotConfig.ExecuteNonQuery();
         }
 
         private IEnumerable<object> LoadTypeReaders(Assembly assembly)
@@ -324,12 +340,30 @@ namespace NadekoBot
             // start handling messages received in commandhandler
             await commandHandler.StartHandling().ConfigureAwait(false);
 
-            var _ = await CommandService.AddModulesAsync(this.GetType().GetTypeInfo().Assembly, Services)
+            _ = await CommandService.AddModulesAsync(this.GetType().GetTypeInfo().Assembly, Services)
                 .ConfigureAwait(false);
 
             HandleStatusChanges();
             StartSendingData();
             Ready.TrySetResult(true);
+            _ = Task.Run(ExecuteReadySubscriptions);
+        }
+
+        private async Task ExecuteReadySubscriptions()
+        {
+            var readyExecutors = Services.GetServices<IReadyExecutor>();
+            foreach (var toExec in readyExecutors)
+            {
+                try
+                {
+                    await toExec.OnReadyAsync();
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Failed running OnReadyAsync method on {Type} type: {Message}",
+                        toExec.GetType().Name, ex.Message);
+                }
+            }
             _log.Info($"Shard {Client.ShardId} ready.");
         }
 

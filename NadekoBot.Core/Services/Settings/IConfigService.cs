@@ -2,8 +2,14 @@
 
 namespace NadekoBot.Core.Services
 {
-    public interface ISettingsService
+    /// <summary>
+    /// Interface that all services which deal with configs should implement
+    /// </summary>
+    public interface IConfigService
     {
+        /// <summary>
+        /// Name of the config
+        /// </summary>
         public string Name { get; }
         /// <summary>
         /// Loads new data and publishes the new state

@@ -55,30 +55,21 @@ namespace NadekoBot.Modules.Permissions
                 if (action == AddRemove.Add && _creds.OwnerIds.Contains(id))
                     return;
 
-                using (var uow = _db.GetDbContext())
+                if (action == AddRemove.Add)
                 {
-                    if (action == AddRemove.Add)
-                    {
-                        var item = new BlacklistItem { ItemId = id, Type = type };
-                        uow.BotConfig.GetOrCreate().Blacklist.Add(item);
-                    }
-                    else
-                    {
-                        var objs = uow.BotConfig
-                            .GetOrCreate(set => set.Include(x => x.Blacklist))
-                            .Blacklist
-                            .Where(bi => bi.ItemId == id && bi.Type == type);
-
-                        if (objs.Any())
-                            uow._context.Set<BlacklistItem>().RemoveRange(objs);
-                    }
-                    await uow.SaveChangesAsync();
+                    _service.Blacklist(type, id);
+                }
+                else
+                {
+                    _service.UnBlacklist(type, id);
                 }
 
                 if (action == AddRemove.Add)
-                    await ReplyConfirmLocalizedAsync("blacklisted", Format.Code(type.ToString()), Format.Code(id.ToString())).ConfigureAwait(false);
+                    await ReplyConfirmLocalizedAsync("blacklisted", Format.Code(type.ToString()),
+                        Format.Code(id.ToString())).ConfigureAwait(false);
                 else
-                    await ReplyConfirmLocalizedAsync("unblacklisted", Format.Code(type.ToString()), Format.Code(id.ToString())).ConfigureAwait(false);
+                    await ReplyConfirmLocalizedAsync("unblacklisted", Format.Code(type.ToString()),
+                        Format.Code(id.ToString())).ConfigureAwait(false);
             }
         }
     }

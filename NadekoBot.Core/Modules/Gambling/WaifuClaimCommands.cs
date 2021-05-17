@@ -19,7 +19,7 @@ namespace NadekoBot.Modules.Gambling
         public class WaifuClaimCommands : GamblingSubmodule<WaifuService>
         {
 
-            public WaifuClaimCommands(GamblingConfigService configService) : base(configService)
+            public WaifuClaimCommands(GamblingConfigService gamblingConfService) : base(gamblingConfService)
             {
             }
 

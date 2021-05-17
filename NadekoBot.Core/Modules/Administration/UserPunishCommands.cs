@@ -11,6 +11,7 @@ using NadekoBot.Modules.Administration.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NadekoBot.Modules.Permissions.Services;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -20,10 +21,12 @@ namespace NadekoBot.Modules.Administration
         public class UserPunishCommands : NadekoSubmodule<UserPunishService>
         {
             private readonly MuteService _mute;
+            private readonly BlacklistService _blacklistService;
 
-            public UserPunishCommands(MuteService mute)
+            public UserPunishCommands(MuteService mute, BlacklistService blacklistService)
             {
                 _mute = mute;
+                _blacklistService = blacklistService;
             }
 
             private async Task<bool> CheckRoleHierarchy(IGuildUser target)
@@ -744,8 +747,6 @@ namespace NadekoBot.Modules.Administration
                     .WithDescription(GetText("mass_kill_in_progress", bans.Count()))
                     .AddField(GetText("invalid", missing), missStr)
                     .WithOkColor());
-
-                Bc.Reload();
 
                 //do the banning
                 await Task.WhenAll(bans

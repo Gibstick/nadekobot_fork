@@ -14,9 +14,6 @@ namespace NadekoBot.Modules
         protected Logger _log { get; }
         protected CultureInfo _cultureInfo { get; set; }
         public IBotStrings Strings { get; set; }
-        
-        public BotSettingsService BotSettings { get; set; }
-        public IBotConfigProvider Bc { get; set; }
         public CommandHandler CmdHandler { get; set; }
         public ILocalization Localization { get; set; }
 
@@ -24,7 +21,7 @@ namespace NadekoBot.Modules
 
         protected ICommandContext ctx => Context;
 
-        protected NadekoModule(bool isTopLevelModule = true)
+        protected NadekoModule()
         {
             _log = LogManager.GetCurrentClassLogger();
         }
@@ -132,23 +129,23 @@ namespace NadekoBot.Modules
         }
     }
 
-    public abstract class NadekoModule<TService> : NadekoModule where TService : INService
+    public abstract class NadekoModule<TService> : NadekoModule
     {
         public TService _service { get; set; }
 
-        protected NadekoModule(bool isTopLevel = true) : base(isTopLevel)
+        protected NadekoModule() : base()
         {
         }
     }
 
     public abstract class NadekoSubmodule : NadekoModule
     {
-        protected NadekoSubmodule() : base(false) { }
+        protected NadekoSubmodule() : base() { }
     }
 
-    public abstract class NadekoSubmodule<TService> : NadekoModule<TService> where TService : INService
+    public abstract class NadekoSubmodule<TService> : NadekoModule<TService>
     {
-        protected NadekoSubmodule() : base(false)
+        protected NadekoSubmodule() : base()
         {
         }
     }

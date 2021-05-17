@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoBot.Core.Services;
+using NadekoBot.Modules.Administration.Services;
 
 namespace NadekoBot.Extensions
 {
@@ -20,9 +21,10 @@ namespace NadekoBot.Extensions
 
             foreach (var type in Assembly.GetCallingAssembly().ExportedTypes.Where(x => x.IsSealed))
             {
-                if (type.BaseType is Type bt && bt.IsGenericType && bt.GetGenericTypeDefinition() == baseType)
+                if (type.BaseType?.IsGenericType == true && type.BaseType.GetGenericTypeDefinition() == baseType)
                 {
                     services.AddSingleton(type);
+                    services.AddSingleton(x => (IConfigService)x.GetRequiredService(type));
                 }
             }
 
