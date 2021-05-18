@@ -22,12 +22,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.Net;
-using Microsoft.EntityFrameworkCore;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Common.Configs;
 using NadekoBot.Modules.Administration.Services;
-using NLog.Fluent;
+using NadekoBot.Modules.CustomReactions.Services;
 
 namespace NadekoBot
 {
@@ -124,17 +123,15 @@ namespace NadekoBot
             });
         }
 
-        private List<ulong> GetCurrentGuildIds()
+        public List<ulong> GetCurrentGuildIds()
         {
             return Client.Guilds.Select(x => x.Id).ToList();
         }
 
         public IEnumerable<GuildConfig> GetCurrentGuildConfigs()
         {
-            using (var uow = _db.GetDbContext())
-            {
-                return uow.GuildConfigs.GetAllGuildConfigs(GetCurrentGuildIds()).ToImmutableArray();
-            }
+            using var uow = _db.GetDbContext();
+            return uow.GuildConfigs.GetAllGuildConfigs(GetCurrentGuildIds()).ToImmutableArray();
         }
 
         private void AddServices()
@@ -174,6 +171,7 @@ namespace NadekoBot
             s.LoadFrom(Assembly.GetAssembly(typeof(CommandHandler)));
 
             s.AddSingleton<IReadyExecutor>(x => x.GetService<SelfService>());
+            s.AddSingleton<IReadyExecutor>(x => x.GetService<CustomReactionsService>());
             //initialize Services
             Services = s.BuildServiceProvider();
             var commandHandler = Services.GetService<CommandHandler>();
