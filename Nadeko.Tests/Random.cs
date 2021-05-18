@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Nadeko.Tests
 {
-    public class Random
+    public class RandomTests
     {
         [SetUp]
         public void Setup()
