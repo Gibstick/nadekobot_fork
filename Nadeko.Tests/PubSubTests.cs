@@ -17,7 +17,7 @@ namespace Nadeko.Tests
             {
                 Assert.AreEqual(expected, data);
                 Assert.Pass();
-                return Task.CompletedTask;
+                return default;
             });
             await pubsub.Pub(key, expected);
             Assert.Fail("Event not registered");
@@ -33,9 +33,9 @@ namespace Nadeko.Tests
             {
                 Assert.AreEqual(expected, data);
                 Assert.Pass();
-                return Task.CompletedTask;
+                return default;
             });
-            await pubsub.Unsub(key, _ => Task.CompletedTask);
+            await pubsub.Unsub(key, _ => default);
             await pubsub.Pub(key, expected);
             Assert.Fail("Event not registered");
         }
@@ -50,13 +50,13 @@ namespace Nadeko.Tests
             {
                 Assert.AreEqual(expected, data);
                 Assert.Pass();
-                return Task.CompletedTask;
+                return default;
             });
             await pubsub.Unsub(key, data =>
             {
                 Assert.AreEqual(expected, data);
                 Assert.Pass();
-                return Task.CompletedTask;
+                return default;
             });
             await pubsub.Pub(key, expected);
             Assert.Fail("Event not registered");
@@ -68,10 +68,10 @@ namespace Nadeko.Tests
             TypedKey<int> key = "test_key";
             var pubsub = new EventPubSub();
 
-            Task Action(int data)
+            ValueTask Action(int data)
             {
                 Assert.Fail("Event is raised when it shouldn't be");
-                return Task.CompletedTask;
+                return default;
             }
 
             await pubsub.Sub(key, Action);
@@ -88,11 +88,11 @@ namespace Nadeko.Tests
 
             var localData = new byte[1]; 
             
-            Task Action(byte[] data)
+            ValueTask Action(byte[] data)
             {
                 Assert.AreEqual(localData, data);
                 Assert.Pass();
-                return Task.CompletedTask;
+                return default;
             }
 
             await pubsub.Sub(key, Action);
@@ -110,18 +110,18 @@ namespace Nadeko.Tests
             var localData = new object();
             int successCounter = 0;
             
-            Task Action1(object data)
+            ValueTask Action1(object data)
             {
                 Assert.AreEqual(localData, data);
                 successCounter+=10;
-                return Task.CompletedTask;
+                return default;
             }
             
-            Task Action2(object data)
+            ValueTask Action2(object data)
             {
                 Assert.AreEqual(localData, data);
                 successCounter++;
-                return Task.CompletedTask;
+                return default;
             }
 
             await pubsub.Sub(key, Action1); // + 10 \
