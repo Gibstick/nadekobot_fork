@@ -1,8 +1,7 @@
-> ⚠️ `.bce` command is getting removed.  
-> ⚠️ Use `.config` command to set-up config  (`.h .config` for help)  (version `2.39.0` and up)  
-> ⚠️ Configs are now saved in human-readable format in `.yml` files in the data/ folder  
-> ⚠️ `data/bot.yml` and `data/gambling.yml` for example  
-> ⚠️ If you edit the files manually, you can reload configuration with `.configreload <config-name>`  
+
+# ⚠️ OBSOLETE
+- ⚠️ `.bce` command is removed in newer version.  If you're on version 2.39.0 or later, use [config guide][CONFIG GUIDE]  
+
 
 # BotConfigEdit Guide
 
@@ -162,3 +161,5 @@ The average amount of xp added every minute to a user connected to a voice chann
 ## MaxXpMinutes
 The maximum amount of time, in minutes, a user can earn xp in a voice channel. This exists mainly to clear entries out of Redis.  
 **Default is 720**
+
+[CONFIG GUIDE]: config-guide.md

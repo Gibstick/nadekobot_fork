@@ -8,7 +8,7 @@ theme:
     palette:
         scheme: preference
         primary: indigo
-        accent: indigo
+        accent: blue
     features:
         - navigation.instant
     icon:
