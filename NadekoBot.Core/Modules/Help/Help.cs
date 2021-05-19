@@ -272,7 +272,7 @@ namespace NadekoBot.Modules.Help
                         return;
                     var (plainText, helpEmbed) = data;
                     await ch.EmbedAsync(helpEmbed, msg: plainText ?? "").ConfigureAwait(false);
-                    await ctx.OkAsync();
+                    try{ await ctx.OkAsync(); } catch { } // ignore if bot can't react
                 }
                 catch (Exception)
                 {
