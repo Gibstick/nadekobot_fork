@@ -89,7 +89,7 @@ namespace NadekoBot.Modules.Xp
         }
 
         [NadekoCommand, Usage, Description, Aliases]
-        [UserPerm(GuildPerm.ManageRoles)]
+        [UserPerm(GuildPerm.Administrator)]
         [RequireContext(ContextType.Guild)]
         public async Task XpRoleReward(int level, [Leftover] IRole role = null)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
+using NadekoBot.Extensions;
 
 namespace NadekoBot.Modules.Administration.Services
 {
@@ -19,29 +21,31 @@ namespace NadekoBot.Modules.Administration.Services
 
         public int Priority { get; } = int.MaxValue;
 
+        private readonly ConcurrentDictionary<(ulong, string), DiscordPermOverride> _overrides;
+
         public DiscordPermOverrideService(DbService db, IServiceProvider services)
         {
             _db = db;
             _services = services;
+            using var uow = _db.GetDbContext();
+            _overrides = uow._context.DiscordPermOverrides
+                .AsNoTracking()
+                .AsEnumerable()
+                .ToDictionary(o => (o.GuildId ?? 0, o.Command), o => o)
+                .ToConcurrent();
         }
         
         public bool TryGetOverrides(ulong guildId, string commandName, out GuildPerm? perm)
         {
             commandName = commandName.ToLowerInvariant();
-            using (var uow = _db.GetDbContext())
+            if (_overrides.TryGetValue((guildId, commandName), out var dpo))
             {
-                perm = uow._context
-                    .Set<DiscordPermOverride>()
-                    .AsNoTracking()
-                    .AsQueryable()
-                    .FirstOrDefault(x => x.GuildId == guildId && x.Command == commandName)
-                    ?.Perm;
-
-                if (perm is null)
-                    return false;
-
+                perm = dpo.Perm;
                 return true;
             }
+
+            perm = null;
+            return false;
         }
 
         public Task<PreconditionResult> ExecuteOverrides(ICommandContext ctx, CommandInfo command,
@@ -64,7 +68,7 @@ namespace NadekoBot.Modules.Administration.Services
                 if (over is null)
                 {
                     uow._context.Set<DiscordPermOverride>()
-                        .Add(new DiscordPermOverride()
+                        .Add(over = new DiscordPermOverride()
                         {
                             Command = commandName,
                             Perm = perm,
@@ -76,6 +80,8 @@ namespace NadekoBot.Modules.Administration.Services
                     over.Perm = perm;
                 }
 
+                _overrides[(guildId, commandName)] = over;
+
                 await uow.SaveChangesAsync();
             }
         }
@@ -84,15 +90,20 @@ namespace NadekoBot.Modules.Administration.Services
         {
             using (var uow = _db.GetDbContext())
             {
-                var over = await uow._context
+                var overrides = await uow._context
                     .Set<DiscordPermOverride>()
                     .AsQueryable()
                     .AsNoTracking()
                     .Where(x => x.GuildId == guildId)
                     .ToListAsync();
                 
-                uow._context.RemoveRange(over);
+                uow._context.RemoveRange(overrides);
                 await uow.SaveChangesAsync();
+
+                foreach (var over in overrides)
+                {
+                    _overrides.TryRemove((guildId, over.Command), out _);
+                }
             }
         }
         
@@ -110,8 +121,11 @@ namespace NadekoBot.Modules.Administration.Services
 
                 if (over is null)
                     return;
+                
                 uow._context.Remove(over);
                 await uow.SaveChangesAsync();
+
+                _overrides.TryRemove((guildId, commandName), out _);
             }
         }
 
@@ -131,7 +145,7 @@ namespace NadekoBot.Modules.Administration.Services
         public async Task<bool> TryBlockLate(DiscordSocketClient client, ICommandContext context, string moduleName,
             CommandInfo command)
         {
-            if (TryGetOverrides(context.Guild?.Id ?? 0, command.Name, out var perm))
+            if (TryGetOverrides(context.Guild?.Id ?? 0, command.Name, out var perm) && !(perm is null))
             {
                 var result = await new RequireUserPermissionAttribute((GuildPermission) perm)
                     .CheckPermissionsAsync(context, command, _services);
