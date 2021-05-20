@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,38 +24,16 @@ namespace NadekoBot.Modules.Utility
         private readonly IStatsService _stats;
         private readonly IBotCredentials _creds;
         private readonly NadekoBot _bot;
-        private readonly DbService _db;
-        private readonly IHttpClientFactory _httpFactory;
         private readonly DownloadTracker _tracker;
 
         public Utility(NadekoBot nadeko, DiscordSocketClient client,
-            IStatsService stats, IBotCredentials creds,
-            DbService db, IHttpClientFactory factory, DownloadTracker tracker)
+            IStatsService stats, IBotCredentials creds, DownloadTracker tracker)
         {
             _client = client;
             _stats = stats;
             _creds = creds;
             _bot = nadeko;
-            _db = db;
-            _httpFactory = factory;
             _tracker = tracker;
-        }
-
-        [NadekoCommand, Usage, Description, Aliases]
-        public async Task TogetherTube()
-        {
-            Uri target;
-            using (var http = _httpFactory.CreateClient())
-            using (var res = await http.GetAsync("https://togethertube.com/room/create").ConfigureAwait(false))
-            {
-                target = res.RequestMessage.RequestUri;
-            }
-
-            await ctx.Channel.EmbedAsync(new EmbedBuilder().WithOkColor()
-                .WithAuthor(eab => eab.WithIconUrl("https://togethertube.com/assets/img/favicons/favicon-32x32.png")
-                .WithName("Together Tube")
-                .WithUrl("https://togethertube.com/"))
-                .WithDescription(ctx.User.Mention + " " + GetText("togtub_room_link") + "\n" + target)).ConfigureAwait(false);
         }
 
         [NadekoCommand, Usage, Description, Aliases]
@@ -90,11 +67,15 @@ namespace NadekoBot.Modules.Utility
                                                                                  .ConfigureAwait(false);
             }
         }
-
+        
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
-        public async Task InRole([Leftover] IRole role)
+        [Priority(0)]
+        public async Task InRole(int page, [Leftover] IRole role)
         {
+            if (--page < 0)
+                return;
+            
             await Context.Channel.TriggerTypingAsync().ConfigureAwait(false);
             await _tracker.EnsureUsersDownloadedAsync(ctx.Guild).ConfigureAwait(false);
 
@@ -104,13 +85,19 @@ namespace NadekoBot.Modules.Utility
                 .Select(u => u.ToString())
                 .ToArray();
 
-            await ctx.SendPaginatedConfirmAsync(0, (cur) =>
+            await ctx.SendPaginatedConfirmAsync(page, (cur) =>
             {
                 return new EmbedBuilder().WithOkColor()
                     .WithTitle(Format.Bold(GetText("inrole_list", Format.Bold(role.Name))) + $" - {roleUsers.Length}")
                     .WithDescription(string.Join("\n", roleUsers.Skip(cur * 20).Take(20)));
             }, roleUsers.Length, 20).ConfigureAwait(false);
         }
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [Priority(1)]
+        public Task InRole([Leftover] IRole role)
+            => InRole(0, role);
 
         public enum MeOrBot { Me, Bot }
 
