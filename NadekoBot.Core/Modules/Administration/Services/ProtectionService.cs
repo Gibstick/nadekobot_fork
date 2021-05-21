@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -29,6 +30,13 @@ namespace NadekoBot.Modules.Administration.Services
         private readonly MuteService _mute;
         private readonly DbService _db;
         private readonly UserPunishService _punishService;
+        
+        private readonly Channel<PunishQueueItem> PunishUserQueue =
+            System.Threading.Channels.Channel.CreateUnbounded<PunishQueueItem>(new UnboundedChannelOptions()
+            {
+                SingleReader = true,
+                SingleWriter = false
+            });
 
         public ProtectionService(DiscordSocketClient client, NadekoBot bot,
             MuteService mute, DbService db, UserPunishService punishService)
@@ -61,6 +69,32 @@ namespace NadekoBot.Modules.Administration.Services
 
             bot.JoinedGuild += _bot_JoinedGuild;
             _client.LeftGuild += _client_LeftGuild;
+            
+            _ = Task.Run(RunQueue);
+        }
+
+        private async Task RunQueue()
+        {
+            while (true)
+            {
+                var item = await PunishUserQueue.Reader.ReadAsync();
+
+                var muteTime = item.MuteTime;
+                var gu = item.User;
+                try
+                {
+                    await _punishService.ApplyPunishment(gu.Guild, gu, _client.CurrentUser,
+                        item.Action, muteTime, item.RoleId, $"{item.Type} Protection");
+                }
+                catch (Exception ex)
+                {
+                    _log.Warn(ex, "Error in punish queue: {Message}", ex.Message);
+                }
+                finally
+                {
+                    await Task.Delay(1000);
+                }
+            }
         }
 
         private Task _client_LeftGuild(SocketGuild arg)
@@ -191,9 +225,13 @@ namespace NadekoBot.Modules.Administration.Services
             _log.Info($"[{pt}] - Punishing [{gus.Length}] users with [{action}] in {gus[0].Guild.Name} guild");
             foreach (var gu in gus)
             {
-                await _punishService.ApplyPunishment(gu.Guild, gu, _client.CurrentUser,
-                    action, muteTime, roleId, $"{pt} Protection");
-                await Task.Delay(1000);
+                await PunishUserQueue.Writer.WriteAsync(new PunishQueueItem()
+                {
+                    Action = action,
+                    Type = pt,
+                    User = gu,MuteTime = muteTime,
+                    RoleId = roleId
+                });
             }
             await OnAntiProtectionTriggered(action, pt, gus).ConfigureAwait(false);
         }
