@@ -3,7 +3,6 @@ using NadekoBot.Core.Services;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Utility.Common;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +21,6 @@ namespace NadekoBot.Modules.Utility.Services
                 .ToString()
                 .MapJson<ConvertUnit[]>();
 
-        private readonly Logger _log;
         private readonly Timer _currencyUpdater;
         private readonly TimeSpan _updateInterval = new TimeSpan(12, 0, 0);
         private readonly DbService _db;
@@ -32,7 +30,6 @@ namespace NadekoBot.Modules.Utility.Services
         public ConverterService(DiscordSocketClient client, DbService db,
             IDataCache cache, IHttpClientFactory factory)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _db = db;
             _cache = cache;
             _httpFactory = factory;

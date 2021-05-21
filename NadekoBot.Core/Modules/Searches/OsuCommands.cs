@@ -11,6 +11,7 @@ using NadekoBot.Common.Attributes;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Modules.Searches.Common;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace NadekoBot.Modules.Searches
 {
@@ -83,7 +84,7 @@ namespace NadekoBot.Modules.Searches
                     catch (Exception ex)
                     {
                         await ReplyErrorLocalizedAsync("osu_failed").ConfigureAwait(false);
-                        _log.Warn(ex);
+                        Log.Warning(ex, "Osu command failed");
                     }
                 }
             }

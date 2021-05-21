@@ -4,12 +4,12 @@ using NadekoBot.Common;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Core.Services
 {
@@ -19,18 +19,17 @@ namespace NadekoBot.Core.Services
 
         public ConcurrentDictionary<ulong, GreetSettings> GuildConfigsCache { get; }
         private readonly DiscordSocketClient _client;
-        private readonly Logger _log;
-
+        
         private GreetGrouper<IGuildUser> greets = new GreetGrouper<IGuildUser>();
         private GreetGrouper<IGuildUser> byes = new GreetGrouper<IGuildUser>();
         private readonly BotConfigService _bss;
         public bool GroupGreets => _bss.Data.GroupGreets;
 
-        public GreetSettingsService(DiscordSocketClient client, NadekoBot bot, DbService db, BotConfigService bss)
+        public GreetSettingsService(DiscordSocketClient client, NadekoBot bot, DbService db,
+            BotConfigService bss)
         {
             _db = db;
             _client = client;
-            _log = LogManager.GetCurrentClassLogger();
             _bss = bss;
 
             GuildConfigsCache = new ConcurrentDictionary<ulong, GreetSettings>(
@@ -144,7 +143,10 @@ namespace NadekoBot.Core.Services
                         toDelete.DeleteAfter(conf.AutoDeleteByeMessagesTimer);
                     }
                 }
-                catch (Exception ex) { _log.Warn(ex); }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Error embeding bye message");
+                }
             }
             else
             {
@@ -159,7 +161,10 @@ namespace NadekoBot.Core.Services
                         toDelete.DeleteAfter(conf.AutoDeleteByeMessagesTimer);
                     }
                 }
-                catch (Exception ex) { _log.Warn(ex); }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Error sending bye message");
+                }
             }
         }
         
@@ -191,7 +196,7 @@ namespace NadekoBot.Core.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex);
+                    Log.Warning(ex, "Error embeding greet message");
                 }
             }
             else
@@ -209,7 +214,7 @@ namespace NadekoBot.Core.Services
                     }
                     catch (Exception ex)
                     {
-                        _log.Warn(ex);
+                        Log.Warning(ex, "Error sending greet message");
                     }
                 }
             }

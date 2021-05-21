@@ -8,7 +8,6 @@ using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Core.Services.Database.Repositories;
 using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
-using NLog;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -33,7 +32,6 @@ namespace NadekoBot.Modules.Gambling.Services
         private readonly IBotStrings _strings;
         private readonly IImageCache _images;
         private readonly FontProvider _fonts;
-        private readonly Logger _log;
         private readonly ICurrencyService _cs;
         private readonly CommandHandler _cmdHandler;
         private readonly NadekoRandom _rng;
@@ -53,7 +51,6 @@ namespace NadekoBot.Modules.Gambling.Services
             _strings = strings;
             _images = cache.LocalImages;
             _fonts = fonts;
-            _log = LogManager.GetCurrentClassLogger();
             _cs = cs;
             _cmdHandler = cmdHandler;
             _rng = new NadekoRandom();

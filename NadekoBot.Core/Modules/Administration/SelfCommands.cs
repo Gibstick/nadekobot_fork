@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using NadekoBot.Core.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -351,7 +352,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (RateLimitedException)
                 {
-                    _log.Warn("You've been ratelimited. Wait 2 hours to change your name.");
+                    Log.Warning("You've been ratelimited. Wait 2 hours to change your name.");
                 }
 
                 await ReplyConfirmLocalizedAsync("bot_name", Format.Bold(newName)).ConfigureAwait(false);

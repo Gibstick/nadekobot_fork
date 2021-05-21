@@ -4,12 +4,12 @@ using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Utility.Common;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Modules.Utility.Services
 {
@@ -17,7 +17,6 @@ namespace NadekoBot.Modules.Utility.Services
     {
         private readonly DbService _db;
         private readonly IBotCredentials _creds;
-        private readonly Logger _log;
         private readonly NadekoBot _bot;
         private readonly DiscordSocketClient _client;
 
@@ -27,8 +26,7 @@ namespace NadekoBot.Modules.Utility.Services
         public MessageRepeaterService(NadekoBot bot, DiscordSocketClient client, DbService db, IBotCredentials creds)
         {
             _db = db;
-            _creds = creds;
-            _log = LogManager.GetCurrentClassLogger();
+            _creds = creds; 
             _bot = bot;
             _client = client;
             var _ = LoadRepeaters();
@@ -40,7 +38,7 @@ namespace NadekoBot.Modules.Utility.Services
 #if GLOBAL_NADEKO
             await Task.Delay(30000);
 #endif
-            _log.Info("Loading message repeaters on shard {ShardId}.", _client.ShardId);
+            Log.Information("Loading message repeaters on shard {ShardId}.", _client.ShardId);
 
             var repeaters = new Dictionary<ulong, ConcurrentDictionary<int, RepeatRunner>>();
             foreach (var gc in _bot.AllGuildConfigs)
@@ -54,7 +52,7 @@ namespace NadekoBot.Modules.Utility.Services
                     var guild = _client.GetGuild(gc.GuildId);
                     if (guild is null)
                     {
-                        _log.Info("Unable to find guild {GuildId} for message repeaters.", gc.GuildId);
+                        Log.Information("Unable to find guild {GuildId} for message repeaters.", gc.GuildId);
                         continue;
                     }
 
@@ -69,8 +67,7 @@ namespace NadekoBot.Modules.Utility.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Error("Failed to load repeaters on Guild {0}.", gc.GuildId);
-                    _log.Error(ex);
+                    Log.Error(ex, "Failed to load repeaters on Guild {0}.", gc.GuildId);
                 }
             }
 

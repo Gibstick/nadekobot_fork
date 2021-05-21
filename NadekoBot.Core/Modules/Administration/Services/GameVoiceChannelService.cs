@@ -5,7 +5,7 @@ using Discord.WebSocket;
 using NadekoBot.Common.Collections;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
-using NLog;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
@@ -13,13 +13,11 @@ namespace NadekoBot.Modules.Administration.Services
     {
         public ConcurrentHashSet<ulong> GameVoiceChannels { get; } = new ConcurrentHashSet<ulong>();
 
-        private readonly Logger _log;
         private readonly DbService _db;
         private readonly DiscordSocketClient _client;
 
         public GameVoiceChannelService(DiscordSocketClient client, DbService db, NadekoBot bot)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _db = db;
             _client = client;
 
@@ -54,7 +52,7 @@ namespace NadekoBot.Modules.Administration.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex);
+                    Log.Warning(ex, "Error running GuildMemberUpdated in gvc");
                 }
             });
             return Task.CompletedTask;
@@ -108,7 +106,7 @@ namespace NadekoBot.Modules.Administration.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex);
+                    Log.Warning(ex, "Error running VoiceStateUpdate in gvc");
                 }
             });
 

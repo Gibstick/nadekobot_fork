@@ -6,18 +6,17 @@ using Discord.WebSocket;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NLog;
 using NadekoBot.Modules.Music.Services;
 using Discord;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
     public class PlayingRotateService : INService
     {
         private readonly Timer _t;
-        private readonly Logger _log;
         private readonly BotConfigService _bss;
         private readonly Replacer _rep;
         private readonly DbService _db;
@@ -33,7 +32,6 @@ namespace NadekoBot.Modules.Administration.Services
         {
             _db = db;
             _bot = bot;
-            _log = LogManager.GetCurrentClassLogger();
             _bss = bss;
 
             if (client.ShardId == 0)
@@ -76,7 +74,7 @@ namespace NadekoBot.Modules.Administration.Services
             }
             catch (Exception ex)
             {
-                _log.Warn("Rotating playing status errored.\n" + ex);
+                Log.Warning("Rotating playing status errored.\n" + ex);
             }
         }
 

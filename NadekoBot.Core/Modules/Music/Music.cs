@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Modules.Music
 {
@@ -484,16 +485,16 @@ namespace NadekoBot.Modules.Music
                         }
                     }
                 }
-
-                if (!success)
-                    await ReplyErrorLocalizedAsync("playlist_delete_fail").ConfigureAwait(false);
-                else
-                    await ReplyConfirmLocalizedAsync("playlist_deleted").ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error deleting playlist");
             }
+
+            if (!success)
+                await ReplyErrorLocalizedAsync("playlist_delete_fail").ConfigureAwait(false);
+            else
+                await ReplyConfirmLocalizedAsync("playlist_deleted").ConfigureAwait(false);
         }
 
         [NadekoCommand, Usage, Description, Aliases]
@@ -581,7 +582,16 @@ namespace NadekoBot.Modules.Music
                     return;
                 }
                 IUserMessage msg = null;
-                try { msg = await ctx.Channel.SendMessageAsync(GetText("attempting_to_queue", Format.Bold(mpl.Songs.Count.ToString()))).ConfigureAwait(false); } catch (Exception ex) { _log.Warn(ex); }
+                try
+                {
+                    msg = await ctx.Channel
+                        .SendMessageAsync(GetText("attempting_to_queue", Format.Bold(mpl.Songs.Count.ToString())))
+                        .ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                }
+
                 foreach (var item in mpl.Songs)
                 {
                     try
@@ -669,14 +679,13 @@ namespace NadekoBot.Modules.Music
                 {
                     try
                     {
-                        await Task.Yield();
                         var sinfo = await svideo.GetSongInfo().ConfigureAwait(false);
                         sinfo.QueuerName = ctx.User.ToString();
                         await InternalQueue(mp, sinfo, true).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
-                        _log.Warn(ex);
+                        Log.Warning(ex, "Error queueing soundcloud song: {Title}", svideo.Title);
                         break;
                     }
                 }
@@ -732,7 +741,7 @@ namespace NadekoBot.Modules.Music
             }
             catch (Exception ex)
             {
-                _log.Warn(ex.Message);
+                Log.Warning(ex.Message);
             }
 
             if (plId == null)
@@ -803,7 +812,6 @@ namespace NadekoBot.Modules.Music
             {
                 try
                 {
-                    await Task.Yield();
                     var song = await _service.ResolveSong(file.FullName, ctx.User.ToString(), MusicType.Local).ConfigureAwait(false);
                     await InternalQueue(mp, song, true).ConfigureAwait(false);
                 }
@@ -813,7 +821,7 @@ namespace NadekoBot.Modules.Music
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex);
+                    Log.Warning(ex, "Error resolving local song {FileName}", file);
                     break;
                 }
             }

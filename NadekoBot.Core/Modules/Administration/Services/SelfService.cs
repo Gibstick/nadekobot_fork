@@ -6,7 +6,6 @@ using Discord.WebSocket;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
-using NLog;
 using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +17,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System;
 using System.Net.Http;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
@@ -26,7 +26,6 @@ namespace NadekoBot.Modules.Administration.Services
         private readonly ConnectionMultiplexer _redis;
         private readonly CommandHandler _cmdHandler;
         private readonly DbService _db;
-        private readonly Logger _log;
         private readonly IBotStrings _strings;
         private readonly DiscordSocketClient _client;
 
@@ -50,7 +49,6 @@ namespace NadekoBot.Modules.Administration.Services
             _redis = cache.Redis;
             _cmdHandler = cmdHandler;
             _db = db;
-            _log = LogManager.GetCurrentClassLogger();
             _strings = strings;
             _client = client;
             _creds = creds;
@@ -84,12 +82,12 @@ namespace NadekoBot.Modules.Administration.Services
                     if (server.OwnerId != _client.CurrentUser.Id)
                     {
                         await server.LeaveAsync().ConfigureAwait(false);
-                        _log.Info($"Left server {server.Name} [{server.Id}]");
+                        Log.Information($"Left server {server.Name} [{server.Id}]");
                     }
                     else
                     {
                         await server.DeleteAsync().ConfigureAwait(false);
-                        _log.Info($"Deleted server {server.Name} [{server.Id}]");
+                        Log.Information($"Deleted server {server.Name} [{server.Id}]");
                     }
                 }
                 catch
@@ -157,7 +155,7 @@ namespace NadekoBot.Modules.Administration.Services
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error in SelfService ExecuteCommand");
             }
         }
 
@@ -218,10 +216,10 @@ namespace NadekoBot.Modules.Administration.Services
                 .ToImmutableDictionary();
 
             if (!ownerChannels.Any())
-                _log.Warn(
+                Log.Warning(
                     "No owner channels created! Make sure you've specified the correct OwnerId in the credentials.json file and invited the bot to a Discord server.");
             else
-                _log.Info($"Created {ownerChannels.Count} out of {_creds.OwnerIds.Length} owner message channels.");
+                Log.Information($"Created {ownerChannels.Count} out of {_creds.OwnerIds.Length} owner message channels.");
         }
 
         public Task LeaveGuild(string guildStr)
@@ -261,7 +259,7 @@ namespace NadekoBot.Modules.Administration.Services
                         }
                         catch
                         {
-                            _log.Warn("Can't contact owner with id {0}", ownerCh.Recipient.Id);
+                            Log.Warning("Can't contact owner with id {0}", ownerCh.Recipient.Id);
                         }
                     }
                 }

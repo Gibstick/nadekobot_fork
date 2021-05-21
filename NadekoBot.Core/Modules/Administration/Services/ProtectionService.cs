@@ -8,9 +8,9 @@ using Discord.WebSocket;
 using NadekoBot.Modules.Administration.Common;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NLog;
 using NadekoBot.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
@@ -25,7 +25,6 @@ namespace NadekoBot.Modules.Administration.Services
         public event Func<PunishmentAction, ProtectionType, IGuildUser[], Task> OnAntiProtectionTriggered
             = delegate { return Task.CompletedTask; };
 
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly MuteService _mute;
         private readonly DbService _db;
@@ -40,8 +39,7 @@ namespace NadekoBot.Modules.Administration.Services
 
         public ProtectionService(DiscordSocketClient client, NadekoBot bot,
             MuteService mute, DbService db, UserPunishService punishService)
-        {
-            _log = LogManager.GetCurrentClassLogger();
+        { 
             _client = client;
             _mute = mute;
             _db = db;
@@ -88,7 +86,7 @@ namespace NadekoBot.Modules.Administration.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex, "Error in punish queue: {Message}", ex.Message);
+                    Log.Warning(ex, "Error in punish queue: {Message}", ex.Message);
                 }
                 finally
                 {
@@ -222,7 +220,7 @@ namespace NadekoBot.Modules.Administration.Services
         private async Task PunishUsers(PunishmentAction action, ProtectionType pt, int muteTime, ulong? roleId,
             params IGuildUser[] gus)
         {
-            _log.Info($"[{pt}] - Punishing [{gus.Length}] users with [{action}] in {gus[0].Guild.Name} guild");
+            Log.Information($"[{pt}] - Punishing [{gus.Length}] users with [{action}] in {gus[0].Guild.Name} guild");
             foreach (var gu in gus)
             {
                 await PunishUserQueue.Writer.WriteAsync(new PunishQueueItem()

@@ -8,15 +8,14 @@ using NadekoBot.Common.Collections;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
-using NLog;
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Core.Services.Database.Models;
+using Serilog;
 
 namespace NadekoBot.Modules.Permissions.Services
 {
     public class FilterService : IEarlyBehavior, INService
     {
-        private readonly Logger _log;
         private readonly DbService _db;
 
         public ConcurrentHashSet<ulong> InviteFilteringChannels { get; }
@@ -74,9 +73,8 @@ namespace NadekoBot.Modules.Permissions.Services
             return words;
         }
 
-        public FilterService(DiscordSocketClient client, NadekoBot bot, DbService db)
+        public FilterService(DiscordSocketClient client, DbService db)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _db = db;
 
             using(var uow = db.GetDbContext())
@@ -153,7 +151,7 @@ namespace NadekoBot.Modules.Permissions.Services
                         }
                         catch (HttpException ex)
                         {
-                            _log.Warn("I do not have permission to filter words in channel with id " + usrMsg.Channel.Id, ex);
+                            Log.Warning("I do not have permission to filter words in channel with id " + usrMsg.Channel.Id, ex);
                         }
                         return true;
                     }
@@ -180,7 +178,7 @@ namespace NadekoBot.Modules.Permissions.Services
                 }
                 catch (HttpException ex)
                 {
-                    _log.Warn("I do not have permission to filter invites in channel with id " + usrMsg.Channel.Id, ex);
+                    Log.Warning("I do not have permission to filter invites in channel with id " + usrMsg.Channel.Id, ex);
                     return true;
                 }
             }
@@ -205,7 +203,7 @@ namespace NadekoBot.Modules.Permissions.Services
                 }
                 catch (HttpException ex)
                 {
-                    _log.Warn("I do not have permission to filter links in channel with id " + usrMsg.Channel.Id, ex);
+                    Log.Warning("I do not have permission to filter links in channel with id " + usrMsg.Channel.Id, ex);
                     return true;
                 }
             }

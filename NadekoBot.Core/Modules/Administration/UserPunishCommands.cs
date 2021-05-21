@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using NadekoBot.Modules.Permissions.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -78,7 +79,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex.Message);
+                    Log.Warning(ex.Message);
                     var errorEmbed = new EmbedBuilder()
                         .WithErrorColor()
                         .WithDescription(GetText("cant_apply_punishment"));

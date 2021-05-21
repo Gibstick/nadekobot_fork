@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NadekoBot.Core.Common;
+using Serilog;
 
 namespace NadekoBot.Modules.Utility
 {
@@ -46,7 +47,7 @@ namespace NadekoBot.Modules.Utility
 
             if (!(ctx.Guild is SocketGuild socketGuild))
             {
-                _log.Warn("Can't cast guild to socket guild.");
+                Log.Warning("Can't cast guild to socket guild.");
                 return;
             }
             var rng = new NadekoRandom();

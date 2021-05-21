@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using NadekoBot.Core.Services;
 using NadekoBot.Modules.Gambling.Common;
-using NLog;
+using Serilog;
 
 namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
 {
@@ -22,8 +22,7 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
         private Deck Deck { get; set; } = new QuadDeck();
         public Dealer Dealer { get; set; }
 
-        private readonly Logger _log;
-
+        
         public List<User> Players { get; set; } = new List<User>();
         public GameState State { get; set; } = GameState.Starting;
         public User CurrentUser { get; private set; }
@@ -42,7 +41,6 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
             _cs = cs;
             _db = db;
             Dealer = new Dealer();
-            _log = LogManager.GetCurrentClassLogger();
         }
 
         public void Start()
@@ -88,22 +86,21 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
                 {
                     while (!usr.Done)
                     {
-                        _log.Info($"Waiting for {usr.DiscordUser}'s move");
+                        Log.Information($"Waiting for {usr.DiscordUser}'s move");
                         await PromptUserMove(usr).ConfigureAwait(false);
                     }
                 }
                 await PrintState().ConfigureAwait(false);
                 State = GameState.Ended;
                 await Task.Delay(2500).ConfigureAwait(false);
-                _log.Info("Dealer moves");
+                Log.Information("Dealer moves");
                 await DealerMoves().ConfigureAwait(false);
                 await PrintState().ConfigureAwait(false);
                 var _ = GameEnded?.Invoke(this);
             }
             catch (Exception ex)
             {
-                _log.Error("REPORT THE MESSAGE BELOW IN #NadekoLog SERVER PLEASE");
-                _log.Warn(ex);
+                Log.Error(ex, "REPORT THE MESSAGE BELOW IN #NadekoLog SERVER PLEASE");
                 State = GameState.Ended;
                 var _ = GameEnded?.Invoke(this);
             }

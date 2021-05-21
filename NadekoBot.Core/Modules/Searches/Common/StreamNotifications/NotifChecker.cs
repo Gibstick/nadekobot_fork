@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NadekoBot.Core.Modules.Searches.Common.StreamNotifications.Providers;
 using NadekoBot.Core.Services.Database.Models;
 using Newtonsoft.Json;
-using NLog;
+using Serilog;
 using StackExchange.Redis;
 
 #nullable enable
@@ -22,14 +22,11 @@ namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications
 
         private readonly Dictionary<FollowedStream.FType, Provider> _streamProviders;
         private readonly HashSet<(FollowedStream.FType, string)> _offlineBuffer;
-        
-        private readonly Logger _log;
 
         public NotifChecker(IHttpClientFactory httpClientFactory, ConnectionMultiplexer multi, string uniqueCacheKey,
             bool isMaster)
         {
             _multi = multi;
-            _log = LogManager.GetCurrentClassLogger();
             _key = $"{uniqueCacheKey}_followed_streams_data";
             _streamProviders = new Dictionary<FollowedStream.FType, Provider>()
             {
@@ -156,8 +153,7 @@ namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications
                 }
                 catch (Exception ex)
                 {
-                    _log.Error($"Error getting stream notifications: {ex.Message}");
-                    _log.Error(ex.ToString());
+                    Log.Error(ex, $"Error getting stream notifications: {ex.Message}");
                 }
             }
         });

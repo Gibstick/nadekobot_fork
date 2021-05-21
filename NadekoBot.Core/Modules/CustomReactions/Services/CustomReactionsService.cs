@@ -8,7 +8,6 @@ using NadekoBot.Extensions;
 using NadekoBot.Modules.CustomReactions.Extensions;
 using NadekoBot.Modules.Permissions.Common;
 using NadekoBot.Modules.Permissions.Services;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,6 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Core.Common;
+using Serilog;
 
 namespace NadekoBot.Modules.CustomReactions.Services
 {
@@ -50,7 +50,6 @@ namespace NadekoBot.Modules.CustomReactions.Services
         public int Priority => -1;
         public ModuleBehaviorType BehaviorType => ModuleBehaviorType.Executor;
 
-        private readonly Logger _log;
         private readonly DbService _db;
         private readonly DiscordSocketClient _client;
         private readonly PermissionService _perms;
@@ -65,7 +64,6 @@ namespace NadekoBot.Modules.CustomReactions.Services
             DiscordSocketClient client, CommandHandler cmd, GlobalPermissionService gperm,
             IPubSub pubSub)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _db = db;
             _client = client;
             _perms = perms;
@@ -409,7 +407,7 @@ namespace NadekoBot.Modules.CustomReactions.Services
                             {
                             }
 
-                            _log.Info(returnMsg);
+                            Log.Information(returnMsg);
                         }
 
                         return true;
@@ -427,7 +425,7 @@ namespace NadekoBot.Modules.CustomReactions.Services
                     }
                     catch
                     {
-                        _log.Warn("Unable to add reactions to message {Message} in server {GuildId}", sentMsg.Id,
+                        Log.Warning("Unable to add reactions to message {Message} in server {GuildId}", sentMsg.Id,
                             cr.GuildId);
                         break;
                     }
@@ -450,7 +448,7 @@ namespace NadekoBot.Modules.CustomReactions.Services
             }
             catch (Exception ex)
             {
-                _log.Warn(ex.Message);
+                Log.Warning(ex.Message);
             }
 
             return false;

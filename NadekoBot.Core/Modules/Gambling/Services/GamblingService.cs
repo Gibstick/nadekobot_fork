@@ -4,13 +4,13 @@ using NadekoBot.Core.Services;
 using NadekoBot.Modules.Gambling.Common.Connect4;
 using NadekoBot.Modules.Gambling.Common.WheelOfFortune;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Core.Modules.Gambling.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Gambling.Services
 {
@@ -19,7 +19,6 @@ namespace NadekoBot.Modules.Gambling.Services
         private readonly DbService _db;
         private readonly ICurrencyService _cs;
         private readonly NadekoBot _bot;
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly IDataCache _cache;
         private readonly GamblingConfigService _gss;
@@ -35,7 +34,6 @@ namespace NadekoBot.Modules.Gambling.Services
             _db = db;
             _cs = cs;
             _bot = bot;
-            _log = LogManager.GetCurrentClassLogger();
             _client = client;
             _cache = cache;
             _gss = gss;
@@ -56,7 +54,7 @@ namespace NadekoBot.Modules.Gambling.Services
                         if (DateTime.UtcNow - lastCurrencyDecay < TimeSpan.FromHours(config.Decay.HourInterval))
                            return;
                         
-                         _log.Info($"Decaying users' currency - decay: {config.Decay.Percent * 100}% " +
+                         Log.Information($"Decaying users' currency - decay: {config.Decay.Percent * 100}% " +
                                    $"| max: {maxDecay} " +
                                    $"| threshold: {config.Decay.MinThreshold}");
                          
@@ -104,7 +102,7 @@ WHERE CurrencyAmount > {config.Decay.MinThreshold} AND UserId!={_client.CurrentU
 
             //    uow._context.Set<Stake>().RemoveRange(stakes);
             //    uow.Complete();
-            //    _log.Info("Refunded {0} users' stakes.", stakes.Length);
+            //    Log.Information("Refunded {0} users' stakes.", stakes.Length);
             //}
         }
 

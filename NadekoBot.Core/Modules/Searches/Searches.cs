@@ -27,6 +27,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NadekoBot.Modules.Administration.Services;
+using Serilog;
 using Configuration = AngleSharp.Configuration;
 
 namespace NadekoBot.Modules.Searches
@@ -84,14 +85,7 @@ namespace NadekoBot.Modules.Searches
             if (CREmbed.TryParse(message, out var embedData))
             {
                 rep.Replace(embedData);
-                try
-                {
-                    await channel.EmbedAsync(embedData, sanitizeAll: !((IGuildUser)Context.User).GuildPermissions.MentionEveryone).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    _log.Warn(ex);
-                }
+                await channel.EmbedAsync(embedData, sanitizeAll: !((IGuildUser)Context.User).GuildPermissions.MentionEveryone).ConfigureAwait(false);
             }
             else
             {
@@ -290,7 +284,7 @@ namespace NadekoBot.Modules.Searches
             }
             catch
             {
-                _log.Warn("Falling back to Imgur");
+                Log.Warning("Falling back to Imgur");
 
                 var fullQueryLink = $"http://imgur.com/search?q={ query }";
                 var config = Configuration.Default.WithDefaultLoader();
@@ -375,7 +369,7 @@ namespace NadekoBot.Modules.Searches
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error shortening a link: {Message}", ex.Message);
+                    Log.Error(ex, "Error shortening a link: {Message}", ex.Message);
                     return;
                 }
             }
@@ -572,7 +566,7 @@ namespace NadekoBot.Modules.Searches
 
                     if (!datas.Any())
                     {
-                        _log.Warn("Definition not found: {Word}", word);
+                        Log.Warning("Definition not found: {Word}", word);
                         await ReplyErrorLocalizedAsync("define_unknown").ConfigureAwait(false);
                     }
 
@@ -588,7 +582,7 @@ namespace NadekoBot.Modules.Searches
                         WordType: string.IsNullOrWhiteSpace(data.PartOfSpeech) ? "-" : data.PartOfSpeech
                     )).ToList();
 
-                    _log.Info($"Sending {col.Count} definition for: {word}");
+                    Log.Information($"Sending {col.Count} definition for: {word}");
 
                     await ctx.SendPaginatedConfirmAsync(0, page =>
                     {
@@ -608,7 +602,7 @@ namespace NadekoBot.Modules.Searches
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error retrieving definition data for: {Word}", word);
+                    Log.Error(ex, "Error retrieving definition data for: {Word}", word);
                 }
             }
         }

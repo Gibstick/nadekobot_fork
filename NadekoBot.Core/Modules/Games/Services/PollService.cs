@@ -7,10 +7,10 @@ using Discord.WebSocket;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Modules.Games.Common;
 using NadekoBot.Core.Services;
-using NLog;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Common.Collections;
 using NadekoBot.Extensions;
+using Serilog;
 
 namespace NadekoBot.Modules.Games.Services
 {
@@ -21,7 +21,6 @@ namespace NadekoBot.Modules.Games.Services
         public int Priority => -5;
         public ModuleBehaviorType BehaviorType => ModuleBehaviorType.Executor;
 
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly IBotStrings _strings;
         private readonly DbService _db;
@@ -30,7 +29,6 @@ namespace NadekoBot.Modules.Games.Services
         public PollService(DiscordSocketClient client, IBotStrings strings, DbService db,
             IBotStrings strs)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _client = client;
             _strings = strings;
             _db = db;
@@ -125,7 +123,7 @@ namespace NadekoBot.Modules.Games.Services
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error voting");
             }
 
             return false;
