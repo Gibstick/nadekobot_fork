@@ -30,11 +30,6 @@ namespace NadekoBot.Modules.Utility
             }
 
             [NadekoCommand, Usage, Description, Aliases]
-            [Priority(1)]
-            public Task Convert(string origin, string target, ShmartNumber value)
-                => Convert(origin, target, (decimal)value.Value);
-
-            [NadekoCommand, Usage, Description, Aliases]
             [Priority(0)]
             public async Task Convert(string origin, string target, decimal value)
             {
