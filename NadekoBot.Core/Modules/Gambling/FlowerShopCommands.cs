@@ -41,10 +41,8 @@ namespace NadekoBot.Modules.Gambling
                 _db = db;
                 _cs = cs;
             }
-
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.Guild)]
-            public Task ShopInternalAsync(int page = 0)
+            
+            private Task ShopInternalAsync(int page = 0)
             {
                 if (page < 0)
                     throw new ArgumentOutOfRangeException(nameof(page));
