@@ -24,6 +24,7 @@ using Discord.Net;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Common.Configs;
+using NadekoBot.Core.Modules.Gambling.Services;
 using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.CustomReactions.Services;
 using Serilog;
@@ -159,7 +160,9 @@ namespace NadekoBot
                 .AddBotStringsServices()
                 .AddConfigServices()
                 .AddConfigMigrators()
-                .AddMemoryCache();
+                .AddMemoryCache()
+                .AddSingleton<IShopService, ShopService>()
+                ;
 
             s.AddHttpClient();
             s.AddHttpClient("memelist").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler

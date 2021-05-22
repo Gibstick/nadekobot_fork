@@ -7,7 +7,7 @@ using NadekoBot.Core.Modules.Gambling.Services;
 
 namespace NadekoBot.Core.Modules.Gambling.Common
 {
-    public abstract class GamblingModule<TService> : NadekoModule<TService> where TService : INService
+    public abstract class GamblingModule<TService> : NadekoModule<TService>
     {
         private readonly Lazy<GamblingConfig> _lazyConfig;
         protected GamblingConfig _config => _lazyConfig.Value;
@@ -59,7 +59,7 @@ namespace NadekoBot.Core.Modules.Gambling.Common
         }
     }
 
-    public abstract class GamblingSubmodule<TService> : GamblingModule<TService> where TService : INService
+    public abstract class GamblingSubmodule<TService> : GamblingModule<TService>
     {
         protected GamblingSubmodule(GamblingConfigService gamblingConfService) : base(gamblingConfService)
         {

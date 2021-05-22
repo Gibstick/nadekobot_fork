@@ -156,6 +156,9 @@ namespace NadekoBot.Extensions
         public static Task OkAsync(this ICommandContext ctx)
             => ctx.Message.AddReactionAsync(new Emoji("✅"));
         
+        public static Task ErrorAsync(this ICommandContext ctx)
+            => ctx.Message.AddReactionAsync(new Emoji("❌"));
+        
         public static Task WarningAsync(this ICommandContext ctx)
             => ctx.Message.AddReactionAsync(new Emoji("⚠️"));
     }
