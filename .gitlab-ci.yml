@@ -3,6 +3,7 @@ image: microsoft/dotnet:latest
 
 stages:
   - build
+  - test
 
 variables:
   project: "NadekoBot"
@@ -17,3 +18,11 @@ build:
   script:
     - "cd $build_path"
     - "dotnet build -c Release"
+
+test:
+  stage: test
+  varables:
+    tests_path: "Nadeko.Tests"
+  script:
+    - "cd $tests_path"
+    - "dotnet test"
