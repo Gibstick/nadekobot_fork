@@ -21,7 +21,7 @@ build:
 
 test:
   stage: test
-  varables:
+  variables:
     tests_path: "Nadeko.Tests"
   script:
     - "cd $tests_path"
