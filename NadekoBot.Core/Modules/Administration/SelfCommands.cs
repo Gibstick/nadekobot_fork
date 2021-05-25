@@ -352,7 +352,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (RateLimitedException)
                 {
-                    Log.Warning("You've been ratelimited. Wait 2 hours to change your name.");
+                    Log.Warning("You've been ratelimited. Wait 2 hours to change your name");
                 }
 
                 await ReplyConfirmLocalizedAsync("bot_name", Format.Bold(newName)).ConfigureAwait(false);
@@ -514,7 +514,6 @@ namespace NadekoBot.Modules.Administration
             [OwnerOnly]
             public async Task StringsReload()
             {
-                // todo add publisher to this. something like v3 eventpusher
                 _strings.Reload();
                 await ReplyConfirmLocalizedAsync("bot_strings_reloaded").ConfigureAwait(false);
             }

@@ -28,7 +28,7 @@ namespace NadekoBot.Modules.Administration.Services
         }
 
         public PlayingRotateService(DiscordSocketClient client, DbService db, NadekoBot bot,
-            MusicService music, BotConfigService bss)
+            BotConfigService bss, IMusicService music)
         {
             _db = db;
             _bot = bot;
@@ -38,7 +38,7 @@ namespace NadekoBot.Modules.Administration.Services
             {
                 _rep = new ReplacementBuilder()
                     .WithClient(client)
-                    .WithMusic(music)
+                    // .WithMusic(music)
                     .Build();
 
                 _t = new Timer(RotatingStatuses, new TimerState(), TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
@@ -74,7 +74,7 @@ namespace NadekoBot.Modules.Administration.Services
             }
             catch (Exception ex)
             {
-                Log.Warning("Rotating playing status errored.\n" + ex);
+                Log.Warning(ex, "Rotating playing status errored: {ErrorMessage}", ex.Message);
             }
         }
 

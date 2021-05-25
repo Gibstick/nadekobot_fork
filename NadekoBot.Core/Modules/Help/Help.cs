@@ -383,7 +383,6 @@ namespace NadekoBot.Modules.Help
 
     }
 
-    // todo 3.3 / 3.4 add versions to the cmds.json
     internal class CommandJsonObject
     {
         public string[] Aliases { get; set; }

@@ -35,7 +35,7 @@ namespace NadekoBot.Core.Services
         {
             var ok = _data.Color.Ok;
             var error = _data.Color.Error;
-            // todo remove these static props once cleanup is done
+            // todo future remove these static props once cleanup is done
             NadekoBot.OkColor = new Color(ok.R, ok.G, ok.B);
             NadekoBot.ErrorColor = new Color(error.R, error.G, error.B);
         }

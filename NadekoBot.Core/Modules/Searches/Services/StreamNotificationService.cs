@@ -326,7 +326,7 @@ namespace NadekoBot.Modules.Searches.Services
 
         public int ClearAllStreams(ulong guildId)
         {
-            // todo clear streams
+            // todo future clear streams
             int count;
             using (var uow = _db.GetDbContext())
             {

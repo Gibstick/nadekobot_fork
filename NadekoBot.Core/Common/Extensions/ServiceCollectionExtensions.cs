@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using NadekoBot.Core.Modules.Music;
 using NadekoBot.Core.Services;
 using NadekoBot.Modules.Administration.Services;
+using NadekoBot.Modules.Music.Resolvers;
+using NadekoBot.Modules.Music.Services;
 
 namespace NadekoBot.Extensions
 {
@@ -33,6 +36,16 @@ namespace NadekoBot.Extensions
 
         public static IServiceCollection AddConfigMigrators(this IServiceCollection services)
             => services.AddSealedSubclassesOf(typeof(IConfigMigrator));
+
+        public static IServiceCollection AddMusic(this IServiceCollection services)
+            => services
+                .AddSingleton<IMusicService, MusicService>()
+                .AddSingleton<ITrackResolveProvider, TrackResolveProvider>()
+                .AddSingleton<IYoutubeResolver, YtdlYoutubeResolver>()
+                .AddSingleton<ISoundcloudResolver, SoundcloudResolver>()
+                .AddSingleton<ILocalTrackResolver, LocalTrackResolver>()
+                .AddSingleton<IRadioResolver, RadioResolver>()
+                .AddSingleton<ITrackCacher, RedisTrackCacher>();
         
         // consider using scrutor, because slightly different versions
         // of this might be needed in several different places
