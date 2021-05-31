@@ -4,16 +4,41 @@ repo_url: 'https://gitlab.com/kwoth/nadekobot'
 site_author: 'Kwoth'
 
 theme:
-    name: 'material'
+    name: material
+    custom_dir: docs/overrides
     palette:
-        scheme: preference
-        primary: indigo
-        accent: blue
+          - media: "(prefers-color-scheme: light)"
+            scheme: default
+            primary: blue
+            accent: light blue
+            toggle:
+                icon: material/weather-sunny
+                name: Switch to dark mode
+          - media: "(prefers-color-scheme: dark)"
+            scheme: dark
+            primary: blue
+            accent: light blue
+            toggle:
+                icon: material/weather-night
+                name: Switch to light mode
     features:
         - navigation.instant
-    icon:
-        repo: fontawesome/brands/gitlab
-    font: false
+        - navigation.expand
+        - navigation.top
+    font: 
+        text: Source Sans Pro
+        code: Source Code Pro
+    logo: assets/favicon.png
+    favicon: assets/favicon.png
+    icon: 
+        repo: custom/gitlab
+
+extra:
+  homepage: https://nadeko.bot
+
+extra_css:
+  - stylesheets/styling-overrides.css
+  - stylesheets/theme.css
 
 plugins:
     - minify:
@@ -23,6 +48,7 @@ plugins:
     - search
 
 markdown_extensions:
+    - attr_list
     - codehilite:
         guess_lang: false
     - toc:
@@ -38,6 +64,12 @@ markdown_extensions:
     - pymdownx.inlinehilite
     - pymdownx.superfences
     - pymdownx.tabbed
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
+        options:
+            custom_icons:
+                - docs/overrides/.icons
 
 nav:
     - Home: index.md
@@ -59,5 +91,5 @@ nav:
         - Config: config-guide.md
         - Bot Config: bce-guide.md
     - Contribution Guide: contribution-guide.md
-    - ❤ Donate ❤: donate.md
+    - Donate: donate.md
     - License: license.md
