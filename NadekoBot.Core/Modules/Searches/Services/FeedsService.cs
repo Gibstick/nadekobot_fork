@@ -100,7 +100,7 @@ namespace NadekoBot.Modules.Searches.Services
 
                             var gotImage = false;
                             if (feedItem.SpecificItem is MediaRssFeedItem mrfi &&
-                                (mrfi.Enclosure?.MediaType.StartsWith("image/") ?? false))
+                                (mrfi.Enclosure?.MediaType?.StartsWith("image/") ?? false))
                             {
                                 var imgUrl = mrfi.Enclosure.Url;
                                 if (!string.IsNullOrWhiteSpace(imgUrl) &&
