@@ -200,7 +200,6 @@ namespace NadekoBot.Modules.Administration
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.Administrator)]
             [OwnerOnly]
             public async Task StartupCommandRemove([Leftover] int index)
             {
