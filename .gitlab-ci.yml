@@ -20,6 +20,7 @@ build:
     - "dotnet build -c Release"
 
 test:
+  image: mcr.microsoft.com/dotnet/core/sdk:2.1
   stage: test
   variables:
     tests_path: "Nadeko.Tests"
