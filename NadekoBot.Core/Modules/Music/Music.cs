@@ -18,12 +18,10 @@ namespace NadekoBot.Core.Modules.Music
     [NoPublicBot]
     public sealed partial class Music : NadekoModule<IMusicService>
     {
-        private readonly IGoogleApiService _google;
         private readonly LogCommandService _logService;
 
-        public Music(IGoogleApiService google, LogCommandService _logService)
+        public Music(LogCommandService _logService)
         {
-            _google = google;
             this._logService = _logService;
         }
         
@@ -358,18 +356,17 @@ namespace NadekoBot.Core.Modules.Music
         public async Task QueueSearch([Leftover] string query)
         {
             _ = ctx.Channel.TriggerTypingAsync();
-            
-            var videos = (await _google.GetVideoInfosByKeywordAsync(query, 5).ConfigureAwait(false))
-                .ToArray();
 
-            if (!videos.Any())
+            var videos = await _service.SearchVideosAsync(query);
+
+            if (videos is null || videos.Count == 0)
             {
                 await ReplyErrorLocalizedAsync("song_not_found").ConfigureAwait(false);
                 return;
             }
 
             var resultsString = videos
-                .Select((x, i) => $"`{i + 1}.`\n\t{Format.Bold(x.Name)}\n\t{x.Url}")
+                .Select((x, i) => $"`{i + 1}.`\n\t{Format.Bold(x.Title)}\n\t{x.Url}")
                 .JoinWith('\n');
             
             var msg = await ctx.Channel.SendConfirmAsync(resultsString);
@@ -380,7 +377,7 @@ namespace NadekoBot.Core.Modules.Music
                 if (input == null
                     || !int.TryParse(input, out var index)
                     || (index -= 1) < 0
-                    || index >= videos.Length)
+                    || index >= videos.Count)
                 {
                     _logService.AddDeleteIgnore(msg.Id);
                     try

@@ -45,7 +45,8 @@ namespace NadekoBot.Extensions
                 .AddSingleton<ISoundcloudResolver, SoundcloudResolver>()
                 .AddSingleton<ILocalTrackResolver, LocalTrackResolver>()
                 .AddSingleton<IRadioResolver, RadioResolver>()
-                .AddSingleton<ITrackCacher, RedisTrackCacher>();
+                .AddSingleton<ITrackCacher, RedisTrackCacher>()
+                .AddSingleton<YtLoader>();
         
         // consider using scrutor, because slightly different versions
         // of this might be needed in several different places
