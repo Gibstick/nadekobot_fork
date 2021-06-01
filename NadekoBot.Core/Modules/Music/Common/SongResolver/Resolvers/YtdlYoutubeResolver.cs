@@ -99,6 +99,9 @@ namespace NadekoBot.Core.Modules.Music
         
         private YtTrackData ResolveYtdlData(string ytdlOutputString)
         {
+            if (string.IsNullOrWhiteSpace(ytdlOutputString))
+                return default;
+            
             var dataArray = ytdlOutputString.Trim().Split('\n');
 
             if (dataArray.Length < 5)

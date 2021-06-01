@@ -3,7 +3,7 @@ image: mcr.microsoft.com/dotnet/core/sdk:3.1
 
 stages:
   - build
-  - test
+  # - test
 
 variables:
   project: "NadekoBot"
@@ -19,11 +19,11 @@ build:
     - "cd $build_path"
     - "dotnet build -c Release"
 
-test:
-  image: mcr.microsoft.com/dotnet/core/sdk:2.1
-  stage: test
-  variables:
-    tests_path: "Nadeko.Tests"
-  script:
-    - "cd $tests_path"
-    - "dotnet test"
+# test:
+#   image: mcr.microsoft.com/dotnet/core/sdk:2.1
+#   stage: test
+#   variables:
+#     tests_path: "Nadeko.Tests"
+#   script:
+#     - "cd $tests_path"
+#     - "dotnet test"
