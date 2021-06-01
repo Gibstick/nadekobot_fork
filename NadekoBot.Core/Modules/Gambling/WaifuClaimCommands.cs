@@ -250,7 +250,6 @@ namespace NadekoBot.Modules.Gambling
                 
                 
                 var nobody = GetText("nobody");
-                var i = 0;
                 var itemsStr = !wi.Items.Any()
                     ? "-"
                     : string.Join("\n", wi.Items
@@ -258,7 +257,7 @@ namespace NadekoBot.Modules.Gambling
                         .OrderBy(x => waifuItems[x.ItemEmoji].Price)
                         .GroupBy(x => x.ItemEmoji)
                         .Select(x => $"{x.Key} x{x.Count(),-3}")
-                        .GroupBy(x => i++ / 2)
+                        .Chunk(2)
                         .Select(x => string.Join(" ", x)));
 
                 var embed = new EmbedBuilder()
