@@ -25,11 +25,8 @@ using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Common.Configs;
 using NadekoBot.Core.Modules.Gambling.Services;
-using NadekoBot.Core.Modules.Music;
 using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.CustomReactions.Services;
-using NadekoBot.Modules.Music.Resolvers;
-using NadekoBot.Modules.Music.Services;
 using Serilog;
 
 namespace NadekoBot
@@ -272,7 +269,7 @@ namespace NadekoBot
             }
 
             //connect
-            Log.Information("Shard {0} logging in ...", Client.ShardId);
+            Log.Information("Shard {ShardId} logging in ...", Client.ShardId);
             try
             {
                 await Client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
