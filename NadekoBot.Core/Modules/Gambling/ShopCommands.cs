@@ -20,7 +20,7 @@ namespace NadekoBot.Modules.Gambling
     public partial class Gambling
     {
         [Group]
-        public class FlowerShopCommands : GamblingSubmodule<IShopService>
+        public class ShopCommands : GamblingSubmodule<IShopService>
         {
             private readonly DbService _db;
             private readonly ICurrencyService _cs;
@@ -35,7 +35,7 @@ namespace NadekoBot.Modules.Gambling
                 List
             }
 
-            public FlowerShopCommands(DbService db, ICurrencyService cs, GamblingConfigService gamblingConf)
+            public ShopCommands(DbService db, ICurrencyService cs, GamblingConfigService gamblingConf)
                 : base(gamblingConf) 
             {
                 _db = db;
