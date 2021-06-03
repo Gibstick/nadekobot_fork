@@ -31,13 +31,13 @@ If you're unsure whether something is an issue, ask in our support server first.
 
 [Donations are welcome][donate], and we rely on your contributions to help keep the project alive.
 
-[invite]: https://invite.nadeko.bot
-[commands]: https://nadeko.bot/commands
-[windows-guide]: /guides/windows-guide/
-[linux-guide]: /guides/linux-guide/
-[macos-guide]: /guides/osx-guide/
-[from-source-guide]: /guides/from-source/
+[invite]: https://invite.nadeko.bot/
+[commands]: https://nadeko.bot/commands/
+[windows-guide]: ./guides/windows-guide.md
+[linux-guide]: ./guides/linux-guide.md
+[macos-guide]: ./guides/osx-guide.md
+[from-source-guide]: ./guides/from-source.md
 [discord-server]: https://discord.nadeko.bot/
 [gitlab]: https://gitlab.com/Kwoth/nadekobot
 [issues]: https://gitlab.com/Kwoth/nadekobot/issues
-[donate]: /donate/
+[donate]: ./donate.md
