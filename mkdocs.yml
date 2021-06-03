@@ -84,7 +84,7 @@ nav:
         - Commands List: https://nadeko.bot/commands
     - Features Explained:
         - Creating and inviting the bot: create-invite.md
-        - JSON Explanations: jsons-explained.md
+        - Credentials & API Keys: jsons-explained.md
         - Permissions System: permissions-system.md
         - Custom Reactions: custom-reactions.md
         - Placeholders: placeholders.md
