@@ -35,7 +35,6 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             return _set
                 .AsQueryable()
                 .Include(gc => gc.CommandCooldowns)
-                .Include(gc => gc.GuildRepeaters)
                 .Include(gc => gc.FollowedStreams)
                 .Include(gc => gc.StreamRole)
                 .Include(gc => gc.NsfwBlacklistedTags)

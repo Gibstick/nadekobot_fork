@@ -21,12 +21,14 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.Net;
+using LinqToDB.EntityFrameworkCore;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Common.Configs;
 using NadekoBot.Core.Modules.Gambling.Services;
 using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.CustomReactions.Services;
+using NadekoBot.Modules.Utility.Services;
 using Serilog;
 
 namespace NadekoBot
@@ -69,6 +71,7 @@ namespace NadekoBot
 
             Credentials = new BotCredentials();
             Cache = new RedisCache(Credentials, shardId);
+            LinqToDBForEFTools.Initialize();
             _db = new DbService(Credentials);
 
             if (shardId == 0)
@@ -176,6 +179,7 @@ namespace NadekoBot
 
             s.AddSingleton<IReadyExecutor>(x => x.GetService<SelfService>());
             s.AddSingleton<IReadyExecutor>(x => x.GetService<CustomReactionsService>());
+            s.AddSingleton<IReadyExecutor>(x => x.GetService<RepeaterService>());
             //initialize Services
             Services = s.BuildServiceProvider();
             var commandHandler = Services.GetService<CommandHandler>();

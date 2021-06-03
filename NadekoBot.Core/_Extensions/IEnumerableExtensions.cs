@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using Microsoft.EntityFrameworkCore.Metadata;
 using NadekoBot.Common.Collections;
 using NadekoBot.Core.Services.Database.Models;
 
