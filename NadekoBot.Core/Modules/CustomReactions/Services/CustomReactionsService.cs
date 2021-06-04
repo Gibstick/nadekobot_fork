@@ -16,6 +16,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using NadekoBot.Core.Common;
 using Serilog;
 
@@ -370,6 +371,10 @@ namespace NadekoBot.Modules.CustomReactions.Services
             if (result.Count == 0)
                 return null;
 
+            var cancelled = result.FirstOrDefault(x => x.Response == "-");
+            if (!(cancelled is null))
+                return cancelled;
+            
             return result[_rng.Next(0, result.Count)];
         }
 
@@ -378,7 +383,7 @@ namespace NadekoBot.Modules.CustomReactions.Services
             // maybe this message is a custom reaction
             var cr = TryGetCustomReaction(msg);
 
-            if (cr is null)
+            if (cr is null || cr.Response == "-")
                 return false;
             
             try
