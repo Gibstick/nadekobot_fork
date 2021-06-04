@@ -1,6 +1,23 @@
 # Changelog
 
-Experimental changelog. Mostly based on [keepachangelog](https://keepachangelog.com/en/1.0.0/) except date format.
+Experimental changelog. Mostly based on [keepachangelog](https://keepachangelog.com/en/1.0.0/) except date format. 
+
+## [Unreleased]
+
+### Added
+
+- Re-added `%music.playing%` and `%music.queued%` (#290)
+- Added `%music.servers%` which shows how many servers have a song queued up to play  
+
+ℹ️ ^ Only available to `.ropl` / `.adpl` feature atm
+
+### Changed
+
+- Using `.commands` / `.cmds` without a module will now list modules
+
+### Fixed
+
+- Fixed `.google` / `.g` command
 
 ## [2.44.3] - 04.06.2021
 
