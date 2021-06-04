@@ -6,15 +6,15 @@ using Discord.WebSocket;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NadekoBot.Modules.Music.Services;
 using Discord;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using NadekoBot.Core.Common;
 using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
-    public class PlayingRotateService : INService
+    public sealed class PlayingRotateService : INService
     {
         private readonly Timer _t;
         private readonly BotConfigService _bss;
@@ -28,7 +28,7 @@ namespace NadekoBot.Modules.Administration.Services
         }
 
         public PlayingRotateService(DiscordSocketClient client, DbService db, NadekoBot bot,
-            BotConfigService bss, IMusicService music)
+            BotConfigService bss, IEnumerable<IPlaceholderProvider> phProviders)
         {
             _db = db;
             _bot = bot;
@@ -38,7 +38,7 @@ namespace NadekoBot.Modules.Administration.Services
             {
                 _rep = new ReplacementBuilder()
                     .WithClient(client)
-                    // .WithMusic(music)
+                    .WithProviders(phProviders)
                     .Build();
 
                 _t = new Timer(RotatingStatuses, new TimerState(), TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));

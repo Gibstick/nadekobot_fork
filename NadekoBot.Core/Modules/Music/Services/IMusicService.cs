@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
+using NadekoBot.Core.Common;
 using NadekoBot.Core.Modules.Music;
 
 namespace NadekoBot.Modules.Music.Services
 {
-    public interface IMusicService
+    public interface IMusicService : IPlaceholderProvider
     {
         /// <summary>
         /// Leave voice channel in the specified guild if it's connected to one

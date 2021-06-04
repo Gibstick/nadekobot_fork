@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using NadekoBot.Core.Common;
 using NadekoBot.Core.Modules.Music;
 using NadekoBot.Core.Services;
 using NadekoBot.Modules.Administration.Services;
@@ -46,7 +47,8 @@ namespace NadekoBot.Extensions
                 .AddSingleton<ILocalTrackResolver, LocalTrackResolver>()
                 .AddSingleton<IRadioResolver, RadioResolver>()
                 .AddSingleton<ITrackCacher, RedisTrackCacher>()
-                .AddSingleton<YtLoader>();
+                .AddSingleton<YtLoader>()
+                .AddSingleton<IPlaceholderProvider>(svc => svc.GetService<IMusicService>());
         
         // consider using scrutor, because slightly different versions
         // of this might be needed in several different places
