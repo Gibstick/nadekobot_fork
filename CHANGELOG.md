@@ -18,6 +18,8 @@ Experimental changelog. Mostly based on [keepachangelog](https://keepachangelog.
 ### Fixed
 
 - Fixed `.google` / `.g` command
+- Removing last song in the queue will no longer reset queue index
+- Having `.rpl` disabled will now correctly stop after the last song, closes #292
 
 ## [2.44.3] - 04.06.2021
 

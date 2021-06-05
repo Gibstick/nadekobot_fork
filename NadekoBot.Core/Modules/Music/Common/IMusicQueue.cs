@@ -22,5 +22,6 @@ namespace NadekoBot.Core.Modules.Music
         void RemoveCurrent();
         IQueuedTrackInfo? MoveTrack(int from, int to);
         void Shuffle(Random rng);
+        bool IsLast();
     }
 }
