@@ -127,6 +127,21 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.Administrator)]
             [NadekoOptions(typeof(WarnExpireOptions))]
+            [Priority(1)]
+            public async Task WarnExpire()
+            {
+                var expireDays = await _service.GetWarnExpire(ctx.Guild.Id);
+
+                if (expireDays == 0)
+                    await ReplyConfirmLocalizedAsync("warns_dont_expire");
+                else
+                    await ReplyConfirmLocalizedAsync("warns_expire_in", expireDays);
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.Administrator)]
+            [NadekoOptions(typeof(WarnExpireOptions))]
             [Priority(2)]
             public async Task WarnExpire(int days, params string[] args)
             {
