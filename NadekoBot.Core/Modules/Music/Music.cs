@@ -7,6 +7,7 @@ using Discord;
 using Discord.Commands;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
+using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using NadekoBot.Modules;
 using NadekoBot.Modules.Administration.Services;
@@ -92,7 +93,7 @@ namespace NadekoBot.Core.Modules.Music
             if (!succ)
                 return;
             
-            var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+            var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
             if (mp is null)
             {
                 await ReplyErrorLocalizedAsync("no_player");
@@ -143,7 +144,7 @@ namespace NadekoBot.Core.Modules.Music
             if (!succ)
                 return;
             
-            var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+            var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
             if (mp is null)
             {
                 await ReplyErrorLocalizedAsync("no_player");
@@ -228,13 +229,7 @@ namespace NadekoBot.Core.Modules.Music
             if (!valid)
                 return;
 
-            if (!_service.TryGetMusicPlayer(ctx.Guild.Id, out var mp))
-            {
-                await ReplyErrorLocalizedAsync("no_player");
-                return;
-            }
-
-            mp.SetVolume(vol);
+            await _service.SetVolumeAsync(ctx.Guild.Id, vol);
             await ReplyConfirmLocalizedAsync("volume_set", vol);
         }
 
@@ -295,22 +290,25 @@ namespace NadekoBot.Core.Modules.Music
                     desc = $"`🔊` {current.PrettyFullName()}\n\n" + desc;
                 }
 
+                var repeatType = mp.Repeat;
                 var add = "";
                 if (mp.IsStopped)
                     add += Format.Bold(GetText("queue_stopped", Format.Code(Prefix + "play"))) + "\n";
                  // var mps = mp.MaxPlaytimeSeconds;
                  // if (mps > 0)
                  //     add += Format.Bold(GetText("song_skips_after", TimeSpan.FromSeconds(mps).ToString("HH\\:mm\\:ss"))) + "\n";
-                 if (mp.IsRepeatingCurrentSong)
-                     add += "🔂 " + GetText("repeating_cur_song") + "\n";
+                 if (repeatType == PlayerRepeatType.Track)
+                 {
+                     add += "🔂 " + GetText("repeating_track") + "\n";
+                 }
                  else
                  {
                      // if (mp.Autoplay)
                      //     add += "↪ " + GetText("autoplaying") + "\n";
                      // if (mp.FairPlay && !mp.Autoplay)
                      //     add += " " + GetText("fairplay") + "\n";
-                     if (mp.IsRepeatingQueue)
-                         add += "🔁 " + GetText("repeating_playlist") + "\n";
+                     if (repeatType == PlayerRepeatType.Queue)
+                         add += "🔁 " + GetText("repeating_queue") + "\n";
                  }
 
 
@@ -409,7 +407,7 @@ namespace NadekoBot.Core.Modules.Music
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
         [Priority(1)]
-        public async Task SongRemove(int index)
+        public async Task TrackRemove(int index)
         {
             if (index < 1)
             {
@@ -446,7 +444,7 @@ namespace NadekoBot.Core.Modules.Music
          [NadekoCommand, Usage, Description, Aliases]
          [RequireContext(ContextType.Guild)]
          [Priority(0)]
-         public async Task SongRemove(All _ = All.All)
+         public async Task TrackRemove(All _ = All.All)
          {
              var valid = await ValidateAsync();
              if (!valid)
@@ -464,17 +462,10 @@ namespace NadekoBot.Core.Modules.Music
          
          [NadekoCommand, Usage, Description, Aliases]
          [RequireContext(ContextType.Guild)]
-         public async Task Defvol([Leftover] int val)
+         public async Task Defvol(int val)
          {
-             if (val < 0 || val > 100)
-             {
-                 await ReplyErrorLocalizedAsync("volume_input_invalid").ConfigureAwait(false);
-                 return;
-             }
-
-             _service.SetDefaultVolume(Context.Guild.Id, val);
-
-             await ReplyConfirmLocalizedAsync("defvol_set", val).ConfigureAwait(false);
+             await ReplyErrorLocalizedAsync("obsolete", $"`{Prefix}vol`");
+             await Volume(val);
          }
          
          [NadekoCommand, Usage, Description, Aliases]
@@ -493,54 +484,46 @@ namespace NadekoBot.Core.Modules.Music
              
              mp.Stop();
          }
+
+         public enum InputRepeatType
+         {
+             N = 0, No = 0, None = 0,
+             T = 1, Track = 1, S = 1, Song = 1,
+             Q = 2, Queue = 2, Playlist = 2, Pl = 2,
+         }
+
+         private PlayerRepeatType InputToDbType(InputRepeatType type) => type switch
+         {
+             InputRepeatType.None => PlayerRepeatType.None,
+             InputRepeatType.Queue => PlayerRepeatType.Queue,
+             InputRepeatType.Track => PlayerRepeatType.Track,
+             _ => PlayerRepeatType.Queue
+         };
          
          [NadekoCommand, Usage, Description, Aliases]
          [RequireContext(ContextType.Guild)]
-         public async Task QueueRepeat()
+         public async Task QueueRepeat(InputRepeatType type = InputRepeatType.Queue)
          {
              var valid = await ValidateAsync();
              if (!valid)
                  return;
-
-             if (!_service.TryGetMusicPlayer(ctx.Guild.Id, out var mp))
-             {
-                 await ReplyErrorLocalizedAsync("no_player");
-                 return;
-             }
              
-             if (mp.ToggleRpl())
-                 await ReplyConfirmLocalizedAsync("rpl_enabled").ConfigureAwait(false);
+             await _service.SetRepeatAsync(ctx.Guild.Id, InputToDbType(type));
+
+             if (type == InputRepeatType.None)
+                 await ReplyConfirmLocalizedAsync("repeating_none");
+             else if (type == InputRepeatType.Queue)
+                 await ReplyConfirmLocalizedAsync("repeating_queue");
              else
-                 await ReplyConfirmLocalizedAsync("rpl_disabled").ConfigureAwait(false);
+                 await ReplyConfirmLocalizedAsync("repeating_track");
          }
          
          [NadekoCommand, Usage, Description, Aliases]
          [RequireContext(ContextType.Guild)]
          public async Task ReptCurSong()
          {
-             var valid = await ValidateAsync();
-             if (!valid)
-                 return;
-
-             IQueuedTrackInfo current;
-             if (!_service.TryGetMusicPlayer(ctx.Guild.Id, out var mp) || (current = mp.GetCurrentTrack(out _)) is null)
-             {
-                 await ReplyErrorLocalizedAsync("no_player");
-                 return;
-             }
-
-             if (mp.ToggleRcs())
-             {
-                 await ctx.Channel.EmbedAsync(new EmbedBuilder()
-                     .WithOkColor()
-                     .WithAuthor(eab => eab.WithMusicIcon().WithName("🔂 " + GetText("repeating_track")))
-                     .WithDescription(current.PrettyName())
-                     .WithFooter(ef => ef.WithText(current.PrettyInfo())));
-             }
-             else
-             {
-                 await ctx.Channel.SendConfirmAsync("🔂 " + GetText("repeating_track_stopped"));
-             }
+             await ReplyErrorLocalizedAsync("obsolete_use", $"`{Prefix}qrp song`");
+             await QueueRepeat(InputRepeatType.Song);
          }
          
          [NadekoCommand, Usage, Description, Aliases]
@@ -558,30 +541,6 @@ namespace NadekoBot.Core.Modules.Music
              }
 
              mp.TogglePause();
-         }
-
-         [NadekoCommand, Usage, Description, Aliases]
-         [RequireContext(ContextType.Guild)]
-         public async Task SongAutoDelete()
-         {
-             var valid = await ValidateAsync();
-             if (!valid)
-                 return;
-
-             if (!_service.TryGetMusicPlayer(ctx.Guild.Id, out var mp))
-             {
-                 await ReplyErrorLocalizedAsync("no_player");
-                 return;
-             }
-             
-             if (mp.ToggleAd())
-             {
-                 await ReplyConfirmLocalizedAsync("sad_enabled").ConfigureAwait(false);
-             }
-             else
-             {
-                 await ReplyConfirmLocalizedAsync("sad_disabled").ConfigureAwait(false);
-             }
          }
          
          [NadekoCommand, Usage, Description, Aliases]
@@ -623,7 +582,7 @@ namespace NadekoBot.Core.Modules.Music
                  return;
              }
             
-             var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+             var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
              if (mp is null)
              {
                  await ReplyErrorLocalizedAsync("no_player");
@@ -649,7 +608,7 @@ namespace NadekoBot.Core.Modules.Music
              if (!valid)
                  return;
              
-             var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+             var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
              if (mp is null)
              {
                  await ReplyErrorLocalizedAsync("no_player");
@@ -692,7 +651,7 @@ namespace NadekoBot.Core.Modules.Music
              if (!succ)
                  return;
 
-             var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+             var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
              if (mp is null)
              {
                  await ReplyErrorLocalizedAsync("no_player");
@@ -717,7 +676,7 @@ namespace NadekoBot.Core.Modules.Music
              if (!succ)
                  return;
 
-             var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+             var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
              if (mp is null)
              {
                  await ReplyErrorLocalizedAsync("no_player");
@@ -740,7 +699,7 @@ namespace NadekoBot.Core.Modules.Music
          [RequireContext(ContextType.Guild)]
          public async Task NowPlaying()
          {
-             var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+             var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
              if (mp is null)
              {
                  await ReplyErrorLocalizedAsync("no_player");
@@ -768,7 +727,7 @@ namespace NadekoBot.Core.Modules.Music
              if (!valid)
                  return;
              
-             var mp = _service.GetOrCreateMusicPlayer((ITextChannel) Context.Channel);
+             var mp = await _service.GetOrCreateMusicPlayerAsync((ITextChannel) Context.Channel);
              if (mp is null)
              {
                  await ReplyErrorLocalizedAsync("no_player");
@@ -784,7 +743,7 @@ namespace NadekoBot.Core.Modules.Music
          [UserPerm(GuildPerm.ManageMessages)]
          public async Task SetMusicChannel()
          {
-             _service.SetMusicChannel(ctx.Guild.Id, ctx.Channel.Id);
+             await _service.SetMusicChannelAsync(ctx.Guild.Id, ctx.Channel.Id);
 
              await ReplyConfirmLocalizedAsync("set_music_channel");
          }
@@ -794,9 +753,21 @@ namespace NadekoBot.Core.Modules.Music
          [UserPerm(GuildPerm.ManageMessages)]
          public async Task UnsetMusicChannel()
          {
-             _service.UnsetMusicChannel(ctx.Guild.Id);
+             await _service.SetMusicChannelAsync(ctx.Guild.Id, null);
 
              await ReplyConfirmLocalizedAsync("unset_music_channel");
+         }
+
+         [NadekoCommand, Usage, Description, Aliases]
+         [RequireContext(ContextType.Guild)]
+         public async Task AutoDisconnect()
+         {
+             var newState = await _service.ToggleAutoDisconnectAsync(ctx.Guild.Id);
+
+             if(newState)
+                await ReplyConfirmLocalizedAsync("autodc_enable");
+             else
+                await ReplyConfirmLocalizedAsync("autodc_disable");
          }
     }
 }
