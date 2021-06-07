@@ -35,5 +35,7 @@ namespace NadekoBot.Modules.Music.Services
         Task SetRepeatAsync(ulong guildId, PlayerRepeatType repeatType);
         Task SetVolumeAsync(ulong guildId, int value);
         Task<bool> ToggleAutoDisconnectAsync(ulong guildId);
+        Task<QualityPreset> GetMusicQualityAsync(ulong guildId);
+        Task SetMusicQualityAsync(ulong guildId, QualityPreset preset);
     }
 }
