@@ -458,6 +458,7 @@ nowplaying:
 volume:
 - volume
 - vol
+- defvol
 playlist:
 - playlist
 - pl
@@ -1209,3 +1210,5 @@ nsfwtoggle:
 - nsfwtgl
 economy:
 - economy
+purgeuser:
+- purgeuser 

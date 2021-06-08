@@ -48,7 +48,7 @@ namespace NadekoBot.Modules.Xp
             if (!reply)
                 return;
 
-            _service.ResetXpRewards(ctx.Guild.Id);
+            await _service.ResetXpRewards(ctx.Guild.Id);
             await ctx.OkAsync();
         }
         

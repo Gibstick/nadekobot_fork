@@ -462,14 +462,6 @@ namespace NadekoBot.Core.Modules.Music
          
          [NadekoCommand, Usage, Description, Aliases]
          [RequireContext(ContextType.Guild)]
-         public async Task Defvol(int val)
-         {
-             await ReplyErrorLocalizedAsync("obsolete_use", $"`{Prefix}vol`");
-             await Volume(val);
-         }
-         
-         [NadekoCommand, Usage, Description, Aliases]
-         [RequireContext(ContextType.Guild)]
          public async Task Stop()
          {
              var valid = await ValidateAsync();

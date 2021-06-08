@@ -2010,3 +2010,7 @@ economy:
   desc: "Breakdown of the current state of the bot's economy. Updates every 3 minutes."
   args:
     - ""
+purgeuser:
+  desc: "Purge user from the database completely. This includes currency, xp, clubs that user owns, waifu info"
+  args:
+    - "@Oblivion"
