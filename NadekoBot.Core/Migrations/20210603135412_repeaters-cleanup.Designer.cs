@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NadekoBot.Core.Services.Database;
 
 namespace NadekoBot.Migrations
 {
     [DbContext(typeof(NadekoContext))]
-    partial class NadekoSqliteContextModelSnapshot : ModelSnapshot
+    [Migration("20210603135412_repeaters-cleanup")]
+    partial class repeaterscleanup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -979,40 +981,6 @@ namespace NadekoBot.Migrations
                     b.ToTable("LogSettings");
                 });
 
-            modelBuilder.Entity("NadekoBot.Core.Services.Database.Models.MusicPlayerSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("AutoDisconnect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<ulong>("GuildId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<ulong?>("MusicChannelId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlayerRepeat")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("QualityPreset")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Volume")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(100);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GuildId")
-                        .IsUnique();
-
-                    b.ToTable("MusicPlayerSettings");
-                });
-
             modelBuilder.Entity("NadekoBot.Core.Services.Database.Models.MusicPlaylist", b =>
                 {
                     b.Property<int>("Id")
@@ -1034,6 +1002,32 @@ namespace NadekoBot.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MusicPlaylists");
+                });
+
+            modelBuilder.Entity("NadekoBot.Core.Services.Database.Models.MusicSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("DateAdded")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GuildConfigId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong?>("MusicChannelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("SongAutoDelete")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildConfigId")
+                        .IsUnique();
+
+                    b.ToTable("MusicSettings");
                 });
 
             modelBuilder.Entity("NadekoBot.Core.Services.Database.Models.MutedUserId", b =>
@@ -2331,6 +2325,15 @@ namespace NadekoBot.Migrations
                     b.HasOne("NadekoBot.Core.Services.Database.Models.LogSetting", "LogSetting")
                         .WithMany("IgnoredVoicePresenceChannelIds")
                         .HasForeignKey("LogSettingId");
+                });
+
+            modelBuilder.Entity("NadekoBot.Core.Services.Database.Models.MusicSettings", b =>
+                {
+                    b.HasOne("NadekoBot.Core.Services.Database.Models.GuildConfig", "GuildConfig")
+                        .WithOne("MusicSettings")
+                        .HasForeignKey("NadekoBot.Core.Services.Database.Models.MusicSettings", "GuildConfigId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("NadekoBot.Core.Services.Database.Models.MutedUserId", b =>
