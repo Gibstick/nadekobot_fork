@@ -39,6 +39,20 @@ namespace NadekoBot.Modules.Xp
         }
 
         [NadekoCommand, Usage, Description, Aliases]
+        public async Task XpRewsReset()
+        {
+            var reply = await PromptUserConfirmAsync(new EmbedBuilder()
+                .WithPendingColor()
+                .WithDescription(GetText("xprewsreset_confirm")));
+
+            if (!reply)
+                return;
+
+            _service.ResetXpRewards(ctx.Guild.Id);
+            await ctx.OkAsync();
+        }
+        
+        [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
         public Task XpLevelUpRewards(int page = 1)
         {

@@ -186,6 +186,9 @@ namespace NadekoBot.Extensions
         public static EmbedBuilder WithOkColor(this EmbedBuilder eb) =>
             eb.WithColor(NadekoBot.OkColor);
 
+        public static EmbedBuilder WithPendingColor(this EmbedBuilder eb) =>
+            eb.WithColor(NadekoBot.PendingColor);
+        
         public static EmbedBuilder WithErrorColor(this EmbedBuilder eb) =>
             eb.WithColor(NadekoBot.ErrorColor);
 
