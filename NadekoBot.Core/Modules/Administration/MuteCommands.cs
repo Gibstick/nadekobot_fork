@@ -82,7 +82,7 @@ namespace NadekoBot.Modules.Administration
             [Priority(1)]
             public async Task Mute(StoopidTime time, IGuildUser user, [Leftover] string reason = "")
             {
-                if (time.Time < TimeSpan.FromMinutes(1) || time.Time > TimeSpan.FromDays(1))
+                if (time.Time < TimeSpan.FromMinutes(1) || time.Time > TimeSpan.FromDays(49))
                     return;
                 try
                 {
