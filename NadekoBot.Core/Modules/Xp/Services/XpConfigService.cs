@@ -31,7 +31,6 @@ namespace NadekoBot.Modules.Xp.Services
 
         private void Migrate()
         {
-            Console.WriteLine("Migrating");
             if (_data.Version <= 1)
             {
                 ModifyConfig(c =>
