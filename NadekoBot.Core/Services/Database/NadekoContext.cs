@@ -98,6 +98,12 @@ namespace NadekoBot.Core.Services.Database
                 .HasOne(x => x.GuildConfig)
                 .WithOne(x => x.AntiRaidSetting);
 
+            modelBuilder.Entity<GuildConfig>()
+                .HasOne(x => x.AntiAltSetting)
+                .WithOne()
+                .HasForeignKey<AntiAltSetting>(x => x.GuildConfigId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<FeedSub>()
                 .HasAlternateKey(x => new { x.GuildConfigId, x.Url });
 
