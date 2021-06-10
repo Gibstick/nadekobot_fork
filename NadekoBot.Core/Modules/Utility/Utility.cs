@@ -381,5 +381,50 @@ namespace NadekoBot.Modules.Utility
                 sem.Release();
             }
         }
+
+        public enum CreateInviteType
+        {
+            Any,
+            New
+        }
+        
+        // [NadekoCommand, Usage, Description, Aliases]
+        // [RequireContext(ContextType.Guild)]
+        // public async Task CreateMyInvite(CreateInviteType type = CreateInviteType.Any)
+        // {
+        //     if (type == CreateInviteType.Any)
+        //     {
+        //         if (_inviteService.TryGetInvite(type, out var code))
+        //         {
+        //             await ReplyConfirmLocalizedAsync("your_invite", $"https://discord.gg/{code}");
+        //             return;
+        //         }
+        //     }
+        //     
+        //     var invite = await ((ITextChannel) ctx.Channel).CreateInviteAsync(isUnique: true);
+        // }
+        //
+        // [NadekoCommand, Usage, Description, Aliases]
+        // [RequireContext(ContextType.Guild)]
+        // public async Task InviteLb(int page = 1)
+        // {
+        //     if (--page < 0)
+        //         return;
+        //
+        //     var inviteUsers = await _inviteService.GetInviteUsersAsync(ctx.Guild.Id);
+        //     
+        //     var embed = new EmbedBuilder()
+        //         .WithOkColor();
+        //
+        //     await ctx.SendPaginatedConfirmAsync(page, (curPage) =>
+        //     {
+        //         var items = inviteUsers.Skip(curPage * 9).Take(9);
+        //         var i = 0;
+        //         foreach (var item in items)
+        //             embed.AddField($"#{curPage * 9 + ++i} {item.UserName} [{item.User.Id}]", item.InvitedUsers);
+        //
+        //         return embed;
+        //     }, inviteUsers.Count, 9);
+        // }
     }
 }
