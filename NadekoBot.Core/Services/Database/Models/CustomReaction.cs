@@ -7,7 +7,6 @@ namespace NadekoBot.Core.Services.Database.Models
 {
     public class CustomReaction : DbEntity
     {
-
         [NotMapped]
         public Regex Regex { get; set; }
         public ulong UseCount { get; set; }
@@ -25,7 +24,9 @@ namespace NadekoBot.Core.Services.Database.Models
         public string Reactions { get; set; }
 
         public string[] GetReactions() =>
-            Array.Empty<string>();
+            string.IsNullOrWhiteSpace(Reactions)
+                ? Array.Empty<string>()
+                : Reactions.Split("@@@");
         
         public bool IsGlobal() => GuildId is null || GuildId == 0;
     }
