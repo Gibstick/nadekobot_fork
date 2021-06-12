@@ -665,7 +665,7 @@ namespace NadekoBot.Modules.Administration
                 if (user is null)
                     return;
 
-                await SoftbanInternal(user);
+                await SoftbanInternal(user, msg);
             }
             
             private async Task SoftbanInternal(IGuildUser user, [Leftover] string msg = null)
