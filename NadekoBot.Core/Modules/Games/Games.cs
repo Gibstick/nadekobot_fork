@@ -56,7 +56,7 @@ namespace NadekoBot.Modules.Games
 
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
-        public async Task RateGirl(IGuildUser usr)
+        public async Task RateGirl([Leftover] IGuildUser usr)
         {
             var gr = _service.GirlRatings.GetOrAdd(usr.Id, GetGirl);
             var originalStream = await gr.Stream;
