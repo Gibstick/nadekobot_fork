@@ -314,6 +314,12 @@ namespace NadekoBot.Modules.Gambling.Services
             }
         }
 
+        public ulong GetWaifuUserId(ulong ownerId, string name)
+        {
+            using var uow = _db.GetDbContext();
+            return uow.Waifus.GetWaifuUserId(ownerId, name);
+        }
+
         public async Task<(WaifuInfo, DivorceResult, long, TimeSpan?)> DivorceWaifuAsync(IUser user, ulong targetId)
         {
             DivorceResult result;
