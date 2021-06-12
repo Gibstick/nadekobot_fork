@@ -16,11 +16,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Discord.WebSocket;
 using NadekoBot.Core.Common.Attributes;
+using NadekoBot.Core.Services.Impl;
+using Serilog;
 
 namespace NadekoBot.Modules.Help
 {
@@ -292,7 +295,7 @@ namespace NadekoBot.Modules.Help
         
         [NadekoCommand, Usage, Description, Aliases]
         [OwnerOnly]
-        public async Task GenCmdList([Leftover] string path = null)
+        public async Task GenCmdList()
         {
             _ = ctx.Channel.TriggerTypingAsync();
 
@@ -304,10 +307,9 @@ namespace NadekoBot.Modules.Help
                 .OrderBy(x => x.Key)
                 .ToDictionary(
                     x => x.Key,
-                    x => x.Distinct(x => x.Aliases.First())
+                    x => x.Distinct(c => c.Aliases.First())
                         .Select(com =>
                         {
-                            var module = com.Module.GetTopLevelModule();
                             List<string> optHelpStr = null;
                             var opt = ((NadekoOptionsAttribute)com.Attributes.FirstOrDefault(x => x is NadekoOptionsAttribute))?.OptionType;
                             if (opt != null)
@@ -346,23 +348,55 @@ namespace NadekoBot.Modules.Help
                 var config = new AmazonS3Config {ServiceURL = serviceUrl};
                 using (var client = new AmazonS3Client(accessKey, secretAcccessKey, config))
                 {
-                    var res = await client.PutObjectAsync(new PutObjectRequest()
+                    await client.PutObjectAsync(new PutObjectRequest()
                     {
                         BucketName = "nadeko-pictures",
                         ContentType = "application/json",
                         ContentBody = uploadData,
                         // either use a path provided in the argument or the default one for public nadeko, other/cmds.json
-                        Key = path ?? "other/cmds.json",
+                        Key = $"cmds/{StatsService.BotVersion}.json",
                         CannedACL = S3CannedACL.PublicRead
                     });
+                }
+
+                const string cmdVersionsFilePath = "../../cmd-versions.json";
+                var versionListString = File.Exists(cmdVersionsFilePath)
+                    ? await File.ReadAllTextAsync(cmdVersionsFilePath)
+                    : "[]";
+
+                var versionList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(versionListString);
+                if (!versionList.Contains(StatsService.BotVersion))
+                {
+                    // save the file with new version added
+                    versionList.Add(StatsService.BotVersion);
+                    versionListString = System.Text.Json.JsonSerializer.Serialize(versionList, new JsonSerializerOptions()
+                    {
+                        WriteIndented = true
+                    });
+                    await File.WriteAllTextAsync(cmdVersionsFilePath, versionListString);
+                    
+                    // upload the updated version list
+                    using var client = new AmazonS3Client(accessKey, secretAcccessKey, config);
+                    await client.PutObjectAsync(new PutObjectRequest()
+                    {
+                        BucketName = "nadeko-pictures",
+                        ContentType = "application/json",
+                        ContentBody = versionListString,
+                        // either use a path provided in the argument or the default one for public nadeko, other/cmds.json
+                        Key = "cmds/versions.json",
+                        CannedACL = S3CannedACL.PublicRead
+                    });
+                }
+                else
+                {
+                    Log.Warning("Version {Version} already exists in the version file. " +
+                                "Did you forget to increment it?", StatsService.BotVersion);
                 }
             }
 
             // also send the file, but indented one, to chat
-            using (var rDataStream = new MemoryStream(Encoding.ASCII.GetBytes(readableData)))
-            {
-                await ctx.Channel.SendFileAsync(rDataStream, "cmds.json", GetText("commandlist_regen")).ConfigureAwait(false);
-            }
+            using var rDataStream = new MemoryStream(Encoding.ASCII.GetBytes(readableData));
+            await ctx.Channel.SendFileAsync(rDataStream, "cmds.json", GetText("commandlist_regen")).ConfigureAwait(false);
         }
 
         [NadekoCommand, Usage, Description, Aliases]
