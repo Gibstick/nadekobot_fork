@@ -47,7 +47,7 @@ namespace NadekoBot.Modules.Games
             if (string.IsNullOrWhiteSpace(question))
                 return;
 
-            var res = _service.GetEightballResponse(question);
+            var res = _service.GetEightballResponse(ctx.User.Id, question);
             await ctx.Channel.EmbedAsync(new EmbedBuilder().WithColor(NadekoBot.OkColor)
                 .WithDescription(ctx.User.ToString())
                 .AddField(efb => efb.WithName("❓ " + GetText("question")).WithValue(question).WithIsInline(false))
