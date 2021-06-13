@@ -2,6 +2,12 @@
 
 Experimental changelog. Mostly based on [keepachangelog](https://keepachangelog.com/en/1.0.0/) except date format. a-c-f-r-o
 
+## Unreleased
+
+### Changed
+
+- `.invlist` shows expire time and is slightly prettier
+
 ## [2.45.1] - 12.06.2021
 
 ### Added
@@ -18,6 +24,7 @@ Experimental changelog. Mostly based on [keepachangelog](https://keepachangelog.
 - `.rolecolor <color> <role>` changed to take color, then the role, to make it easier to set color for roles with multiple words without mentioning the role
 - `.acmdcds` alias chanaged to `.cmdcds`
 - `.8ball` will now cache results for a day
+- `.chatmute` and `.voicemute` now support timed mutes
 
 ### Fixed
 
