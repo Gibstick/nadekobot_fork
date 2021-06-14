@@ -368,11 +368,13 @@ namespace NadekoBot.Modules.Help
                 if (!versionList.Contains(StatsService.BotVersion))
                 {
                     // save the file with new version added
-                    versionList.Add(StatsService.BotVersion);
-                    versionListString = System.Text.Json.JsonSerializer.Serialize(versionList, new JsonSerializerOptions()
-                    {
-                        WriteIndented = true
-                    });
+                    // versionList.Add(StatsService.BotVersion);
+                    versionListString = System.Text.Json.JsonSerializer.Serialize(
+                        versionList.Prepend(StatsService.BotVersion),
+                        new JsonSerializerOptions()
+                        {
+                            WriteIndented = true
+                        });
                     await File.WriteAllTextAsync(cmdVersionsFilePath, versionListString);
                     
                     // upload the updated version list
