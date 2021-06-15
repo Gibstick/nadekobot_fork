@@ -1,4 +1,5 @@
-﻿using NadekoBot.Common.Collections;
+﻿using System;
+using NadekoBot.Common.Collections;
 using System.Collections.Generic;
 
 namespace NadekoBot.Core.Services.Database.Models
@@ -11,7 +12,9 @@ namespace NadekoBot.Core.Services.Database.Models
 
         public bool DeleteMessageOnCommand { get; set; }
         public HashSet<DelMsgOnCmdChannel> DelMsgOnCmdChannels { get; set; } = new HashSet<DelMsgOnCmdChannel>();
+        [Obsolete("Use autoassignroleids")]
         public ulong AutoAssignRoleId { get; set; }
+        public string AutoAssignRoleIds { get; set; }
         //greet stuff
         public bool AutoDeleteGreetMessages { get; set; } //unused
         public bool AutoDeleteByeMessages { get; set; } // unused
