@@ -15,16 +15,18 @@ namespace NadekoBot.Modules.Permissions.Services
     {
         private readonly DbService _db;
         private readonly IPubSub _pubSub;
+        private readonly IBotCredentials _creds;
         private IReadOnlyList<BlacklistEntry> _blacklist;
         public int Priority => -100;
 
         public ModuleBehaviorType BehaviorType => ModuleBehaviorType.Blocker;
 
         private readonly TypedKey<BlacklistEntry[]> blPubKey = new TypedKey<BlacklistEntry[]>("blacklist.reload");
-        public BlacklistService(DbService db, IPubSub pubSub)
+        public BlacklistService(DbService db, IPubSub pubSub, IBotCredentials creds)
         {
             _db = db;
             _pubSub = pubSub;
+            _creds = creds;
 
             Reload(false);
             _pubSub.Sub(blPubKey, OnReload);
@@ -53,6 +55,9 @@ namespace NadekoBot.Modules.Permissions.Services
             return Task.FromResult(false);
         }
 
+        public IReadOnlyList<BlacklistEntry> GetBlacklist()
+            => _blacklist;
+
         public void Reload(bool publish = true)
         {
             using var uow = _db.GetDbContext();
@@ -66,6 +71,9 @@ namespace NadekoBot.Modules.Permissions.Services
 
         public void Blacklist(BlacklistType type, ulong id)
         {
+            if (_creds.OwnerIds.Contains(id))
+                return;
+            
             using var uow = _db.GetDbContext();
             var item = new BlacklistEntry { ItemId = id, Type = type };
             uow._context.Blacklist.Add(item);
