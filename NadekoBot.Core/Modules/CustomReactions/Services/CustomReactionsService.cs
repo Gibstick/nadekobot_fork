@@ -58,11 +58,12 @@ namespace NadekoBot.Modules.CustomReactions.Services
         private readonly IBotStrings _strings;
         private readonly NadekoBot _bot;
         private readonly GlobalPermissionService _gperm;
+        private readonly CmdCdService _cmdCds;
         private readonly IPubSub _pubSub;
         private readonly Random _rng;
 
         public CustomReactionsService(PermissionService perms, DbService db, IBotStrings strings, NadekoBot bot,
-            DiscordSocketClient client, CommandHandler cmd, GlobalPermissionService gperm,
+            DiscordSocketClient client, CommandHandler cmd, GlobalPermissionService gperm, CmdCdService cmdCds,
             IPubSub pubSub)
         {
             _db = db;
@@ -72,6 +73,7 @@ namespace NadekoBot.Modules.CustomReactions.Services
             _strings = strings;
             _bot = bot;
             _gperm = gperm;
+            _cmdCds = cmdCds;
             _pubSub = pubSub;
             _rng = new NadekoRandom();
 
@@ -384,6 +386,9 @@ namespace NadekoBot.Modules.CustomReactions.Services
             var cr = TryGetCustomReaction(msg);
 
             if (cr is null || cr.Response == "-")
+                return false;
+            
+            if(await _cmdCds.TryBlock(guild, msg.Author, cr.Trigger))
                 return false;
             
             try
