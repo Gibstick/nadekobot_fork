@@ -17,19 +17,20 @@ using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
+using Microsoft.EntityFrameworkCore.Internal;
 using Serilog;
 using HorizontalAlignment = SixLabors.Fonts.HorizontalAlignment;
 using Image = SixLabors.ImageSharp.Image;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NadekoBot.Modules.Searches.Services
 {
@@ -850,37 +851,95 @@ namespace NadekoBot.Modules.Searches.Services
                 fullQueryLink,
                 "0");
         }
-    }
-
-    public class SteamGameId
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-        [JsonProperty("appid")]
-        public int AppId { get; set; }
-    }
-
-    public class SteamGameData
-    {
-        public string ShortDescription { get; set; }
-
-        public class Container
+        #region Nhentai
+        private string GetNhentaiExtensionInternal(string s)
+            => s switch
+            {
+                "j" => "jpg",
+                "p" => "png",
+                "g" => "gif",
+                _ => "jpg"
+            };
+        
+        private Gallery ModelToGallery(NhentaiApiModel.Gallery model)
         {
-            [JsonProperty("success")]
-            public bool Success { get; set; }
+            var thumbnail = $"https://t.nhentai.net/galleries/{model.MediaId}/thumb."
+                            + GetNhentaiExtensionInternal(model.Images.Thumbnail.T);
 
-            [JsonProperty("data")]
-            public SteamGameData Data { get; set; }
+            var url = $"https://nhentai.net/g/{model.Id}";
+            return new Gallery(
+                model.Id.ToString(),
+                url,
+                model.Title.English,
+                model.Title.Pretty,
+                thumbnail,
+                model.NumPages,
+                model.NumFavorites,
+                model.UploadDate.ToUnixTimestamp().UtcDateTime,
+                model.Tags.Map(x => new Tag()
+                {
+                    Name = x.Name,
+                    Url = "https://nhentai.com/" + x.Url
+                }));
+        }
+        
+        public async Task<NhentaiApiModel.Gallery> GetNhentaiByIdInternalAsync(uint id)
+        {
+            using var http = _httpFactory.CreateClient();
+            try
+            {
+                var res = await http.GetStringAsync("https://nhentai.net/api/gallery/" + id);
+                return JsonConvert.DeserializeObject<NhentaiApiModel.Gallery>(res);
+            }
+            catch (HttpRequestException)
+            {
+                Log.Warning("Nhentai with id {NhentaiId} not found", id);
+                return null;
+            }
+        }
+        
+        private async Task<NhentaiApiModel.Gallery[]> SearchNhentaiInternalAsync(string search)
+        {
+            using var http = _httpFactory.CreateClient();
+            try
+            {
+                var res = await http.GetStringAsync("https://nhentai.net/api/galleries/search?query=" + search);
+                return JsonConvert.DeserializeObject<NhentaiApiModel.SearchResult>(res).Result;
+            }
+            catch (HttpRequestException)
+            {
+                Log.Warning("Nhentai with search {NhentaiSearch} not found", search);
+                return null;
+            }
+        }
+        
+        public async Task<Gallery> GetNhentaiByIdAsync(uint id)
+        {
+            var model = await GetNhentaiByIdInternalAsync(id);
+
+            return ModelToGallery(model);
         }
 
-    }
+        private static readonly string[] _bannedTags =
+        {
+            "loli",
+            "lolicon",
+            "shota",
+            "shotacon",
+            "cub"
+        };
+        
+        public async Task<Gallery> GetNhentaiBySearchAsync(string search)
+        {
+            var models = await SearchNhentaiInternalAsync(search);
 
-
-    public enum TimeErrors
-    {
-        InvalidInput,
-        ApiKeyMissing,
-        NotFound,
-        Unknown
+            models = models.Where(x => !x.Tags.Any(t => _bannedTags.Contains(t.Name))).ToArray();
+            
+            if (models.Length == 0)
+                return null;
+            
+            return ModelToGallery(models[_rng.Next(0, models.Length)]);
+        }
+        #endregion
     }
 }

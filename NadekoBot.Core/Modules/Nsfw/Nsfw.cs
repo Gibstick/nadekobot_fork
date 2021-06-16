@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using NadekoBot.Core.Modules.Searches.Common;
 using Serilog;
 
 namespace NadekoBot.Modules.NSFW
@@ -371,6 +372,61 @@ namespace NadekoBot.Modules.NSFW
         {
             _service.ClearCache();
             return Context.OkAsync();
+        }
+        
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [Priority(1)]
+        public async Task Nhentai(uint id)
+        {
+            var g = await _service.GetNhentaiByIdAsync(id);
+
+            if (g is null)
+            {
+                await ReplyErrorLocalizedAsync("not_found");
+                return;
+            }
+
+            await SendNhentaiGalleryInternalAsync(g);
+        }
+        
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [Priority(0)]
+        public async Task Nhentai([Leftover]string query)
+        {
+            var g = await _service.GetNhentaiBySearchAsync(query);
+
+            if (g is null)
+            {
+                await ReplyErrorLocalizedAsync("not_found");
+                return;
+            }
+
+            await SendNhentaiGalleryInternalAsync(g);
+        }
+
+        private async Task SendNhentaiGalleryInternalAsync(Gallery g)
+        {
+            var count = 0;
+            var tagString = g.Tags
+                .Shuffle()
+                .Select(tag => $"[{tag.Name}]({tag.Url})")
+                .TakeWhile(tag => (count += tag.Length) < 1000)
+                .JoinWith(" ");
+            
+            var embed = new EmbedBuilder()
+                .WithTitle(g.Title)
+                .WithDescription(g.FullTitle)
+                .WithImageUrl(g.Thumbnail)
+                .WithUrl(g.Url)
+                .AddField(GetText("favorites"), g.Likes, true)
+                .AddField(GetText("pages"), g.PageCount, true)
+                .AddField(GetText("tags"), tagString, true)
+                .WithFooter(g.UploadedAt.ToString("f"))
+                .WithOkColor();
+
+            await ctx.Channel.EmbedAsync(embed);
         }
 
         public async Task InternalDapiCommand(string tag, DapiSearchType type, bool forceExplicit)

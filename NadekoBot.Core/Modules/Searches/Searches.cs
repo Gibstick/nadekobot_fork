@@ -1,14 +1,10 @@
 ﻿using AngleSharp;
-using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using AngleSharp.Html.Parser;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
-using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Modules.Searches.Common;
 using NadekoBot.Core.Services;
 using NadekoBot.Extensions;
