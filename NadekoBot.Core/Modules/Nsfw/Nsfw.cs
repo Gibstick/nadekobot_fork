@@ -276,6 +276,11 @@ namespace NadekoBot.Modules.NSFW
         [RequireNsfw(Group = "nsfw_or_dm"), RequireContext(ContextType.DM, Group = "nsfw_or_dm")]
         public Task Konachan([Leftover] string tag = null)
             => InternalDapiCommand(tag, DapiSearchType.Konachan, false);
+        
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireNsfw(Group = "nsfw_or_dm"), RequireContext(ContextType.DM, Group = "nsfw_or_dm")]
+        public Task Sankaku([Leftover] string tag = null)
+            => InternalDapiCommand(tag, DapiSearchType.Sankaku, false);
 
         [NadekoCommand, Usage, Description, Aliases]
         [RequireNsfw(Group = "nsfw_or_dm"), RequireContext(ContextType.DM, Group = "nsfw_or_dm")]
