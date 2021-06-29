@@ -142,7 +142,7 @@ namespace NadekoBot.Core.Modules.Music
                         Provider = s.Platform.ToString(),
                         ProviderType = (MusicType)s.Platform,
                         Title = s.Title,
-                        Query = s.Url,
+                        Query = s.Platform == MusicPlatform.Local ? s.GetStreamUrl().Result.Trim('"') : s.Url,
                     }).ToList();
 
                 MusicPlaylist playlist;
