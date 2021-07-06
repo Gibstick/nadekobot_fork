@@ -3,8 +3,6 @@
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ApplicationIcon>nadeko_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

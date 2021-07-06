@@ -1,38 +1,37 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:3.1-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 
 WORKDIR /build
 
 COPY NadekoBot.sln NuGet.Config ./
 COPY NadekoBot.Core/NadekoBot.Core.csproj ./NadekoBot.Core/NadekoBot.Core.csproj
+COPY Nadeko.Tests/Nadeko.Tests.csproj ./Nadeko.Tests/Nadeko.Tests.csproj
 COPY src/NadekoBot/NadekoBot.csproj ./src/NadekoBot/NadekoBot.csproj
+COPY src/ayu/Ayu.Discord.Voice/Ayu.Discord.Voice.csproj ./src/ayu/Ayu.Discord.Voice/Ayu.Discord.Voice.csproj
+RUN cd src/NadekoBot && dotnet add package SQLitePCLRaw.lib.e_sqlite3 --version 2.0.2
 
 RUN dotnet restore
 
 COPY NadekoBot.Core ./NadekoBot.Core
-COPY src/NadekoBot ./src/NadekoBot
+COPY src ./src
 
 # FIXME: the data directory is specified in the project file and therefore gets
 # copied in a publish. This means that changes in the data changes trigger a
 # full rebuild.
 RUN dotnet publish -c release -o /app --no-restore
 
-RUN cd /app && rm -R runtimes/win* runtimes/osx* runtimes/linux-*
-
 # Set up runtime container
-FROM mcr.microsoft.com/dotnet/runtime:3.1-alpine
+FROM mcr.microsoft.com/dotnet/runtime:3.1
 
-RUN set -ex; \
-    echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories; \
-    echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories; \
-    apk add --no-cache \
-        ffmpeg \
-        youtube-dl@edge \
-        libsodium \
-        opus \
-        rsync;
 
-RUN adduser -D nadeko
+RUN apt-get update && apt-get install -y \
+	ffmpeg \
+        youtube-dl \
+        libsodium23 \
+        libopus0 \
+        rsync
+
+RUN useradd -ms /bin/bash nadeko
 
 WORKDIR /home/nadeko/app
 
