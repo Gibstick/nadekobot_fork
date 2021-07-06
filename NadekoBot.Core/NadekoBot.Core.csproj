@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
@@ -43,7 +43,7 @@
     <PackageReference Include="VideoLibrary" Version="3.0.7" />
     <PackageReference Include="YamlDotNet" Version="11.1.1" />
     <PackageReference Include="YoutubeExplode" Version="5.1.8" />
-    <PackageReference Include="linq2db.EntityFrameworkCore" Version="3.10.1" />
+    <PackageReference Include="linq2db.EntityFrameworkCore" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
