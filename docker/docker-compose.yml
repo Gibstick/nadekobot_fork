@@ -24,8 +24,6 @@ services:
     restart: unless-stopped
     sysctls:
       net.core.somaxconn: 511
-    ports:
-      - "6379:6379/tcp"
 
 volumes:
   nadeko-data:
