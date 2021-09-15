@@ -1,5 +1,7 @@
 ## Setting Up NadekoBot on OSX (macOS)
 
+### This applies to NadekoBot version 2.  For NadekoBot version 3 with all the latest improvements and features, click [here][v3].
+
 | Table of Contents                                       |
 | :------------------------------------------------------ |
 | [Prerequisites]                                         |
@@ -173,3 +175,4 @@ If music still isn't working, try reinstalling ffmpeg:
 [Using Nadeko with pm2 (easiest method)]: #using-nadeko-with-pm2-easiest-method
 [Using Nadeko with tmux (if you don't want to use pm2)]: #using-nadeko-with-tmux-if-you-dont-want-to-use-pm2
 [Doing a clean reinstall]: #doing-a-clean-reinstall
+[v3]: https://nadekobot.readthedocs.io/en/v3/guides/osx-guide/

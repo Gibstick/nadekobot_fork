@@ -1,5 +1,7 @@
 ## Setting up NadekoBot From Source
 
+### This applies to NadekoBot version 2.  For NadekoBot version 3 with all the latest improvements and features, click [here][v3].
+
 | Table of Contents                                                                                                                       |
 | :-------------------------------------------------------------------------------------------------------------------------------------- |
 | [Installing with the CLI Installer](#installing-with-the-cli-installer) |
@@ -166,3 +168,4 @@ Other useful commands:
 [ffmpeg-32bit]: https://cdn.nadeko.bot/dl/ffmpeg-32.zip
 [ffmpeg-64bit]: https://cdn.nadeko.bot/dl/ffmpeg-64.zip
 [youtube-dl]: https://rg3.github.io/youtube-dl/download.html
+[v3]: https://nadekobot.readthedocs.io/en/v3/guides/windows-guide/#windows-from-source
