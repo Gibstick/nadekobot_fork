@@ -1,5 +1,7 @@
 ## Setting Up NadekoBot on Windows With the Updater
 
+### This applies to NadekoBot version 2.  For NadekoBot version 3 with all the latest improvements and features, click [here][v3].
+
 | Table of Contents|
 | :---------------------------------------------------------------------------------------------------------------------------|
 | [Prerequisites](#prerequisites)                                                                                             |
@@ -70,3 +72,4 @@ You can still install them manually:
 [ffmpeg-32bit]: https://cdn.nadeko.bot/dl/ffmpeg-32.zip
 [ffmpeg-64bit]: https://cdn.nadeko.bot/dl/ffmpeg-64.zip
 [youtube-dl]: https://yt-dl.org/downloads/latest/youtube-dl.exe
+[v3]: https://nadekobot.readthedocs.io/en/v3/guides/windows-guide

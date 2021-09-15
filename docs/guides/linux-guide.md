@@ -1,5 +1,7 @@
 ## Setting up NadekoBot on Linux
 
+### This applies to NadekoBot version 2.  For NadekoBot version 3 with all the latest improvements and features, click [here][v3].
+
 | Table of Contents                                   |
 | :-------------------------------------------------- |
 | [Getting Started]                                   |
@@ -273,3 +275,4 @@ After that, your droplet should be ready for use. [Follow the guide from the beg
 [Running Nadeko on tmux]: #running-nadeko-on-tmux-if-you-dont-want-to-use-pm2
 [Making Nadeko persist upon system restarts (tmux)]: #making-nadeko-persist-upon-system-restarts-tmux-for-advanced-users
 [Setting up Nadeko on a VPS (Digital Ocean)]: #setting-up-nadeko-on-a-linux-vps-digital-ocean-droplet
+[v3]: https://nadekobot.readthedocs.io/en/v3/guides/linux-guide
