@@ -229,21 +229,33 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
                     if (usr.State == User.UserState.Blackjack)
                         usr.State = User.UserState.Won;
                     else if (usr.State == User.UserState.Stand)
-                        usr.State = hw < usr.GetHandValue()
-                            ? User.UserState.Won
-                            : User.UserState.Lost;
+                        if (hw == usr.GetHandValue())
+                            usr.State = User.UserState.Tie;
+                        else if (hw < usr.GetHandValue())
+                            usr.State = User.UserState.Won;
                     else
                         usr.State = User.UserState.Lost;
+
                 }
             }
 
             foreach (var usr in Players)
             {
-                if (usr.State == User.UserState.Won || usr.State == User.UserState.Blackjack)
+                if (usr.State == User.UserState.Won)
                 {
                     await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * 2, gamble: true).ConfigureAwait(false);
                 }
-            }
+                else if (usr.State == User.UserState.Blackjack)
+                {
+                    await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * (5/2), gamble: true).ConfigureAwait(false);
+                }
+                else if (usr.State == User.UserState.Tie)
+                {
+                    await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-push", usr.Bet * 1, gamble: true).ConfigureAwait(false);
+                }
+            }   
+            
+
         }
 
         public async Task<bool> Double(IUser u)
