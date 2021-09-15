@@ -49,7 +49,7 @@ namespace NadekoBot.Modules.Searches
 
                 using (var http = _httpFactory.CreateClient("memelist"))
                 {
-                    var res = await http.GetAsync("https://api.memegen.link/templates/")
+                    var res = await http.GetAsync("https://api.memegen.link/templates")
                         .ConfigureAwait(false);
 
                     var rawJson = await res.Content.ReadAsStringAsync();
