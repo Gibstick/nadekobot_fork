@@ -224,11 +224,14 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
                 foreach (var usr in Players)
                 {
                     if (usr.State == User.UserState.Blackjack)
-                        usr.State = User.UserState.Won;
+                        usr.State = User.UserState.BJWin;
                     else if (usr.State == User.UserState.Stand)
-                        usr.State = hw < usr.GetHandValue()
-                            ? User.UserState.Won
-                            : User.UserState.Lost;
+                    {
+                        if (hw == usr.GetHandValue())
+                            usr.State = User.UserState.Tie;
+                        else if (hw < usr.GetHandValue())
+                            usr.State = User.UserState.Won;
+                    }
                     else
                         usr.State = User.UserState.Lost;
                 }
@@ -236,11 +239,18 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
 
             foreach (var usr in Players)
             {
-                if (usr.State == User.UserState.Won || usr.State == User.UserState.Blackjack)
+                switch (usr.State)
                 {
-                    await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * 2, gamble: true).ConfigureAwait(false);
+                    case User.UserState.BJWin:
+                        await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * (5/2), gamble: true).ConfigureAwait(false);
+
+                    case User.UserState.Won:
+                        await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * 2, gamble: true).ConfigureAwait(false);
+
+                    case User.UserState.Tie:
+                        await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet, gamble: true).ConfigureAwait(false);
                 }
-            }
+            }   
         }
 
         public async Task<bool> Double(IUser u)
