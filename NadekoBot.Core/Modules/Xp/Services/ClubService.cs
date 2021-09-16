@@ -2,7 +2,6 @@
 using System;
 using NadekoBot.Core.Services.Database.Models;
 using Discord;
-using NadekoBot.Modules.Xp.Common;
 using System.Linq;
 using NadekoBot.Extensions;
 using System.Net.Http;

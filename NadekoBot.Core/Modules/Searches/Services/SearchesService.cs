@@ -1,5 +1,4 @@
-﻿using AngleSharp;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Common;
@@ -11,22 +10,27 @@ using NadekoBot.Extensions;
 using NadekoBot.Modules.Searches.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NLog;
-using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using StackExchange.Redis;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+using Microsoft.EntityFrameworkCore.Internal;
+using Serilog;
+using HorizontalAlignment = SixLabors.Fonts.HorizontalAlignment;
 using Image = SixLabors.ImageSharp.Image;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace NadekoBot.Modules.Searches.Services
 {
@@ -36,7 +40,6 @@ namespace NadekoBot.Modules.Searches.Services
         private readonly DiscordSocketClient _client;
         private readonly IGoogleApiService _google;
         private readonly DbService _db;
-        private readonly Logger _log;
         private readonly IImageCache _imgs;
         private readonly IDataCache _cache;
         private readonly FontProvider _fonts;
@@ -67,7 +70,6 @@ namespace NadekoBot.Modules.Searches.Services
             _client = client;
             _google = google;
             _db = db;
-            _log = LogManager.GetCurrentClassLogger();
             _imgs = cache.LocalImages;
             _cache = cache;
             _fonts = fonts;
@@ -116,14 +118,14 @@ namespace NadekoBot.Modules.Searches.Services
                 WowJokes = JsonConvert.DeserializeObject<List<WoWJoke>>(File.ReadAllText("data/wowjokes.json"));
             }
             else
-                _log.Warn("data/wowjokes.json is missing. WOW Jokes are not loaded.");
+                Log.Warning("data/wowjokes.json is missing. WOW Jokes are not loaded.");
 
             if (File.Exists("data/magicitems.json"))
             {
                 MagicItems = JsonConvert.DeserializeObject<List<MagicItem>>(File.ReadAllText("data/magicitems.json"));
             }
             else
-                _log.Warn("data/magicitems.json is missing. Magic items are not loaded.");
+                Log.Warning("data/magicitems.json is missing. Magic items are not loaded.");
 
             if (File.Exists("data/yomama.txt"))
             {
@@ -134,7 +136,7 @@ namespace NadekoBot.Modules.Searches.Services
             else
             {
                 _yomamaJokes = new List<string>();
-                _log.Warn("data/yomama.txt is missing. .yomama command won't work");
+                Log.Warning("data/yomama.txt is missing. .yomama command won't work");
             }
         }
 
@@ -233,7 +235,7 @@ namespace NadekoBot.Modules.Searches.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex.Message);
+                    Log.Warning(ex.Message);
                     return null;
                 }
             }
@@ -280,7 +282,7 @@ namespace NadekoBot.Modules.Searches.Services
                     var responses = JsonConvert.DeserializeObject<LocationIqResponse[]>(res);
                     if (responses is null || responses.Length == 0)
                     {
-                        _log.Warn("Geocode lookup failed for: {Query}", query);
+                        Log.Warning("Geocode lookup failed for: {Query}", query);
                         return (default, TimeErrors.NotFound);
                     }
 
@@ -310,7 +312,7 @@ namespace NadekoBot.Modules.Searches.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, "Weather error: {Message}", ex.Message);
+                Log.Error(ex, "Weather error: {Message}", ex.Message);
                 return (default, TimeErrors.NotFound);
             }
         }
@@ -361,7 +363,7 @@ namespace NadekoBot.Modules.Searches.Services
             var from = langarr[0];
             var to = langarr[1];
             text = text?.Trim();
-            return (await _google.Translate(text, from, to).ConfigureAwait(false)).SanitizeMentions();
+            return (await _google.Translate(text, from, to).ConfigureAwait(false)).SanitizeMentions(true);
         }
 
         public Task<ImageCacherObject> DapiSearch(string tag, DapiSearchType type, ulong? guild, bool isExplicit = false)
@@ -464,17 +466,13 @@ namespace NadekoBot.Modules.Searches.Services
             // }
         }
 
-        public static async Task<(string Text, string BaseUri)> GetRandomJoke()
+        public async Task<(string Setup, string Punchline)> GetRandomJoke()
         {
-            var config = AngleSharp.Configuration.Default.WithDefaultLoader();
-            using (var document = await BrowsingContext.New(config).OpenAsync("http://www.goodbadjokes.com/random").ConfigureAwait(false))
+            using (var http = _httpFactory.CreateClient())
             {
-                var html = document.QuerySelector(".post > .joke-body-wrap > .joke-content");
-
-                var part1 = html.QuerySelector("dt")?.TextContent;
-                var part2 = html.QuerySelector("dd")?.TextContent;
-
-                return (part1 + "\n\n" + part2, document.BaseUri);
+                var res = await http.GetStringAsync("https://official-joke-api.appspot.com/random_joke");
+                var resObj = JsonConvert.DeserializeAnonymousType(res, new {setup = "", punchline = ""});
+                return (resObj.setup, resObj.punchline);
             }
         }
 
@@ -606,7 +604,7 @@ namespace NadekoBot.Modules.Searches.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex.Message);
+                    Log.Error(ex.Message);
                     return null;
                 }
             }
@@ -724,37 +722,224 @@ namespace NadekoBot.Modules.Searches.Services
         //        return data[appid].Data;
         //    }
         //}
-    }
 
-    public class SteamGameId
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-        [JsonProperty("appid")]
-        public int AppId { get; set; }
-    }
-
-    public class SteamGameData
-    {
-        public string ShortDescription { get; set; }
-
-        public class Container
+        public class GoogleSearchResultData
         {
-            [JsonProperty("success")]
-            public bool Success { get; set; }
+            public IReadOnlyList<GoogleSearchResult> Results { get; }
+            public string FullQueryLink { get; }
+            public string TotalResults { get; }
 
-            [JsonProperty("data")]
-            public SteamGameData Data { get; set; }
+            public GoogleSearchResultData(IReadOnlyList<GoogleSearchResult> results, string fullQueryLink,
+                string totalResults)
+            {
+                Results = results;
+                FullQueryLink = fullQueryLink;
+                TotalResults = totalResults;
+            }
         }
 
-    }
+        private static readonly HtmlParser _googleParser = new HtmlParser(new HtmlParserOptions()
+        {
+            IsScripting = false,
+            IsEmbedded = false,
+            IsSupportingProcessingInstructions = false,
+            IsKeepingSourceReferences = false,
+            IsNotSupportingFrames = true,
+        });
+        
+        public async Task<GoogleSearchResultData> GoogleSearchAsync(string query)
+        {
+            query = WebUtility.UrlEncode(query)?.Replace(' ', '+');
 
+            var fullQueryLink = $"https://www.google.ca/search?q={ query }&safe=on&lr=lang_eng&hl=en&ie=utf-8&oe=utf-8";
 
-    public enum TimeErrors
-    {
-        InvalidInput,
-        ApiKeyMissing,
-        NotFound,
-        Unknown
+            using var msg = new HttpRequestMessage(HttpMethod.Get, fullQueryLink);
+            msg.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36");
+            msg.Headers.Add("Cookie", "CONSENT=YES+shp.gws-20210601-0-RC2.en+FX+423;");
+                
+            using var http = _httpFactory.CreateClient();
+            http.DefaultRequestHeaders.Clear();
+            
+            using var response = await http.SendAsync(msg);
+            var content = await response.Content.ReadAsStreamAsync();
+
+            using var document = await _googleParser.ParseDocumentAsync(content);
+            var elems = document.QuerySelectorAll("div.g > div > div");
+
+            var resultsElem = document.QuerySelectorAll("#resultStats").FirstOrDefault();
+            var totalResults = resultsElem?.TextContent;
+            //var time = resultsElem.Children.FirstOrDefault()?.TextContent
+            //^ this doesn't work for some reason, <nobr> is completely missing in parsed collection
+            if (!elems.Any())
+                return default;
+
+            var results = elems.Select(elem =>
+                {
+                    var children = elem.Children.ToList();
+                    if (children.Count < 2)
+                        return null;
+                    
+                    var href = (children[0].QuerySelector("a") as IHtmlAnchorElement)?.Href;
+                    var name = children[0].QuerySelector("h3")?.TextContent;
+                    
+                    if (href == null || name == null)
+                        return null;
+
+                    var txt = children[1].TextContent;
+
+                    if (string.IsNullOrWhiteSpace(txt))
+                        return null;
+
+                    return new GoogleSearchResult(name, href, txt);
+                })
+                .Where(x => x != null)
+                .ToList();
+
+            return new GoogleSearchResultData(
+                results.AsReadOnly(),
+                fullQueryLink,
+                totalResults);
+        }
+        
+        public async Task<GoogleSearchResultData> DuckDuckGoSearchAsync(string query)
+        {
+            query = WebUtility.UrlEncode(query)?.Replace(' ', '+');
+
+            var fullQueryLink = $"https://html.duckduckgo.com/html";
+
+            using var http = _httpFactory.CreateClient();
+            http.DefaultRequestHeaders.Clear();
+            http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36");
+
+            using var formData = new MultipartFormDataContent();
+            formData.Add(new StringContent(query), "q");
+            using var response = await http.PostAsync(fullQueryLink, formData);
+            var content = await response.Content.ReadAsStringAsync();
+
+            using var document = await _googleParser.ParseDocumentAsync(content);
+            var searchResults = document.QuerySelector(".results");
+            var elems = searchResults.QuerySelectorAll(".result");
+            
+            if (!elems.Any())
+                return default;
+
+            var results = elems.Select(elem =>
+                {
+                    var anchor = elem.QuerySelector(".result__a") as IHtmlAnchorElement;
+
+                    if (anchor is null)
+                        return null;
+
+                    var href = anchor.Href;
+                    var name = anchor.TextContent;
+                    
+                    if (string.IsNullOrWhiteSpace(href) || string.IsNullOrWhiteSpace(name))
+                        return null;
+
+                    var txt = elem.QuerySelector(".result__snippet")?.TextContent;
+
+                    if (string.IsNullOrWhiteSpace(txt))
+                        return null;
+
+                    return new GoogleSearchResult(name, href, txt);
+                })
+                .Where(x => x != null)
+                .ToList();
+
+            return new GoogleSearchResultData(
+                results.AsReadOnly(),
+                fullQueryLink,
+                "0");
+        }
+        #region Nhentai
+        private string GetNhentaiExtensionInternal(string s)
+            => s switch
+            {
+                "j" => "jpg",
+                "p" => "png",
+                "g" => "gif",
+                _ => "jpg"
+            };
+        
+        private Gallery ModelToGallery(NhentaiApiModel.Gallery model)
+        {
+            var thumbnail = $"https://t.nhentai.net/galleries/{model.MediaId}/thumb."
+                            + GetNhentaiExtensionInternal(model.Images.Thumbnail.T);
+
+            var url = $"https://nhentai.net/g/{model.Id}";
+            return new Gallery(
+                model.Id.ToString(),
+                url,
+                model.Title.English,
+                model.Title.Pretty,
+                thumbnail,
+                model.NumPages,
+                model.NumFavorites,
+                model.UploadDate.ToUnixTimestamp().UtcDateTime,
+                model.Tags.Map(x => new Tag()
+                {
+                    Name = x.Name,
+                    Url = "https://nhentai.com/" + x.Url
+                }));
+        }
+        
+        public async Task<NhentaiApiModel.Gallery> GetNhentaiByIdInternalAsync(uint id)
+        {
+            using var http = _httpFactory.CreateClient();
+            try
+            {
+                var res = await http.GetStringAsync("https://nhentai.net/api/gallery/" + id);
+                return JsonConvert.DeserializeObject<NhentaiApiModel.Gallery>(res);
+            }
+            catch (HttpRequestException)
+            {
+                Log.Warning("Nhentai with id {NhentaiId} not found", id);
+                return null;
+            }
+        }
+        
+        private async Task<NhentaiApiModel.Gallery[]> SearchNhentaiInternalAsync(string search)
+        {
+            using var http = _httpFactory.CreateClient();
+            try
+            {
+                var res = await http.GetStringAsync("https://nhentai.net/api/galleries/search?query=" + search);
+                return JsonConvert.DeserializeObject<NhentaiApiModel.SearchResult>(res).Result;
+            }
+            catch (HttpRequestException)
+            {
+                Log.Warning("Nhentai with search {NhentaiSearch} not found", search);
+                return null;
+            }
+        }
+        
+        public async Task<Gallery> GetNhentaiByIdAsync(uint id)
+        {
+            var model = await GetNhentaiByIdInternalAsync(id);
+
+            return ModelToGallery(model);
+        }
+
+        private static readonly string[] _bannedTags =
+        {
+            "loli",
+            "lolicon",
+            "shota",
+            "shotacon",
+            "cub"
+        };
+        
+        public async Task<Gallery> GetNhentaiBySearchAsync(string search)
+        {
+            var models = await SearchNhentaiInternalAsync(search);
+
+            models = models.Where(x => !x.Tags.Any(t => _bannedTags.Contains(t.Name))).ToArray();
+            
+            if (models.Length == 0)
+                return null;
+            
+            return ModelToGallery(models[_rng.Next(0, models.Length)]);
+        }
+        #endregion
     }
 }

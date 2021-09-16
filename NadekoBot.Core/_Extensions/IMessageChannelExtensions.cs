@@ -28,6 +28,9 @@ namespace NadekoBot.Extensions
         public static Task<IUserMessage> SendErrorAsync(this IMessageChannel ch, string error)
              => ch.SendMessageAsync("", embed: new EmbedBuilder().WithErrorColor().WithDescription(error).Build());
 
+        public static Task<IUserMessage> SendPendingAsync(this IMessageChannel ch, string message)
+            => ch.SendMessageAsync("", embed: new EmbedBuilder().WithPendingColor().WithDescription(message).Build());
+        
         public static Task<IUserMessage> SendConfirmAsync(this IMessageChannel ch, string title, string text, string url = null, string footer = null)
         {
             var eb = new EmbedBuilder().WithOkColor().WithDescription(text)
@@ -44,9 +47,8 @@ namespace NadekoBot.Extensions
 
         public static Task<IUserMessage> SendTableAsync<T>(this IMessageChannel ch, string seed, IEnumerable<T> items, Func<T, string> howToPrint, int columns = 3)
         {
-            var i = 0;
             return ch.SendMessageAsync($@"{seed}```css
-{string.Join("\n", items.GroupBy(item => (i++) / columns)
+{string.Join("\n", items.Chunk(columns)
                         .Select(ig => string.Concat(ig.Select(el => howToPrint(el)))))}
 ```");
         }
@@ -71,13 +73,20 @@ namespace NadekoBot.Extensions
             var embed = await pageFunc(currentPage).ConfigureAwait(false);
 
             var lastPage = (totalElements - 1) / itemsPerPage;
-
-            if (addPaginatedFooter)
+            
+            var canPaginate = true;
+            var sg = ctx.Guild as SocketGuild;
+            if (!(sg is null) && !sg.CurrentUser.GetPermissions((IGuildChannel) ctx.Channel).AddReactions)
+                canPaginate = false;
+            
+            if (!canPaginate)
+                embed.WithFooter("⚠️ AddReaction permission required for pagination.");
+            else if (addPaginatedFooter)
                 embed.AddPaginatedFooter(currentPage, lastPage);
 
             var msg = await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false) as IUserMessage;
 
-            if (lastPage == 0)
+            if (lastPage == 0 || !canPaginate)
                 return;
 
             await msg.AddReactionAsync(arrow_left).ConfigureAwait(false);
@@ -145,5 +154,14 @@ namespace NadekoBot.Extensions
                 // ignored
             }
         }
+
+        public static Task OkAsync(this ICommandContext ctx)
+            => ctx.Message.AddReactionAsync(new Emoji("✅"));
+        
+        public static Task ErrorAsync(this ICommandContext ctx)
+            => ctx.Message.AddReactionAsync(new Emoji("❌"));
+        
+        public static Task WarningAsync(this ICommandContext ctx)
+            => ctx.Message.AddReactionAsync(new Emoji("⚠️"));
     }
 }

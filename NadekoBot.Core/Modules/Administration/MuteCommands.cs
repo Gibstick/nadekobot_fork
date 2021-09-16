@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using NadekoBot.Extensions;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -33,8 +34,15 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageRoles)]
-            public async Task SetMuteRole([Leftover] IRole role)
+            public async Task MuteRole([Leftover] IRole role = null)
             {
+                if (role is null)
+                {
+                    var muteRole = await _service.GetMuteRole(ctx.Guild).ConfigureAwait(false);
+                    await ReplyConfirmLocalizedAsync("mute_role", Format.Code(muteRole.Name)).ConfigureAwait(false);
+                    return;
+                }
+                
                 if (Context.User.Id != Context.Guild.OwnerId &&
                     role.Position >= ((SocketGuildUser) Context.User).Roles.Max(x => x.Position))
                 {
@@ -49,8 +57,7 @@ namespace NadekoBot.Modules.Administration
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.ManageRoles)]
-            [UserPerm(GuildPerm.MuteMembers)]
+            [UserPerm(GuildPerm.ManageRoles | GuildPerm.MuteMembers)]
             [Priority(0)]
             public async Task Mute(IGuildUser target, [Leftover] string reason = "")
             {
@@ -64,19 +71,18 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Log.Warning(ex.ToString());
                     await ReplyErrorLocalizedAsync("mute_error").ConfigureAwait(false);
                 }
             }
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.ManageRoles)]
-            [UserPerm(GuildPerm.MuteMembers)]
+            [UserPerm(GuildPerm.ManageRoles | GuildPerm.MuteMembers)]
             [Priority(1)]
             public async Task Mute(StoopidTime time, IGuildUser user, [Leftover] string reason = "")
             {
-                if (time.Time < TimeSpan.FromMinutes(1) || time.Time > TimeSpan.FromDays(1))
+                if (time.Time < TimeSpan.FromMinutes(1) || time.Time > TimeSpan.FromDays(49))
                     return;
                 try
                 {
@@ -88,15 +94,14 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex);
+                    Log.Warning(ex, "Error in mute command");
                     await ReplyErrorLocalizedAsync("mute_error").ConfigureAwait(false);
                 }
             }
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.ManageRoles)]
-            [UserPerm(GuildPerm.MuteMembers)]
+            [UserPerm(GuildPerm.ManageRoles | GuildPerm.MuteMembers)]
             public async Task Unmute(IGuildUser user, [Leftover] string reason = "")
             {
                 try
@@ -113,6 +118,7 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageRoles)]
+            [Priority(0)]
             public async Task ChatMute(IGuildUser user, [Leftover] string reason = "")
             {
                 try
@@ -125,7 +131,30 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Log.Warning(ex.ToString());
+                    await ReplyErrorLocalizedAsync("mute_error").ConfigureAwait(false);
+                }
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.ManageRoles)]
+            [Priority(1)]
+            public async Task ChatMute(StoopidTime time, IGuildUser user, [Leftover] string reason = "")
+            {
+                 if (time.Time < TimeSpan.FromMinutes(1) || time.Time > TimeSpan.FromDays(49))
+                    return;
+                try
+                {
+                    if (!await VerifyMutePermissions((IGuildUser)ctx.User, user))
+                        return;
+
+                    await _service.TimedMute(user, ctx.User, time.Time, MuteType.Chat, reason: reason).ConfigureAwait(false);
+                    await ReplyConfirmLocalizedAsync("user_chat_mute_time", Format.Bold(user.ToString()), (int)time.Time.TotalMinutes).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex.ToString());
                     await ReplyErrorLocalizedAsync("mute_error").ConfigureAwait(false);
                 }
             }
@@ -149,6 +178,7 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.MuteMembers)]
+            [Priority(0)]
             public async Task VoiceMute(IGuildUser user, [Leftover] string reason = "")
             {
                 try
@@ -158,6 +188,28 @@ namespace NadekoBot.Modules.Administration
 
                     await _service.MuteUser(user, ctx.User, MuteType.Voice, reason: reason).ConfigureAwait(false);
                     await ReplyConfirmLocalizedAsync("user_voice_mute", Format.Bold(user.ToString())).ConfigureAwait(false);
+                }
+                catch
+                {
+                    await ReplyErrorLocalizedAsync("mute_error").ConfigureAwait(false);
+                }
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.MuteMembers)]
+            [Priority(1)]
+            public async Task VoiceMute(StoopidTime time,IGuildUser user, [Leftover] string reason = "")
+            {
+                if (time.Time < TimeSpan.FromMinutes(1) || time.Time > TimeSpan.FromDays(49))
+                    return;
+                try
+                {
+                    if (!await VerifyMutePermissions((IGuildUser)ctx.User, user))
+                        return;
+
+                    await _service.TimedMute(user, ctx.User, time.Time, MuteType.Voice, reason: reason).ConfigureAwait(false);
+                    await ReplyConfirmLocalizedAsync("user_voice_mute_time", Format.Bold(user.ToString()), (int)time.Time.TotalMinutes).ConfigureAwait(false);
                 }
                 catch
                 {

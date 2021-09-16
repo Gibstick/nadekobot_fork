@@ -7,12 +7,10 @@ using Discord.WebSocket;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Modules.Games.Common;
 using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Impl;
-using NLog;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Common.Collections;
 using NadekoBot.Extensions;
-using NadekoBot.Core.Services.Database;
+using Serilog;
 
 namespace NadekoBot.Modules.Games.Services
 {
@@ -23,29 +21,25 @@ namespace NadekoBot.Modules.Games.Services
         public int Priority => -5;
         public ModuleBehaviorType BehaviorType => ModuleBehaviorType.Executor;
 
-        private readonly Logger _log;
-        private readonly DiscordSocketClient _client;
-        private readonly NadekoStrings _strings;
         private readonly DbService _db;
-        private readonly NadekoStrings _strs;
+        private readonly IBotStrings _strs;
 
-        public PollService(DiscordSocketClient client, NadekoStrings strings, DbService db,
-            NadekoStrings strs, IUnitOfWork uow)
+        public PollService(DbService db, IBotStrings strs)
         {
-            _log = LogManager.GetCurrentClassLogger();
-            _client = client;
-            _strings = strings;
             _db = db;
             _strs = strs;
 
-            ActivePolls = uow.Polls.GetAllPolls()
-                .ToDictionary(x => x.GuildId, x =>
-                {
-                    var pr = new PollRunner(db, x);
-                    pr.OnVoted += Pr_OnVoted;
-                    return pr;
-                })
-                .ToConcurrent();
+            using (var uow = db.GetDbContext())
+            {
+                ActivePolls = uow.Polls.GetAllPolls()
+                    .ToDictionary(x => x.GuildId, x =>
+                    {
+                        var pr = new PollRunner(db, x);
+                        pr.OnVoted += Pr_OnVoted;
+                        return pr;
+                    })
+                    .ToConcurrent();
+            }
         }
 
         public Poll CreatePoll(ulong guildId, ulong channelId, string input)
@@ -91,11 +85,11 @@ namespace NadekoBot.Modules.Games.Services
             if (ActivePolls.TryRemove(guildId, out var pr))
             {
                 pr.OnVoted -= Pr_OnVoted;
-                using (var uow = _db.GetDbContext())
-                {
-                    uow.Polls.RemovePoll(pr.Poll.Id);
-                    uow.SaveChanges();
-                }
+                
+                using var uow = _db.GetDbContext();
+                uow.Polls.RemovePoll(pr.Poll.Id);
+                uow.SaveChanges();
+                
                 return pr.Poll;
             }
             return null;
@@ -103,7 +97,8 @@ namespace NadekoBot.Modules.Games.Services
 
         private async Task Pr_OnVoted(IUserMessage msg, IGuildUser usr)
         {
-            var toDelete = await msg.Channel.SendConfirmAsync(_strs.GetText("poll_voted", usr.Guild.Id, "Games".ToLowerInvariant(), Format.Bold(usr.ToString())))
+            var toDelete = await msg.Channel.SendConfirmAsync(_strs.GetText("poll_voted", 
+                    usr.Guild.Id, Format.Bold(usr.ToString())))
                 .ConfigureAwait(false);
             toDelete.DeleteAfter(5);
             try { await msg.DeleteAsync().ConfigureAwait(false); } catch { }
@@ -123,7 +118,7 @@ namespace NadekoBot.Modules.Games.Services
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error voting");
             }
 
             return false;

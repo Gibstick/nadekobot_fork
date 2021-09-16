@@ -6,8 +6,10 @@ using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.Music.Services;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using NadekoBot.Core.Common;
 
 namespace NadekoBot.Common.Replacements
 {
@@ -121,25 +123,50 @@ namespace NadekoBot.Common.Replacements
 
         public ReplacementBuilder WithUser(IUser user)
         {
+            // /*OBSOLETE*/
+            // _reps.TryAdd("%user%", () => user.Mention);
+            // _reps.TryAdd("%userfull%", () => user.ToString());
+            // _reps.TryAdd("%username%", () => user.Username);
+            // _reps.TryAdd("%userdiscrim%", () => user.Discriminator);
+            // _reps.TryAdd("%useravatar%", () => user.RealAvatarUrl()?.ToString());
+            // _reps.TryAdd("%id%", () => user.Id.ToString());
+            // _reps.TryAdd("%uid%", () => user.Id.ToString());
+            // /*NEW*/
+            // _reps.TryAdd("%user.mention%", () => user.Mention);
+            // _reps.TryAdd("%user.fullname%", () => user.ToString());
+            // _reps.TryAdd("%user.name%", () => user.Username);
+            // _reps.TryAdd("%user.discrim%", () => user.Discriminator);
+            // _reps.TryAdd("%user.avatar%", () => user.RealAvatarUrl()?.ToString());
+            // _reps.TryAdd("%user.id%", () => user.Id.ToString());
+            // _reps.TryAdd("%user.created_time%", () => user.CreatedAt.ToString("HH:mm"));
+            // _reps.TryAdd("%user.created_date%", () => user.CreatedAt.ToString("dd.MM.yyyy"));
+            // _reps.TryAdd("%user.joined_time%", () => (user as IGuildUser)?.JoinedAt?.ToString("HH:mm") ?? "-");
+            // _reps.TryAdd("%user.joined_date%", () => (user as IGuildUser)?.JoinedAt?.ToString("dd.MM.yyyy") ?? "-");
+            WithManyUsers(new[] {user});
+            return this;
+        }
+
+        public ReplacementBuilder WithManyUsers(IEnumerable<IUser> users)
+        {
             /*OBSOLETE*/
-            _reps.TryAdd("%user%", () => user.Mention);
-            _reps.TryAdd("%userfull%", () => user.ToString());
-            _reps.TryAdd("%username%", () => user.Username);
-            _reps.TryAdd("%userdiscrim%", () => user.Discriminator);
-            _reps.TryAdd("%useravatar%", () => user.RealAvatarUrl()?.ToString());
-            _reps.TryAdd("%id%", () => user.Id.ToString());
-            _reps.TryAdd("%uid%", () => user.Id.ToString());
+            _reps.TryAdd("%user%", () => string.Join(" ", users.Select(user => user.Mention)));
+            _reps.TryAdd("%userfull%", () => string.Join(" ", users.Select(user => user.ToString())));
+            _reps.TryAdd("%username%", () => string.Join(" ", users.Select(user => user.Username)));
+            _reps.TryAdd("%userdiscrim%", () => string.Join(" ", users.Select(user => user.Discriminator)));
+            _reps.TryAdd("%useravatar%", () => string.Join(" ", users.Select(user => user.RealAvatarUrl()?.ToString())));
+            _reps.TryAdd("%id%", () => string.Join(" ", users.Select(user => user.Id.ToString())));
+            _reps.TryAdd("%uid%", () => string.Join(" ", users.Select(user => user.Id.ToString())));
             /*NEW*/
-            _reps.TryAdd("%user.mention%", () => user.Mention);
-            _reps.TryAdd("%user.fullname%", () => user.ToString());
-            _reps.TryAdd("%user.name%", () => user.Username);
-            _reps.TryAdd("%user.discrim%", () => user.Discriminator);
-            _reps.TryAdd("%user.avatar%", () => user.RealAvatarUrl()?.ToString());
-            _reps.TryAdd("%user.id%", () => user.Id.ToString());
-            _reps.TryAdd("%user.created_time%", () => user.CreatedAt.ToString("HH:mm"));
-            _reps.TryAdd("%user.created_date%", () => user.CreatedAt.ToString("dd.MM.yyyy"));
-            _reps.TryAdd("%user.joined_time%", () => (user as IGuildUser)?.JoinedAt?.ToString("HH:mm") ?? "-");
-            _reps.TryAdd("%user.joined_date%", () => (user as IGuildUser)?.JoinedAt?.ToString("dd.MM.yyyy") ?? "-");
+            _reps.TryAdd("%user.mention%", () => string.Join(" ", users.Select(user => user.Mention)));
+            _reps.TryAdd("%user.fullname%", () => string.Join(" ", users.Select(user => user.ToString())));
+            _reps.TryAdd("%user.name%", () => string.Join(" ", users.Select(user => user.Username)));
+            _reps.TryAdd("%user.discrim%", () => string.Join(" ", users.Select(user => user.Discriminator)));
+            _reps.TryAdd("%user.avatar%", () => string.Join(" ", users.Select(user => user.RealAvatarUrl()?.ToString())));
+            _reps.TryAdd("%user.id%", () => string.Join(" ", users.Select(user => user.Id.ToString())));
+            _reps.TryAdd("%user.created_time%", () => string.Join(" ", users.Select(user => user.CreatedAt.ToString("HH:mm"))));
+            _reps.TryAdd("%user.created_date%", () => string.Join(" ", users.Select(user => user.CreatedAt.ToString("dd.MM.yyyy"))));
+            _reps.TryAdd("%user.joined_time%", () => string.Join(" ", users.Select(user => (user as IGuildUser)?.JoinedAt?.ToString("HH:mm") ?? "-")));
+            _reps.TryAdd("%user.joined_date%", () => string.Join(" ", users.Select(user => (user as IGuildUser)?.JoinedAt?.ToString("dd.MM.yyyy") ?? "-")));
             return this;
         }
 
@@ -157,44 +184,6 @@ namespace NadekoBot.Common.Replacements
             _reps.TryAdd("%shard.usercount%", () => c.Guilds.Sum(s => s.Users.Count).ToString());
 #endif
             _reps.TryAdd("%shard.id%", () => c.ShardId.ToString());
-            return this;
-        }
-
-        public ReplacementBuilder WithMusic(MusicService ms)
-        {
-            _reps.TryAdd("%playing%", () =>
-            {
-                var cnt = ms.MusicPlayers.Count(kvp => kvp.Value.Current.Current != null);
-                if (cnt != 1) return cnt.ToString();
-                try
-                {
-                    var mp = ms.MusicPlayers.FirstOrDefault();
-                    var title = mp.Value?.Current.Current?.Title;
-                    return title ?? "No songs";
-                }
-                catch
-                {
-                    return "error";
-                }
-            });
-            _reps.TryAdd("%queued%", () => ms.MusicPlayers.Sum(kvp => kvp.Value.QueueArray().Songs.Length).ToString());
-
-            _reps.TryAdd("%music.queued%", () => ms.MusicPlayers.Sum(kvp => kvp.Value.QueueArray().Songs.Length).ToString());
-            _reps.TryAdd("%music.playing%", () =>
-            {
-                var cnt = ms.MusicPlayers.Count(kvp => kvp.Value.Current.Current != null);
-                if (cnt != 1) return cnt.ToString();
-                try
-                {
-                    var mp = ms.MusicPlayers.FirstOrDefault();
-                    var title = mp.Value?.Current.Current?.Title;
-                    return title ?? "No songs";
-                }
-                catch
-                {
-                    return "error";
-                }
-            });
             return this;
         }
 
@@ -228,6 +217,19 @@ namespace NadekoBot.Common.Replacements
         public Replacer Build()
         {
             return new Replacer(_reps.Select(x => (x.Key, x.Value)).ToArray(), _regex.Select(x => (x.Key, x.Value)).ToArray());
+        }
+
+        public ReplacementBuilder WithProviders(IEnumerable<IPlaceholderProvider> phProviders)
+        {
+            foreach (var provider in phProviders)
+            {
+                foreach (var ovr in provider.GetPlaceholders())
+                {
+                    _reps.TryAdd(ovr.Name, ovr.Func);
+                }
+            }
+
+            return this;
         }
     }
 }

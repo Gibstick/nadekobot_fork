@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
-using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 
 namespace NadekoBot.Common.ModuleBehaviors
 {
     public interface ILateBlocker
     {
-        Task<bool> TryBlockLate(DiscordSocketClient client, IUserMessage msg, IGuild guild, 
-            IMessageChannel channel, IUser user, string moduleName, string commandName);
+        public int Priority { get; }
+        
+        Task<bool> TryBlockLate(DiscordSocketClient client, ICommandContext context,
+            string moduleName, CommandInfo command);
     }
 }

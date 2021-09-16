@@ -7,7 +7,6 @@ using Google.Apis.YouTube.v3;
 using NadekoBot.Common;
 using NadekoBot.Extensions;
 using Newtonsoft.Json.Linq;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Core.Services.Impl
 {
@@ -25,9 +25,7 @@ namespace NadekoBot.Core.Services.Impl
         private YouTubeService yt;
         private UrlshortenerService sh;
         private CustomsearchService cs;
-
-        private readonly Logger _log;
-
+        
         public GoogleApiService(IBotCredentials creds, IHttpClientFactory factory)
         {
             _creds = creds;
@@ -38,9 +36,7 @@ namespace NadekoBot.Core.Services.Impl
                 ApplicationName = "Nadeko Bot",
                 ApiKey = _creds.GoogleApiKey,
             };
-
-            _log = LogManager.GetCurrentClassLogger();
-
+            
             yt = new YouTubeService(bcs);
             sh = new UrlshortenerService(bcs);
             cs = new CustomsearchService(bcs);
@@ -72,7 +68,7 @@ namespace NadekoBot.Core.Services.Impl
         private readonly IBotCredentials _creds;
         private readonly IHttpClientFactory _httpFactory;
 
-        // todo add quota users
+        // todo future add quota users
         public async Task<IEnumerable<string>> GetRelatedVideosAsync(string id, int count = 1)
         {
             await Task.Yield();
@@ -143,7 +139,7 @@ namespace NadekoBot.Core.Services.Impl
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error shortening URL");
                 return url;
             }
         }

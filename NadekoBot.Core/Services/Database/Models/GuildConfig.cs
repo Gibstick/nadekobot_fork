@@ -1,8 +1,6 @@
-﻿using NadekoBot.Common.Collections;
-using NadekoBot.Core.Common.TypeReaders.Models;
-using System;
+﻿using System;
+using NadekoBot.Common.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NadekoBot.Core.Services.Database.Models
 {
@@ -14,7 +12,9 @@ namespace NadekoBot.Core.Services.Database.Models
 
         public bool DeleteMessageOnCommand { get; set; }
         public HashSet<DelMsgOnCmdChannel> DelMsgOnCmdChannels { get; set; } = new HashSet<DelMsgOnCmdChannel>();
+        [Obsolete("Use autoassignroleids")]
         public ulong AutoAssignRoleId { get; set; }
+        public string AutoAssignRoleIds { get; set; }
         //greet stuff
         public bool AutoDeleteGreetMessages { get; set; } //unused
         public bool AutoDeleteByeMessages { get; set; } // unused
@@ -72,10 +72,10 @@ namespace NadekoBot.Core.Services.Database.Models
 
         public string MuteRoleName { get; set; }
         public bool CleverbotEnabled { get; set; }
-        public List<Repeater> GuildRepeaters { get; set; } = new List<Repeater>();
 
         public AntiRaidSetting AntiRaidSetting { get; set; }
         public AntiSpamSetting AntiSpamSetting { get; set; }
+        public AntiAltSetting AntiAltSetting { get; set; }
 
         public string Locale { get; set; } = null;
         public string TimeZoneId { get; set; } = null;
@@ -100,7 +100,6 @@ namespace NadekoBot.Core.Services.Database.Models
         public XpSettings XpSettings { get; set; }
         public List<FeedSub> FeedSubs { get; set; } = new List<FeedSub>();
         public bool AutoDcFromVc { get; set; }
-        public MusicSettings MusicSettings { get; set; } = new MusicSettings();
         public IndexedCollection<ReactionRoleMessage> ReactionRoleMessages { get; set; } = new IndexedCollection<ReactionRoleMessage>();
         public bool NotifyStreamOffline { get; set; }
         public List<GroupName> SelfAssignableRoleGroupNames { get; set; }

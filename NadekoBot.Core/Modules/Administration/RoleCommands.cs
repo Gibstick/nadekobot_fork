@@ -9,7 +9,9 @@ using NadekoBot.Modules.Administration.Services;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -36,8 +38,6 @@ namespace NadekoBot.Modules.Administration
                 if (input.Length % 2 != 0)
                     return;
 
-                var g = (SocketGuild)ctx.Guild;
-
                 var grp = 0;
                 var results = input
                     .GroupBy(x => grp++ / 2)
@@ -48,7 +48,7 @@ namespace NadekoBot.Modules.Administration
                        var roleResult = await roleReader.ReadAsync(ctx, inputRoleStr, _services);
                        if (!roleResult.IsSuccess)
                        {
-                           _log.Warn("Role {0} not found.", inputRoleStr);
+                           Log.Warning("Role {0} not found.", inputRoleStr);
                            return null;
                        }
                        var role = (IRole)roleResult.BestMatch;
@@ -67,11 +67,20 @@ namespace NadekoBot.Modules.Administration
 
                 foreach (var x in all)
                 {
-                    await prev.AddReactionAsync(x.emote, new RequestOptions()
+                    try
                     {
-                        RetryMode = RetryMode.Retry502 | RetryMode.RetryRatelimit
-                    }).ConfigureAwait(false);
-                    await Task.Delay(100).ConfigureAwait(false);
+                        await prev.AddReactionAsync(x.emote, new RequestOptions()
+                        {
+                            RetryMode = RetryMode.Retry502 | RetryMode.RetryRatelimit
+                        }).ConfigureAwait(false);
+                    }
+                    catch (Discord.Net.HttpException ex) when(ex.HttpCode == HttpStatusCode.BadRequest)
+                    {
+                        await ReplyErrorLocalizedAsync("reaction_cant_access", Format.Code(x.emote.ToString()));
+                        return;
+                    }
+
+                    await Task.Delay(500).ConfigureAwait(false);
                 }
 
                 if (_service.Add(ctx.Guild.Id, new ReactionRoleMessage()
@@ -89,8 +98,7 @@ namespace NadekoBot.Modules.Administration
                     }).ToList(),
                 }))
                 {
-                    await ctx.Channel.SendConfirmAsync(":ok:")
-                        .ConfigureAwait(false);
+                    await ctx.OkAsync();
                 }
                 else
                 {
@@ -154,7 +162,7 @@ namespace NadekoBot.Modules.Administration
             [UserPerm(GuildPerm.ManageRoles)]
             public async Task ReactionRolesRemove(int index)
             {
-                if (index < 1 || index > 5 ||
+                if (index < 1 ||
                     !_service.Get(ctx.Guild.Id, out var rrs) ||
                     !rrs.Any() || rrs.Count < index)
                 {
@@ -185,8 +193,8 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
+                    Log.Warning(ex, "Error in setrole command");
                     await ReplyErrorLocalizedAsync("setrole_err").ConfigureAwait(false);
-                    _log.Info(ex);
                 }
             }
 
@@ -214,7 +222,7 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.ManageRoles)]
             [BotPerm(GuildPerm.ManageRoles)]
-            public async Task RenameRole(IRole roleToEdit, string newname)
+            public async Task RenameRole(IRole roleToEdit, [Leftover]string newname)
             {
                 var guser = (IGuildUser)ctx.User;
                 if (ctx.User.Id != guser.Guild.OwnerId && guser.GetRoles().Max(x => x.Position) <= roleToEdit.Position)
@@ -243,7 +251,10 @@ namespace NadekoBot.Modules.Administration
             {
                 var guser = (IGuildUser)ctx.User;
 
-                var userRoles = user.GetRoles().Except(new[] { guser.Guild.EveryoneRole });
+                var userRoles = user.GetRoles()
+                    .Where(x => !x.IsManaged && x != x.Guild.EveryoneRole)
+                    .ToList();
+                
                 if (user.Id == ctx.Guild.OwnerId || (ctx.User.Id != ctx.Guild.OwnerId && guser.GetRoles().Max(x => x.Position) <= userRoles.Max(x => x.Position)))
                     return;
                 try
@@ -316,7 +327,7 @@ namespace NadekoBot.Modules.Administration
             [UserPerm(GuildPerm.ManageRoles)]
             [BotPerm(GuildPerm.ManageRoles)]
             [Priority(0)]
-            public async Task RoleColor(IRole role, SixLabors.ImageSharp.Color color)
+            public async Task RoleColor(SixLabors.ImageSharp.Color color, [Leftover]IRole role)
             {
                 try
                 {
@@ -327,24 +338,6 @@ namespace NadekoBot.Modules.Administration
                 catch (Exception)
                 {
                     await ReplyErrorLocalizedAsync("rc_perms").ConfigureAwait(false);
-                }
-            }
-
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.MentionEveryone)]
-            [BotPerm(GuildPerm.ManageRoles)]
-            public async Task MentionRole([Leftover] IRole role)
-            {
-                if (!role.IsMentionable)
-                {
-                    await role.ModifyAsync(x => x.Mentionable = true).ConfigureAwait(false);
-                    await ctx.Channel.SendMessageAsync(role.Mention).ConfigureAwait(false);
-                    await role.ModifyAsync(x => x.Mentionable = false).ConfigureAwait(false);
-                }
-                else
-                {
-                    await ctx.Channel.SendMessageAsync(role.Mention).ConfigureAwait(false);
                 }
             }
         }

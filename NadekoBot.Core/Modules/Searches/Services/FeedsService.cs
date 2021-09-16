@@ -18,6 +18,7 @@ namespace NadekoBot.Modules.Searches.Services
         private readonly DbService _db;
         private readonly ConcurrentDictionary<string, HashSet<FeedSub>> _subs;
         private readonly DiscordSocketClient _client;
+
         private readonly ConcurrentDictionary<string, DateTime> _lastPosts =
             new ConcurrentDictionary<string, DateTime>();
 
@@ -25,12 +26,20 @@ namespace NadekoBot.Modules.Searches.Services
         {
             _db = db;
 
-            _subs = bot
-                .AllGuildConfigs
-                .SelectMany(x => x.FeedSubs)
-                .GroupBy(x => x.Url.ToLower())
-                .ToDictionary(x => x.Key, x => x.ToHashSet())
-                .ToConcurrent();
+            using (var uow = db.GetDbContext())
+            {
+                var guildConfigIds = bot.AllGuildConfigs.Select(x => x.Id).ToList();
+                _subs = uow._context.GuildConfigs
+                    .AsQueryable()
+                    .Where(x => guildConfigIds.Contains(x.Id))
+                    .Include(x => x.FeedSubs)
+                        .ThenInclude(x => x.GuildConfig)
+                    .ToList()
+                    .SelectMany(x => x.FeedSubs)
+                    .GroupBy(x => x.Url.ToLower())
+                    .ToDictionary(x => x.Key, x => x.ToHashSet())
+                    .ToConcurrent();
+            }
 
             _client = client;
 
@@ -52,22 +61,21 @@ namespace NadekoBot.Modules.Searches.Services
                     {
                         var feed = await CodeHollow.FeedReader.FeedReader.ReadAsync(rssUrl).ConfigureAwait(false);
 
-                        var embed = new EmbedBuilder()
-                            .WithFooter(rssUrl);
-
                         var items = feed
                             .Items
                             .Select(item => (Item: item, LastUpdate: item.PublishingDate?.ToUniversalTime()
-                                                                  ?? (item.SpecificItem as AtomFeedItem)?.UpdatedDate?.ToUniversalTime()))
+                                                                     ?? (item.SpecificItem as AtomFeedItem)?.UpdatedDate
+                                                                     ?.ToUniversalTime()))
                             .Where(data => !(data.LastUpdate is null))
-                            .Select(data => (data.Item, LastUpdate: (DateTime)data.LastUpdate))
+                            .Select(data => (data.Item, LastUpdate: (DateTime) data.LastUpdate))
                             .OrderByDescending(data => data.LastUpdate)
                             .Reverse() // start from the oldest
                             .ToList();
 
                         if (!_lastPosts.TryGetValue(kvp.Key, out DateTime lastFeedUpdate))
                         {
-                            lastFeedUpdate = _lastPosts[kvp.Key] = items.Any() ? items[items.Count - 1].LastUpdate : DateTime.UtcNow;
+                            lastFeedUpdate = _lastPosts[kvp.Key] =
+                                items.Any() ? items[items.Count - 1].LastUpdate : DateTime.UtcNow;
                         }
 
                         foreach (var (feedItem, itemUpdateDate) in items)
@@ -75,7 +83,10 @@ namespace NadekoBot.Modules.Searches.Services
                             if (itemUpdateDate <= lastFeedUpdate)
                             {
                                 continue;
-                            }
+                            }                            
+
+                            var embed = new EmbedBuilder()
+                                .WithFooter(rssUrl);
 
                             _lastPosts[kvp.Key] = itemUpdateDate;
 
@@ -87,18 +98,43 @@ namespace NadekoBot.Modules.Searches.Services
                                 ? "-"
                                 : feedItem.Title;
 
-                            if (feedItem.SpecificItem is MediaRssFeedItem mrfi && (mrfi.Enclosure?.MediaType.StartsWith("image/") ?? false))
+                            var gotImage = false;
+                            if (feedItem.SpecificItem is MediaRssFeedItem mrfi &&
+                                (mrfi.Enclosure?.MediaType?.StartsWith("image/") ?? false))
                             {
                                 var imgUrl = mrfi.Enclosure.Url;
-                                if (!string.IsNullOrWhiteSpace(imgUrl) && Uri.IsWellFormedUriString(imgUrl, UriKind.Absolute))
+                                if (!string.IsNullOrWhiteSpace(imgUrl) &&
+                                    Uri.IsWellFormedUriString(imgUrl, UriKind.Absolute))
                                 {
                                     embed.WithImageUrl(imgUrl);
+                                    gotImage = true;
+                                }
+                            }
+                            
+                            if (!gotImage && feedItem.SpecificItem is AtomFeedItem afi)
+                            {
+                                var previewElement = afi.Element.Elements()
+                                    .FirstOrDefault(x => x.Name.LocalName == "preview");
+
+                                if (previewElement == null)
+                                {
+                                    previewElement = afi.Element.Elements()
+                                        .FirstOrDefault(x => x.Name.LocalName == "thumbnail");
+                                }
+                                
+                                if (previewElement != null)
+                                {
+                                    var urlAttribute = previewElement.Attribute("url");
+                                    if (urlAttribute != null && !string.IsNullOrWhiteSpace(urlAttribute.Value)
+                                                             && Uri.IsWellFormedUriString(urlAttribute.Value,
+                                                                 UriKind.Absolute))
+                                    {
+                                        embed.WithImageUrl(urlAttribute.Value);
+                                        gotImage = true;
+                                    }
                                 }
                             }
 
-                            //// old image retreiving code
-                            //var img = (item as Rss20Feed).Items.FirstOrDefault(x => x.Element.Name == "enclosure") ...FirstOrDefault(x => x.RelationshipType == "enclosure")?.Uri.AbsoluteUri
-                            //    ?? Regex.Match(item.Description, @"src=""(?<src>.*?)""").Groups["src"].ToString();
 
                             embed.WithTitle(title.TrimTo(256));
 
@@ -117,7 +153,9 @@ namespace NadekoBot.Modules.Searches.Services
                             allSendTasks.Add(Task.WhenAll(feedSendTasks));
                         }
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                 }
 
                 await Task.WhenAll(Task.WhenAll(allSendTasks), Task.Delay(10000)).ConfigureAwait(false);
@@ -128,7 +166,9 @@ namespace NadekoBot.Modules.Searches.Services
         {
             using (var uow = _db.GetDbContext())
             {
-                return uow.GuildConfigs.ForId(guildId, set => set.Include(x => x.FeedSubs))
+                return uow.GuildConfigs.ForId(guildId, 
+                        set => set.Include(x => x.FeedSubs)
+                                        .ThenInclude(x => x.GuildConfig))
                     .FeedSubs
                     .OrderBy(x => x.Id)
                     .ToList();
@@ -147,7 +187,9 @@ namespace NadekoBot.Modules.Searches.Services
 
             using (var uow = _db.GetDbContext())
             {
-                var gc = uow.GuildConfigs.ForId(guildId, set => set.Include(x => x.FeedSubs));
+                var gc = uow.GuildConfigs.ForId(guildId,
+                    set => set.Include(x => x.FeedSubs)
+                                    .ThenInclude(x => x.GuildConfig));
 
                 if (gc.FeedSubs.Any(x => x.Url.ToLower() == fs.Url.ToLower()))
                 {
@@ -163,13 +205,12 @@ namespace NadekoBot.Modules.Searches.Services
                 //adding all, in case bot wasn't on this guild when it started
                 foreach (var feed in gc.FeedSubs)
                 {
-                    _subs.AddOrUpdate(feed.Url.ToLower(), new HashSet<FeedSub>() { feed }, (k, old) =>
+                    _subs.AddOrUpdate(feed.Url.ToLower(), new HashSet<FeedSub>() {feed}, (k, old) =>
                     {
                         old.Add(feed);
                         return old;
                     });
                 }
-
             }
 
             return true;
@@ -198,6 +239,7 @@ namespace NadekoBot.Modules.Searches.Services
                 uow._context.Remove(toRemove);
                 uow.SaveChanges();
             }
+
             return true;
         }
     }

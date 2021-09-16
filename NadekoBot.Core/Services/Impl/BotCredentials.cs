@@ -2,18 +2,17 @@
 using Microsoft.Extensions.Configuration;
 using NadekoBot.Common;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using NadekoBot.Core.Common;
+using Serilog;
 
 namespace NadekoBot.Core.Services.Impl
 {
     public class BotCredentials : IBotCredentials
     {
-        private Logger _log;
-
         public string GoogleApiKey { get; }
         public string MashapeKey { get; }
         public string Token { get; }
@@ -47,8 +46,6 @@ namespace NadekoBot.Core.Services.Impl
 
         public BotCredentials()
         {
-            _log = LogManager.GetCurrentClassLogger();
-
             try
             {
                 File.WriteAllText("./credentials_example.json",
@@ -59,7 +56,7 @@ namespace NadekoBot.Core.Services.Impl
             }
 
             if (!File.Exists(_credsFileName))
-                _log.Warn(
+                Log.Warning(
                     $"credentials.json is missing. Attempting to load creds from environment variables prefixed with 'NadekoBot_'. Example is in {Path.GetFullPath("./credentials_example.json")}");
             try
             {
@@ -72,11 +69,9 @@ namespace NadekoBot.Core.Services.Impl
                 Token = data[nameof(Token)];
                 if (string.IsNullOrWhiteSpace(Token))
                 {
-                    _log.Error(
-                        "Token is missing from credentials.json or Environment varibles. Add it and restart the program.");
-                    if (!Console.IsInputRedirected)
-                        Console.ReadKey();
-                    Environment.Exit(3);
+                    Log.Error(
+                        "Token is missing from credentials.json or Environment variables. Add it and restart the program.");
+                    Helpers.ReadErrorAndExit(5);
                 }
 
                 OwnerIds = data.GetSection("OwnerIds").GetChildren().Select(c => ulong.Parse(c.Value))
@@ -154,9 +149,9 @@ namespace NadekoBot.Core.Services.Impl
             }
             catch (Exception ex)
             {
-                _log.Fatal(ex.Message);
-                _log.Fatal(ex);
-                throw;
+                Log.Error("JSON serialization has failed. Fix your credentials file and restart the bot.");
+                Log.Fatal(ex.ToString());
+                Helpers.ReadErrorAndExit(6);
             }
         }
 

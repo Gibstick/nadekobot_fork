@@ -7,7 +7,6 @@ using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NLog;
 using System;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +15,7 @@ namespace NadekoBot.Modules.Utility.Services
 {
     public class CommandMapService : IInputTransformer, INService
     {
-        private readonly Logger _log;
-
+        
         public ConcurrentDictionary<ulong, ConcurrentDictionary<string, string>> AliasMaps { get; } = new ConcurrentDictionary<ulong, ConcurrentDictionary<string, string>>();
 
         private readonly DbService _db;
@@ -25,8 +23,7 @@ namespace NadekoBot.Modules.Utility.Services
         //commandmap
         public CommandMapService(DiscordSocketClient client, DbService db)
         {
-            _log = LogManager.GetCurrentClassLogger();
-
+            
             using (var uow = db.GetDbContext())
             {
                 var guildIds = client.Guilds.Select(x => x.Id).ToList();

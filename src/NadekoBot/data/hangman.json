@@ -1,1526 +1,1338 @@
 {
   "Animals": [
     {
-      "Word": "meerkat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/meerkat.jpg"
+      "Word": "Alligator",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Alligator.jpg"
     },
     {
-      "ImageUrl": "https://www.randomlists.com/img/animals/aardvark.jpg",
-      "Word": "aardvark"
+      "Word": "Alpaca",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Alpaca.jpg"
     },
     {
-      "Word": "addax",
-      "ImageUrl": "https://www.randomlists.com/img/animals/addax.jpg"
+      "Word": "Anaconda",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Anaconda.jpg"
     },
     {
-      "Word": "alligator",
-      "ImageUrl": "https://www.randomlists.com/img/animals/alligator.jpg"
+      "Word": "Ant",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Ant.jpg"
     },
     {
-      "Word": "alpaca",
-      "ImageUrl": "https://www.randomlists.com/img/animals/alpaca.jpg"
+      "Word": "Antelope",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Antelope.jpg"
     },
     {
-      "Word": "anteater",
-      "ImageUrl": "https://www.randomlists.com/img/animals/anteater.jpg"
+      "Word": "Ape",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Ape.jpg"
     },
     {
-      "Word": "antelope",
-      "ImageUrl": "https://www.randomlists.com/img/animals/antelope.jpg"
+      "Word": "Armadillo",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Armadillo.jpg"
     },
     {
-      "Word": "aoudad",
-      "ImageUrl": "https://www.randomlists.com/img/animals/aoudad.jpg"
+      "Word": "Baboon",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Baboon.jpg"
     },
     {
-      "Word": "ape",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ape.jpg"
+      "Word": "Badger",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Badger.jpg"
     },
     {
-      "Word": "argali",
-      "ImageUrl": "https://www.randomlists.com/img/animals/argali.jpg"
+      "Word": "Bald Eagle",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bald Eagle.jpg"
     },
     {
-      "Word": "armadillo",
-      "ImageUrl": "https://www.randomlists.com/img/animals/armadillo.jpg"
+      "Word": "Barracuda",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Barracuda.jpg"
     },
     {
-      "Word": "baboon",
-      "ImageUrl": "https://www.randomlists.com/img/animals/baboon.jpg"
+      "Word": "Bat",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bat.jpg"
     },
     {
-      "Word": "badger",
-      "ImageUrl": "https://www.randomlists.com/img/animals/badger.jpg"
+      "Word": "Bear",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bear.jpg"
     },
     {
-      "Word": "basilisk",
-      "ImageUrl": "https://www.randomlists.com/img/animals/basilisk.jpg"
+      "Word": "Beaver",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Beaver.jpg"
     },
     {
-      "Word": "bat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bat.jpg"
+      "Word": "Bedbug",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bedbug.jpg"
     },
     {
-      "Word": "bear",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bear.jpg"
+      "Word": "Bee",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bee.jpg"
     },
     {
-      "Word": "beaver",
-      "ImageUrl": "https://www.randomlists.com/img/animals/beaver.jpg"
+      "Word": "Beetle",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Beetle.jpg"
     },
     {
-      "Word": "bighorn",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bighorn.jpg"
+      "Word": "Bird",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bird.jpg"
     },
     {
-      "Word": "bison",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bison.jpg"
+      "Word": "Bison",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bison.jpg"
     },
     {
-      "Word": "boar",
-      "ImageUrl": "https://www.randomlists.com/img/animals/boar.jpg"
+      "Word": "Puma",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Puma.jpg"
     },
     {
-      "Word": "budgerigar",
-      "ImageUrl": "https://www.randomlists.com/img/animals/budgerigar.jpg"
+      "Word": "Black Widow",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Black Widow.jpg"
     },
     {
-      "Word": "buffalo",
-      "ImageUrl": "https://www.randomlists.com/img/animals/buffalo.jpg"
+      "Word": "Blue Jay",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Blue Jay.jpg"
     },
     {
-      "Word": "bull",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bull.jpg"
+      "Word": "Blue Whale",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Blue Whale.jpg"
     },
     {
-      "Word": "bunny",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bunny.jpg"
+      "Word": "Bobcat",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Bobcat.jpg"
     },
     {
-      "Word": "burro",
-      "ImageUrl": "https://www.randomlists.com/img/animals/burro.jpg"
+      "Word": "Buffalo",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Buffalo.jpg"
     },
     {
-      "Word": "camel",
-      "ImageUrl": "https://www.randomlists.com/img/animals/camel.jpg"
+      "Word": "Butterfly",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Butterfly.jpg"
     },
     {
-      "Word": "canary",
-      "ImageUrl": "https://www.randomlists.com/img/animals/canary.jpg"
+      "Word": "Buzzard",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Buzzard.jpg"
     },
     {
-      "Word": "capybara",
-      "ImageUrl": "https://www.randomlists.com/img/animals/capybara.jpg"
+      "Word": "Camel",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Camel.jpg"
     },
     {
-      "Word": "cat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/cat.jpg"
+      "Word": "Carp",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Carp.jpg"
     },
     {
-      "Word": "chameleon",
-      "ImageUrl": "https://www.randomlists.com/img/animals/chameleon.jpg"
+      "Word": "Cat",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cat.jpg"
     },
     {
-      "Word": "chamois",
-      "ImageUrl": "https://www.randomlists.com/img/animals/chamois.jpg"
+      "Word": "Caterpillar",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Caterpillar.jpg"
     },
     {
-      "Word": "cheetah",
-      "ImageUrl": "https://www.randomlists.com/img/animals/cheetah.jpg"
+      "Word": "Catfish",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Catfish.jpg"
     },
     {
-      "Word": "chimpanzee",
-      "ImageUrl": "https://www.randomlists.com/img/animals/chimpanzee.jpg"
+      "Word": "Cheetah",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cheetah.jpg"
     },
     {
-      "Word": "chinchilla",
-      "ImageUrl": "https://www.randomlists.com/img/animals/chinchilla.jpg"
+      "Word": "Chicken",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Chicken.jpg"
     },
     {
-      "Word": "chipmunk",
-      "ImageUrl": "https://www.randomlists.com/img/animals/chipmunk.jpg"
+      "Word": "Chimpanzee",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Chimpanzee.jpg"
     },
     {
-      "Word": "civet",
-      "ImageUrl": "https://www.randomlists.com/img/animals/civet.jpg"
+      "Word": "Chipmunk",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Chipmunk.jpg"
     },
     {
-      "Word": "coati",
-      "ImageUrl": "https://www.randomlists.com/img/animals/coati.jpg"
+      "Word": "Cobra",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cobra.jpg"
     },
     {
-      "Word": "colt",
-      "ImageUrl": "https://www.randomlists.com/img/animals/colt.jpg"
+      "Word": "Cod",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cod.jpg"
     },
     {
-      "Word": "cougar",
-      "ImageUrl": "https://www.randomlists.com/img/animals/cougar.jpg"
+      "Word": "Condor",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Condor.jpg"
     },
     {
-      "Word": "cow",
-      "ImageUrl": "https://www.randomlists.com/img/animals/cow.jpg"
+      "Word": "Cougar",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cougar.jpg"
     },
     {
-      "Word": "coyote",
-      "ImageUrl": "https://www.randomlists.com/img/animals/coyote.jpg"
+      "Word": "Cow",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cow.jpg"
     },
     {
-      "Word": "crocodile",
-      "ImageUrl": "https://www.randomlists.com/img/animals/crocodile.jpg"
+      "Word": "Coyote",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Coyote.jpg"
     },
     {
-      "Word": "crow",
-      "ImageUrl": "https://www.randomlists.com/img/animals/crow.jpg"
+      "Word": "Crab",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Crab.jpg"
     },
     {
-      "Word": "deer",
-      "ImageUrl": "https://www.randomlists.com/img/animals/deer.jpg"
+      "Word": "Crane",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Crane.jpg"
     },
     {
-      "Word": "dingo",
-      "ImageUrl": "https://www.randomlists.com/img/animals/dingo.jpg"
+      "Word": "Cricket",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cricket.jpg"
     },
     {
-      "Word": "doe",
-      "ImageUrl": "https://www.randomlists.com/img/animals/doe.jpg"
+      "Word": "Crocodile",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Crocodile.jpg"
     },
     {
-      "Word": "dung beetle",
-      "ImageUrl": "https://www.randomlists.com/img/animals/dung_beetle.jpg"
+      "Word": "Crow",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Crow.jpg"
     },
     {
-      "Word": "dog",
-      "ImageUrl": "https://www.randomlists.com/img/animals/dog.jpg"
+      "Word": "Cuckoo",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Cuckoo.jpg"
     },
     {
-      "Word": "donkey",
-      "ImageUrl": "https://www.randomlists.com/img/animals/donkey.jpg"
+      "Word": "Deer",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Deer.jpg"
     },
     {
-      "Word": "dormouse",
-      "ImageUrl": "https://www.randomlists.com/img/animals/dormouse.jpg"
+      "Word": "Dinosaur",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Dinosaur.jpg"
     },
     {
-      "Word": "dromedary",
-      "ImageUrl": "https://www.randomlists.com/img/animals/dromedary.jpg"
+      "Word": "Dog",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Dog.jpg"
     },
     {
-      "Word": "duckbill platypus",
-      "ImageUrl": "https://www.randomlists.com/img/animals/duckbill_platypus.jpg"
+      "Word": "Dolphin",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Dolphin.jpg"
     },
     {
-      "Word": "dugong",
-      "ImageUrl": "https://www.randomlists.com/img/animals/dugong.jpg"
+      "Word": "Donkey",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Donkey.jpg"
     },
     {
-      "Word": "eland",
-      "ImageUrl": "https://www.randomlists.com/img/animals/eland.jpg"
+      "Word": "Dove",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Dove.jpg"
     },
     {
-      "Word": "elephant",
-      "ImageUrl": "https://www.randomlists.com/img/animals/elephant.jpg"
+      "Word": "Dragonfly",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Dragonfly.jpg"
     },
     {
-      "Word": "elk",
-      "ImageUrl": "https://www.randomlists.com/img/animals/elk.jpg"
+      "Word": "Duck",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Duck.jpg"
     },
     {
-      "Word": "ermine",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ermine.jpg"
+      "Word": "Eel",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Eel.jpg"
     },
     {
-      "Word": "ewe",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ewe.jpg"
+      "Word": "Elephant",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Elephant.jpg"
     },
     {
-      "Word": "fawn",
-      "ImageUrl": "https://www.randomlists.com/img/animals/fawn.jpg"
+      "Word": "Emu",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Emu.jpg"
     },
     {
-      "Word": "ferret",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ferret.jpg"
+      "Word": "Falcon",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Falcon.jpg"
     },
     {
-      "Word": "finch",
-      "ImageUrl": "https://www.randomlists.com/img/animals/finch.jpg"
+      "Word": "Ferret",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Ferret.jpg"
     },
     {
-      "Word": "fish",
-      "ImageUrl": "https://www.randomlists.com/img/animals/fish.jpg"
+      "Word": "Finch",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Finch.jpg"
     },
     {
-      "Word": "fox",
-      "ImageUrl": "https://www.randomlists.com/img/animals/fox.jpg"
+      "Word": "Fish",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Fish.jpg"
     },
     {
-      "Word": "frog",
-      "ImageUrl": "https://www.randomlists.com/img/animals/frog.jpg"
+      "Word": "Flamingo",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Flamingo.jpg"
     },
     {
-      "Word": "gazelle",
-      "ImageUrl": "https://www.randomlists.com/img/animals/gazelle.jpg"
+      "Word": "Flea",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Flea.jpg"
     },
     {
-      "Word": "gemsbok",
-      "ImageUrl": "https://www.randomlists.com/img/animals/gemsbok.jpg"
+      "Word": "Fly",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Fly.jpg"
     },
     {
-      "Word": "gila monster",
-      "ImageUrl": "https://www.randomlists.com/img/animals/gila_monster.jpg"
+      "Word": "Fox",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Fox.jpg"
     },
     {
-      "Word": "giraffe",
-      "ImageUrl": "https://www.randomlists.com/img/animals/giraffe.jpg"
+      "Word": "Frog",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Frog.jpg"
     },
     {
-      "Word": "gnu",
-      "ImageUrl": "https://www.randomlists.com/img/animals/gnu.jpg"
+      "Word": "Goat",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Goat.jpg"
     },
     {
-      "Word": "goat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/goat.jpg"
+      "Word": "Golden Eagle",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Golden Eagle.jpg"
     },
     {
-      "Word": "gopher",
-      "ImageUrl": "https://www.randomlists.com/img/animals/gopher.jpg"
+      "Word": "Goose",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Goose.jpg"
     },
     {
-      "Word": "gorilla",
-      "ImageUrl": "https://www.randomlists.com/img/animals/gorilla.jpg"
+      "Word": "Gopher",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Gopher.jpg"
     },
     {
-      "Word": "grizzly bear",
-      "ImageUrl": "https://www.randomlists.com/img/animals/grizzly_bear.jpg"
+      "Word": "Gorilla",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Gorilla.jpg"
     },
     {
-      "Word": "ground hog",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ground_hog.jpg"
+      "Word": "Grasshopper",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Grasshopper.jpg"
     },
     {
-      "Word": "guanaco",
-      "ImageUrl": "https://www.randomlists.com/img/animals/guanaco.jpg"
+      "Word": "Hamster",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Hamster.jpg"
     },
     {
-      "Word": "guinea pig",
-      "ImageUrl": "https://www.randomlists.com/img/animals/guinea_pig.jpg"
+      "Word": "Hare",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Hare.jpg"
     },
     {
-      "Word": "hamster",
-      "ImageUrl": "https://www.randomlists.com/img/animals/hamster.jpg"
+      "Word": "Hawk",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Hawk.jpg"
     },
     {
-      "Word": "hare",
-      "ImageUrl": "https://www.randomlists.com/img/animals/hare.jpg"
+      "Word": "Hippopotamus",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Hippopotamus.jpg"
     },
     {
-      "Word": "hartebeest",
-      "ImageUrl": "https://www.randomlists.com/img/animals/hartebeest.jpg"
+      "Word": "Horse",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Horse.jpg"
     },
     {
-      "Word": "hedgehog",
-      "ImageUrl": "https://www.randomlists.com/img/animals/hedgehog.jpg"
+      "Word": "Hummingbird",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Hummingbird.jpg"
     },
     {
-      "Word": "hippopotamus",
-      "ImageUrl": "https://www.randomlists.com/img/animals/hippopotamus.jpg"
+      "Word": "Husky",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Husky.jpg"
     },
     {
-      "Word": "hog",
-      "ImageUrl": "https://www.randomlists.com/img/animals/hog.jpg"
+      "Word": "Iguana",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Iguana.jpg"
     },
     {
-      "Word": "horse",
-      "ImageUrl": "https://www.randomlists.com/img/animals/horse.jpg"
+      "Word": "Impala",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Impala.jpg"
     },
     {
-      "Word": "hyena",
-      "ImageUrl": "https://www.randomlists.com/img/animals/hyena.jpg"
+      "Word": "Kangaroo",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Kangaroo.jpg"
     },
     {
-      "Word": "ibex",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ibex.jpg"
+      "Word": "Ladybug",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Ladybug.jpg"
     },
     {
-      "Word": "iguana",
-      "ImageUrl": "https://www.randomlists.com/img/animals/iguana.jpg"
+      "Word": "Leopard",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Leopard.jpg"
     },
     {
-      "Word": "impala",
-      "ImageUrl": "https://www.randomlists.com/img/animals/impala.jpg"
+      "Word": "Lion",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Lion.jpg"
     },
     {
-      "Word": "jackal",
-      "ImageUrl": "https://www.randomlists.com/img/animals/jackal.jpg"
+      "Word": "Lizard",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Lizard.jpg"
     },
     {
-      "Word": "jaguar",
-      "ImageUrl": "https://www.randomlists.com/img/animals/jaguar.jpg"
+      "Word": "Llama",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Llama.jpg"
     },
     {
-      "Word": "jerboa",
-      "ImageUrl": "https://www.randomlists.com/img/animals/jerboa.jpg"
+      "Word": "Lobster",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Lobster.jpg"
     },
     {
-      "Word": "kangaroo",
-      "ImageUrl": "https://www.randomlists.com/img/animals/kangaroo.jpg"
+      "Word": "Mongoose",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Mongoose.jpg"
     },
     {
-      "Word": "kitten",
-      "ImageUrl": "https://www.randomlists.com/img/animals/kitten.jpg"
+      "Word": "Monitor lizard",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Monitor lizard.jpg"
     },
     {
-      "Word": "koala",
-      "ImageUrl": "https://www.randomlists.com/img/animals/koala.jpg"
+      "Word": "Monkey",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Monkey.jpg"
     },
     {
-      "Word": "lamb",
-      "ImageUrl": "https://www.randomlists.com/img/animals/lamb.jpg"
+      "Word": "Moose",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Moose.jpg"
     },
     {
-      "Word": "lemur",
-      "ImageUrl": "https://www.randomlists.com/img/animals/lemur.jpg"
+      "Word": "Mosquito",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Mosquito.jpg"
     },
     {
-      "Word": "leopard",
-      "ImageUrl": "https://www.randomlists.com/img/animals/leopard.jpg"
+      "Word": "Moth",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Moth.jpg"
     },
     {
-      "Word": "lion",
-      "ImageUrl": "https://www.randomlists.com/img/animals/lion.jpg"
+      "Word": "Mountain goat",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Mountain goat.jpg"
     },
     {
-      "Word": "lizard",
-      "ImageUrl": "https://www.randomlists.com/img/animals/lizard.jpg"
+      "Word": "Mouse",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Mouse.jpg"
     },
     {
-      "Word": "llama",
-      "ImageUrl": "https://www.randomlists.com/img/animals/llama.jpg"
+      "Word": "Mule",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Mule.jpg"
     },
     {
-      "Word": "lovebird",
-      "ImageUrl": "https://www.randomlists.com/img/animals/lovebird.jpg"
+      "Word": "Octopus",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Octopus.jpg"
     },
     {
-      "Word": "lynx",
-      "ImageUrl": "https://www.randomlists.com/img/animals/lynx.jpg"
+      "Word": "Orca",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Orca.jpg"
     },
     {
-      "Word": "mandrill",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mandrill.jpg"
+      "Word": "Ostrich",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Ostrich.jpg"
     },
     {
-      "Word": "mare",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mare.jpg"
+      "Word": "Otter",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Otter.jpg"
     },
     {
-      "Word": "marmoset",
-      "ImageUrl": "https://www.randomlists.com/img/animals/marmoset.jpg"
+      "Word": "Owl",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Owl.jpg"
     },
     {
-      "Word": "marten",
-      "ImageUrl": "https://www.randomlists.com/img/animals/marten.jpg"
+      "Word": "Ox",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Ox.jpg"
     },
     {
-      "Word": "mink",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mink.jpg"
+      "Word": "Oyster",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Oyster.jpg"
     },
     {
-      "Word": "mole",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mole.jpg"
+      "Word": "Panda",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Panda.jpg"
     },
     {
-      "Word": "mongoose",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mongoose.jpg"
+      "Word": "Parrot",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Parrot.jpg"
     },
     {
-      "Word": "monkey",
-      "ImageUrl": "https://www.randomlists.com/img/animals/monkey.jpg"
+      "Word": "Peacock",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Peacock.jpg"
     },
     {
-      "Word": "moose",
-      "ImageUrl": "https://www.randomlists.com/img/animals/moose.jpg"
+      "Word": "Pelican",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Pelican.jpg"
     },
     {
-      "Word": "mountain goat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mountain_goat.jpg"
+      "Word": "Penguin",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Penguin.jpg"
     },
     {
-      "Word": "mouse",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mouse.jpg"
+      "Word": "Perch",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Perch.jpg"
     },
     {
-      "Word": "mule",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mule.jpg"
+      "Word": "Pheasant",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Pheasant.jpg"
     },
     {
-      "Word": "musk deer",
-      "ImageUrl": "https://www.randomlists.com/img/animals/musk_deer.jpg"
+      "Word": "Pig",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Pig.jpg"
     },
     {
-      "Word": "musk-ox",
-      "ImageUrl": "https://www.randomlists.com/img/animals/musk-ox.jpg"
+      "Word": "Pigeon",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Pigeon.jpg"
     },
     {
-      "Word": "muskrat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/muskrat.jpg"
+      "Word": "Polar bear",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Polar bear.jpg"
     },
     {
-      "Word": "mustang",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mustang.jpg"
+      "Word": "Porcupine",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Porcupine.jpg"
     },
     {
-      "Word": "mynah bird",
-      "ImageUrl": "https://www.randomlists.com/img/animals/mynah_bird.jpg"
+      "Word": "Quail",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Quail.jpg"
     },
     {
-      "Word": "newt",
-      "ImageUrl": "https://www.randomlists.com/img/animals/newt.jpg"
+      "Word": "Rabbit",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Rabbit.jpg"
     },
     {
-      "Word": "ocelot",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ocelot.jpg"
+      "Word": "Raccoon",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Raccoon.jpg"
     },
     {
-      "Word": "okapi",
-      "ImageUrl": "https://www.randomlists.com/img/animals/okapi.jpg"
+      "Word": "Rat",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Rat.jpg"
     },
     {
-      "Word": "opossum",
-      "ImageUrl": "https://www.randomlists.com/img/animals/opossum.jpg"
+      "Word": "Rattlesnake",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Rattlesnake.jpg"
     },
     {
-      "Word": "orangutan",
-      "ImageUrl": "https://www.randomlists.com/img/animals/orangutan.jpg"
+      "Word": "Raven",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Raven.jpg"
     },
     {
-      "Word": "oryx",
-      "ImageUrl": "https://www.randomlists.com/img/animals/oryx.jpg"
+      "Word": "Reindeer",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Reindeer.jpg"
     },
     {
-      "Word": "otter",
-      "ImageUrl": "https://www.randomlists.com/img/animals/otter.jpg"
+      "Word": "Rooster",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Rooster.jpg"
     },
     {
-      "Word": "ox",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ox.jpg"
+      "Word": "Sea lion",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Sea lion.jpg"
     },
     {
-      "Word": "panda",
-      "ImageUrl": "https://www.randomlists.com/img/animals/panda.jpg"
+      "Word": "Seal",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Seal.jpg"
     },
     {
-      "Word": "panther",
-      "ImageUrl": "https://www.randomlists.com/img/animals/panther.jpg"
+      "Word": "Sheep",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Sheep.jpg"
     },
     {
-      "Word": "parakeet",
-      "ImageUrl": "https://www.randomlists.com/img/animals/parakeet.jpg"
+      "Word": "Shrew",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Shrew.jpg"
     },
     {
-      "Word": "parrot",
-      "ImageUrl": "https://www.randomlists.com/img/animals/parrot.jpg"
+      "Word": "Skunk",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Skunk.jpg"
     },
     {
-      "Word": "peccary",
-      "ImageUrl": "https://www.randomlists.com/img/animals/peccary.jpg"
+      "Word": "Snail",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Snail.jpg"
     },
     {
-      "Word": "pig",
-      "ImageUrl": "https://www.randomlists.com/img/animals/pig.jpg"
+      "Word": "Snake",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Snake.jpg"
     },
     {
-      "Word": "octopus",
-      "ImageUrl": "https://www.randomlists.com/img/animals/octopus.jpg"
+      "Word": "Spider",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Spider.jpg"
     },
     {
-      "Word": "thorny devil",
-      "ImageUrl": "https://www.randomlists.com/img/animals/thorny_devil.jpg"
+      "Word": "Tiger",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Tiger.jpg"
     },
     {
-      "Word": "starfish",
-      "ImageUrl": "https://www.randomlists.com/img/animals/starfish.jpg"
+      "Word": "Walrus",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Walrus.jpg"
     },
     {
-      "Word": "blue crab",
-      "ImageUrl": "https://www.randomlists.com/img/animals/blue_crab.jpg"
+      "Word": "Whale",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Whale.jpg"
     },
     {
-      "Word": "snowy owl",
-      "ImageUrl": "https://www.randomlists.com/img/animals/snowy_owl.jpg"
+      "Word": "Wolf",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Wolf.jpg"
     },
     {
-      "Word": "chicken",
-      "ImageUrl": "https://www.randomlists.com/img/animals/chicken.jpg"
-    },
-    {
-      "Word": "rooster",
-      "ImageUrl": "https://www.randomlists.com/img/animals/rooster.jpg"
-    },
-    {
-      "Word": "bumble bee",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bumble_bee.jpg"
-    },
-    {
-      "Word": "eagle owl",
-      "ImageUrl": "https://www.randomlists.com/img/animals/eagle_owl.jpg"
-    },
-    {
-      "Word": "polar bear",
-      "ImageUrl": "https://www.randomlists.com/img/animals/polar_bear.jpg"
-    },
-    {
-      "Word": "pony",
-      "ImageUrl": "https://www.randomlists.com/img/animals/pony.jpg"
-    },
-    {
-      "Word": "porcupine",
-      "ImageUrl": "https://www.randomlists.com/img/animals/porcupine.jpg"
-    },
-    {
-      "Word": "porpoise",
-      "ImageUrl": "https://www.randomlists.com/img/animals/porpoise.jpg"
-    },
-    {
-      "Word": "prairie dog",
-      "ImageUrl": "https://www.randomlists.com/img/animals/prairie_dog.jpg"
-    },
-    {
-      "Word": "pronghorn",
-      "ImageUrl": "https://www.randomlists.com/img/animals/pronghorn.jpg"
-    },
-    {
-      "Word": "puma",
-      "ImageUrl": "https://www.randomlists.com/img/animals/puma.jpg"
-    },
-    {
-      "Word": "puppy",
-      "ImageUrl": "https://www.randomlists.com/img/animals/puppy.jpg"
-    },
-    {
-      "Word": "quagga",
-      "ImageUrl": "https://www.randomlists.com/img/animals/quagga.jpg"
-    },
-    {
-      "Word": "rabbit",
-      "ImageUrl": "https://www.randomlists.com/img/animals/rabbit.jpg"
-    },
-    {
-      "Word": "raccoon",
-      "ImageUrl": "https://www.randomlists.com/img/animals/raccoon.jpg"
-    },
-    {
-      "Word": "ram",
-      "ImageUrl": "https://www.randomlists.com/img/animals/ram.jpg"
-    },
-    {
-      "Word": "rat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/rat.jpg"
-    },
-    {
-      "Word": "reindeer",
-      "ImageUrl": "https://www.randomlists.com/img/animals/reindeer.jpg"
-    },
-    {
-      "Word": "rhinoceros",
-      "ImageUrl": "https://www.randomlists.com/img/animals/rhinoceros.jpg"
-    },
-    {
-      "Word": "salamander",
-      "ImageUrl": "https://www.randomlists.com/img/animals/salamander.jpg"
-    },
-    {
-      "Word": "seal",
-      "ImageUrl": "https://www.randomlists.com/img/animals/seal.jpg"
-    },
-    {
-      "Word": "sheep",
-      "ImageUrl": "https://www.randomlists.com/img/animals/sheep.jpg"
-    },
-    {
-      "Word": "shrew",
-      "ImageUrl": "https://www.randomlists.com/img/animals/shrew.jpg"
-    },
-    {
-      "Word": "silver fox",
-      "ImageUrl": "https://www.randomlists.com/img/animals/silver_fox.jpg"
-    },
-    {
-      "Word": "skunk",
-      "ImageUrl": "https://www.randomlists.com/img/animals/skunk.jpg"
-    },
-    {
-      "Word": "sloth",
-      "ImageUrl": "https://www.randomlists.com/img/animals/sloth.jpg"
-    },
-    {
-      "Word": "snake",
-      "ImageUrl": "https://www.randomlists.com/img/animals/snake.jpg"
-    },
-    {
-      "Word": "springbok",
-      "ImageUrl": "https://www.randomlists.com/img/animals/springbok.jpg"
-    },
-    {
-      "Word": "squirrel",
-      "ImageUrl": "https://www.randomlists.com/img/animals/squirrel.jpg"
-    },
-    {
-      "Word": "stallion",
-      "ImageUrl": "https://www.randomlists.com/img/animals/stallion.jpg"
-    },
-    {
-      "Word": "steer",
-      "ImageUrl": "https://www.randomlists.com/img/animals/steer.jpg"
-    },
-    {
-      "Word": "tapir",
-      "ImageUrl": "https://www.randomlists.com/img/animals/tapir.jpg"
-    },
-    {
-      "Word": "tiger",
-      "ImageUrl": "https://www.randomlists.com/img/animals/tiger.jpg"
-    },
-    {
-      "Word": "toad",
-      "ImageUrl": "https://www.randomlists.com/img/animals/toad.jpg"
-    },
-    {
-      "Word": "turtle",
-      "ImageUrl": "https://www.randomlists.com/img/animals/turtle.jpg"
-    },
-    {
-      "Word": "vicuna",
-      "ImageUrl": "https://www.randomlists.com/img/animals/vicuna.jpg"
-    },
-    {
-      "Word": "walrus",
-      "ImageUrl": "https://www.randomlists.com/img/animals/walrus.jpg"
-    },
-    {
-      "Word": "warthog",
-      "ImageUrl": "https://www.randomlists.com/img/animals/warthog.jpg"
-    },
-    {
-      "Word": "waterbuck",
-      "ImageUrl": "https://www.randomlists.com/img/animals/waterbuck.jpg"
-    },
-    {
-      "Word": "weasel",
-      "ImageUrl": "https://www.randomlists.com/img/animals/weasel.jpg"
-    },
-    {
-      "Word": "whale",
-      "ImageUrl": "https://www.randomlists.com/img/animals/whale.jpg"
-    },
-    {
-      "Word": "wildcat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/wildcat.jpg"
-    },
-    {
-      "Word": "bald eagle",
-      "ImageUrl": "https://www.randomlists.com/img/animals/bald_eagle.jpg"
-    },
-    {
-      "Word": "wolf",
-      "ImageUrl": "https://www.randomlists.com/img/animals/wolf.jpg"
-    },
-    {
-      "Word": "wolverine",
-      "ImageUrl": "https://www.randomlists.com/img/animals/wolverine.jpg"
-    },
-    {
-      "Word": "wombat",
-      "ImageUrl": "https://www.randomlists.com/img/animals/wombat.jpg"
-    },
-    {
-      "Word": "woodchuck",
-      "ImageUrl": "https://www.randomlists.com/img/animals/woodchuck.jpg"
-    },
-    {
-      "Word": "yak",
-      "ImageUrl": "https://www.randomlists.com/img/animals/yak.jpg"
-    },
-    {
-      "Word": "zebra",
-      "ImageUrl": "https://www.randomlists.com/img/animals/zebra.jpg"
-    },
-    {
-      "Word": "zebu",
-      "ImageUrl": "https://www.randomlists.com/img/animals/zebu.jpg"
+      "Word": "Zebra",
+      "ImageUrl": "https://cdn.nadeko.bot/animals/Zebra"
     }
   ],
   "Countries": [
     {
       "Word": "Afghanistan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/af.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/af-flag.gif"
     },
     {
       "Word": "Albania",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/al.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/al-flag.gif"
     },
     {
       "Word": "Algeria",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/dz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ag-flag.gif"
     },
     {
       "Word": "Andorra",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ad.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/an-flag.gif"
     },
     {
       "Word": "Angola",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ao.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ao-flag.gif"
     },
     {
       "Word": "Antigua and Barbuda",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ag.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ac-flag.gif"
     },
     {
       "Word": "Argentina",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ar.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ar-flag.gif"
     },
     {
       "Word": "Armenia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/am.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/am-flag.gif"
     },
     {
       "Word": "Australia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/au.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/as-flag.gif"
     },
     {
       "Word": "Austria",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/at.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/au-flag.gif"
     },
     {
       "Word": "Azerbaijan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/az.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/aj-flag.gif"
     },
     {
       "Word": "Bahamas",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bs.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bf-flag.gif"
     },
     {
       "Word": "Bahrain",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bh.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ba-flag.gif"
     },
     {
       "Word": "Bangladesh",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bd.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bg-flag.gif"
     },
     {
       "Word": "Barbados",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bb.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bb-flag.gif"
     },
     {
       "Word": "Belarus",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/by.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bo-flag.gif"
     },
     {
       "Word": "Belgium",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/be.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/be-flag.gif"
     },
     {
       "Word": "Belize",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bh-flag.gif"
     },
     {
       "Word": "Benin",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bj.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bn-flag.gif"
     },
     {
       "Word": "Bhutan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bt.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bt-flag.gif"
     },
     {
       "Word": "Bolivia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bo.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bl-flag.gif"
     },
     {
       "Word": "Bosnia and Herzegovina",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ba.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bk-flag.gif"
     },
     {
       "Word": "Botswana",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bw.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bc-flag.gif"
     },
     {
       "Word": "Brazil",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/br.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/br-flag.gif"
     },
     {
-      "Word": "Brunei Darussalam",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bn.png"
+      "Word": "Brunei",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bx-flag.gif"
     },
     {
       "Word": "Bulgaria",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bg.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bu-flag.gif"
     },
     {
       "Word": "Burkina Faso",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bf.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/uv-flag.gif"
     },
     {
       "Word": "Burundi",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/bi.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/by-flag.gif"
+    },
+    {
+      "Word": "Ivory Coast",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/iv-flag.gif"
+    },
+    {
+      "Word": "Cabo Verde",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cv-flag.gif"
     },
     {
       "Word": "Cambodia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/kh.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cb-flag.gif"
     },
     {
       "Word": "Cameroon",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cm-flag.gif"
     },
     {
       "Word": "Canada",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ca.png"
-    },
-    {
-      "Word": "Cape Verde",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cv.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ca-flag.gif"
     },
     {
       "Word": "Central African Republic",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cf.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ct-flag.gif"
     },
     {
       "Word": "Chad",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/td.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cd-flag.gif"
     },
     {
       "Word": "Chile",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cl.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ci-flag.gif"
     },
     {
       "Word": "China",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cn.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ch-flag.gif"
     },
     {
       "Word": "Colombia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/co.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/co-flag.gif"
     },
     {
       "Word": "Comoros",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/km.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cn-flag.gif"
     },
     {
       "Word": "Congo",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cd.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cg-flag.gif"
     },
     {
       "Word": "Costa Rica",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cr.png"
-    },
-    {
-      "Word": "Cote d'Ivoire",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ci.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cs-flag.gif"
     },
     {
       "Word": "Croatia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/hr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/hr-flag.gif"
     },
     {
       "Word": "Cuba",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cu.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cu-flag.gif"
     },
     {
       "Word": "Cyprus",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cy.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/cy-flag.gif"
     },
     {
-      "Word": "Czech Republic",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/cz.png"
+      "Word": "Czechia",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ez-flag.gif"
     },
     {
       "Word": "Denmark",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/dk.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/da-flag.gif"
     },
     {
       "Word": "Djibouti",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/dj.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/dj-flag.gif"
     },
     {
       "Word": "Dominica",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/dm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/do-flag.gif"
     },
     {
       "Word": "Dominican Republic",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/do.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/dr-flag.gif"
+    },
+    {
+      "Word": "Democratic People's Republic of Korea",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/kn-flag.gif"
+    },
+    {
+      "Word": "Democratic Republic of the Congo",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/congo-flag.gif"
     },
     {
       "Word": "Ecuador",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ec.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ec-flag.gif"
     },
     {
       "Word": "Egypt",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/eg.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/eg-flag.gif"
     },
     {
       "Word": "El Salvador",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sv.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/es-flag.gif"
     },
     {
       "Word": "Equatorial Guinea",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gq.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ek-flag.gif"
     },
     {
       "Word": "Eritrea",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/er.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/er-flag.gif"
     },
     {
       "Word": "Estonia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ee.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/en-flag.gif"
+    },
+    {
+      "Word": "Eswatini",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/wz-flag.gif"
     },
     {
       "Word": "Ethiopia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/et.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/et-flag.gif"
     },
     {
       "Word": "Fiji",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/fj.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/fj-flag.gif"
     },
     {
       "Word": "Finland",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/fi.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/fi-flag.gif"
     },
     {
       "Word": "France",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/fr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/fr-flag.gif"
     },
     {
       "Word": "Gabon",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ga.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gb-flag.gif"
     },
     {
       "Word": "Gambia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ga-flag.gif"
     },
     {
       "Word": "Georgia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ge.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gg-flag.gif"
     },
     {
       "Word": "Germany",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/de.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gm-flag.gif"
     },
     {
       "Word": "Ghana",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gh.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gh-flag.gif"
     },
     {
       "Word": "Greece",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gr-flag.gif"
     },
     {
       "Word": "Grenada",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gd.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gj-flag.gif"
     },
     {
       "Word": "Guatemala",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gt.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gt-flag.gif"
     },
     {
       "Word": "Guinea",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gn.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gv-flag.gif"
     },
     {
       "Word": "Guinea-Bissau",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gw.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/pu-flag.gif"
     },
     {
       "Word": "Guyana",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gy.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/gy-flag.gif"
     },
     {
       "Word": "Haiti",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ht.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ha-flag.gif"
     },
     {
       "Word": "Holy See",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/va.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/vt-flag.gif"
     },
     {
       "Word": "Honduras",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/hn.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ho-flag.gif"
     },
     {
       "Word": "Hungary",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/hu.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/hu-flag.gif"
     },
     {
       "Word": "Iceland",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/is.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ic-flag.gif"
     },
     {
       "Word": "India",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/in.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/in-flag.gif"
     },
     {
       "Word": "Indonesia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/id.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/id-flag.gif"
     },
     {
-      "Word": "Iran, Islamic Republic of",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ir.png"
+      "Word": "Iran",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ir-flag.gif"
     },
     {
       "Word": "Iraq",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/iq.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/iz-flag.gif"
     },
     {
       "Word": "Ireland",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ie.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ei-flag.gif"
     },
     {
       "Word": "Israel",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/il.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/is-flag.gif"
     },
     {
       "Word": "Italy",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/it.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/it-flag.gif"
     },
     {
       "Word": "Jamaica",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/jm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/jm-flag.gif"
     },
     {
       "Word": "Japan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/jp.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ja-flag.gif"
     },
     {
       "Word": "Jordan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/jo.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/jo-flag.gif"
     },
     {
       "Word": "Kazakhstan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/kz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/kz-flag.gif"
     },
     {
       "Word": "Kenya",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ke.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ke-flag.gif"
     },
     {
       "Word": "Kiribati",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ki.png"
-    },
-    {
-      "Word": "Korea",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/kr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/kr-flag.gif"
     },
     {
       "Word": "Kuwait",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/kw.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ku-flag.gif"
     },
     {
       "Word": "Kyrgyzstan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/kg.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/kg-flag.gif"
     },
     {
-      "Word": "Lao PDR",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/la.png"
+      "Word": "Laos",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/la-flag.gif"
     },
     {
       "Word": "Latvia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/lv.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/lg-flag.gif"
     },
     {
       "Word": "Lebanon",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/lb.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/le-flag.gif"
     },
     {
       "Word": "Lesotho",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ls.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/lt-flag.gif"
     },
     {
       "Word": "Liberia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/lr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/li-flag.gif"
     },
     {
       "Word": "Libya",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ly.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ly-flag.gif"
     },
     {
       "Word": "Liechtenstein",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/li.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ls-flag.gif"
     },
     {
       "Word": "Lithuania",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/lt.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/lh-flag.gif"
     },
     {
       "Word": "Luxembourg",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/lu.png"
-    },
-    {
-      "Word": "Macedonia, Republic of",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mk.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/lu-flag.gif"
     },
     {
       "Word": "Madagascar",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mg.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ma-flag.gif"
     },
     {
       "Word": "Malawi",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mw.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mi-flag.gif"
     },
     {
       "Word": "Malaysia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/my.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/my-flag.gif"
     },
     {
       "Word": "Maldives",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mv.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mv-flag.gif"
     },
     {
       "Word": "Mali",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ml.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ml-flag.gif"
     },
     {
       "Word": "Malta",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mt.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mt-flag.gif"
     },
     {
       "Word": "Marshall Islands",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mh.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/rm-flag.gif"
     },
     {
       "Word": "Mauritania",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mr-flag.gif"
     },
     {
       "Word": "Mauritius",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mu.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mp-flag.gif"
     },
     {
       "Word": "Mexico",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mx.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mx-flag.gif"
     },
     {
-      "Word": "Micronesia, Federated States of",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/fm.png"
+      "Word": "Micronesia",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/fm-flag.gif"
     },
     {
       "Word": "Moldova",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/md.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/md-flag.gif"
     },
     {
       "Word": "Monaco",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mc.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mn-flag.gif"
     },
     {
       "Word": "Mongolia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mn.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mg-flag.gif"
     },
     {
       "Word": "Montenegro",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/me.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mj-flag.gif"
     },
     {
       "Word": "Morocco",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ma.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mo-flag.gif"
     },
     {
       "Word": "Mozambique",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mz-flag.gif"
     },
     {
       "Word": "Myanmar",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/mm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bm-flag.gif"
     },
     {
       "Word": "Namibia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/na.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/wa-flag.gif"
     },
     {
       "Word": "Nauru",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/nr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/nr-flag.gif"
     },
     {
       "Word": "Nepal",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/np.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/np-flag.gif"
     },
     {
       "Word": "Netherlands",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/nl.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/nl-flag.gif"
     },
     {
       "Word": "New Zealand",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/nz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/nz-flag.gif"
     },
     {
       "Word": "Nicaragua",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ni.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/nu-flag.gif"
     },
     {
       "Word": "Niger",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ne.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ng-flag.gif"
     },
     {
       "Word": "Nigeria",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ng.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ni-flag.gif"
+    },
+    {
+      "Word": "North Macedonia",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mk-flag.gif"
     },
     {
       "Word": "Norway",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/no.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/no-flag.gif"
     },
     {
       "Word": "Oman",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/om.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/mu-flag.gif"
     },
     {
       "Word": "Pakistan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/pk.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/pk-flag.gif"
     },
     {
       "Word": "Palau",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/pw.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ps-flag.gif"
     },
     {
       "Word": "Panama",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/pa.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/pm-flag.gif"
     },
     {
       "Word": "Papua New Guinea",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/pg.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/pp-flag.gif"
     },
     {
       "Word": "Paraguay",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/py.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/pa-flag.gif"
     },
     {
       "Word": "Peru",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/pe.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/pe-flag.gif"
     },
     {
       "Word": "Philippines",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ph.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/rp-flag.gif"
     },
     {
       "Word": "Poland",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/pl.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/pl-flag.gif"
     },
     {
       "Word": "Portugal",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/pt.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/po-flag.gif"
     },
     {
       "Word": "Qatar",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/qa.png"
-    },
-    {
-      "Word": "Reunion",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/re.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/qa-flag.gif"
     },
     {
       "Word": "Romania",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ro.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ro-flag.gif"
     },
     {
-      "Word": "Russian Federation",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ru.png"
+      "Word": "Russia",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/rs-flag.gif"
     },
     {
       "Word": "Rwanda",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/rw.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/rw-flag.gif"
     },
     {
       "Word": "Saint Kitts and Nevis",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/kn.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sc-flag.gif"
     },
     {
       "Word": "Saint Lucia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/lc.png"
-    },
-    {
-      "Word": "Saint Vincent and Grenadines",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/vc.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/st-flag.gif"
     },
     {
       "Word": "Samoa",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ws.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ws-flag.gif"
     },
     {
       "Word": "San Marino",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sm-flag.gif"
     },
     {
       "Word": "Sao Tome and Principe",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/st.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/tp-flag.gif"
     },
     {
       "Word": "Saudi Arabia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sa.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sa-flag.gif"
     },
     {
       "Word": "Senegal",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sn.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sg-flag.gif"
     },
     {
       "Word": "Serbia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/rs.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ri-flag.gif"
     },
     {
       "Word": "Seychelles",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sc.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/se-flag.gif"
     },
     {
       "Word": "Sierra Leone",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sl.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sl-flag.gif"
     },
     {
       "Word": "Singapore",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sg.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sn-flag.gif"
     },
     {
       "Word": "Slovakia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sk.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/lo-flag.gif"
     },
     {
       "Word": "Slovenia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/si.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/si-flag.gif"
     },
     {
       "Word": "Solomon Islands",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sb.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/bp-flag.gif"
     },
     {
       "Word": "Somalia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/so.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/so-flag.gif"
     },
     {
       "Word": "South Africa",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/za.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sf-flag.gif"
+    },
+    {
+      "Word": "South Korea",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ks-flag.gif"
+    },
+    {
+      "Word": "South Sudan",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/od-flag.gif"
     },
     {
       "Word": "Spain",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/es.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sp-flag.gif"
     },
     {
       "Word": "Sri Lanka",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/lk.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ce-flag.gif"
+    },
+    {
+      "Word": "St. Vincent Grenadines",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/vc-flag.gif"
+    },
+    {
+      "Word": "State of Palestine",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/palestine-flag.gif"
     },
     {
       "Word": "Sudan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sd.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/su-flag.gif"
     },
     {
       "Word": "Suriname",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sr.png"
-    },
-    {
-      "Word": "Swaziland",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ns-flag.gif"
     },
     {
       "Word": "Sweden",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/se.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sw-flag.gif"
     },
     {
       "Word": "Switzerland",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ch.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sz-flag.gif"
     },
     {
-      "Word": "Syrian Arab Republic",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/sy.png"
-    },
-    {
-      "Word": "Taiwan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tw.png"
+      "Word": "Syria",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/sy-flag.gif"
     },
     {
       "Word": "Tajikistan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tj.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ti-flag.gif"
     },
     {
       "Word": "Tanzania",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/tz-flag.gif"
     },
     {
       "Word": "Thailand",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/th.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/th-flag.gif"
     },
     {
       "Word": "Timor-Leste",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tl.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/tt-flag.gif"
     },
     {
       "Word": "Togo",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tg.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/to-flag.gif"
     },
     {
       "Word": "Tonga",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/to.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/tn-flag.gif"
     },
     {
       "Word": "Trinidad and Tobago",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tt.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/td-flag.gif"
     },
     {
       "Word": "Tunisia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tn.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ts-flag.gif"
     },
     {
       "Word": "Turkey",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tr.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/tu-flag.gif"
     },
     {
       "Word": "Turkmenistan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/tx-flag.gif"
     },
     {
       "Word": "Tuvalu",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/tv.png"
-    },
-    {
-      "Word": "Uganda",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ug.png"
-    },
-    {
-      "Word": "Ukraine",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ua.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/tv-flag.gif"
     },
     {
       "Word": "United Arab Emirates",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ae.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ae-flag.gif"
     },
     {
       "Word": "United Kingdom",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/gb.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/uk-flag.gif"
     },
     {
-      "Word": "United States of America",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/us.png"
+      "Word": "United States Of America",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/us-flag.gif"
+    },
+    {
+      "Word": "Uganda",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ug-flag.gif"
+    },
+    {
+      "Word": "Ukraine",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/up-flag.gif"
     },
     {
       "Word": "Uruguay",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/uy.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/uy-flag.gif"
     },
     {
       "Word": "Uzbekistan",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/uz.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/uz-flag.gif"
     },
     {
       "Word": "Vanuatu",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/vu.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/nh-flag.gif"
     },
     {
       "Word": "Venezuela",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ve.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ve-flag.gif"
     },
     {
-      "Word": "Viet Nam",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/vn.png"
+      "Word": "Vietnam",
+      "ImageUrl": "https://cdn.nadeko.bot/flags/vm-flag.gif"
     },
     {
       "Word": "Yemen",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/ye.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/ym-flag.gif"
     },
     {
       "Word": "Zambia",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/zm.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/za-flag.gif"
     },
     {
       "Word": "Zimbabwe",
-      "ImageUrl": "https://nadeko-pictures.nyc3.digitaloceanspaces.com/countries/zw.png"
+      "ImageUrl": "https://cdn.nadeko.bot/flags/zi-flag.gif"
     }
   ],
   "Movies": [
@@ -2531,7 +2343,7 @@
       "ImageUrl": "https://www.randomlists.com/img/things/cup.jpg"
     },
     {
-      "Word": "deodorant ",
+      "Word": "deodorant",
       "ImageUrl": "https://www.randomlists.com/img/things/deodorant_.jpg"
     },
     {
@@ -3085,6 +2897,1540 @@
     {
       "Word": "zipper",
       "ImageUrl": "https://www.randomlists.com/img/things/zipper.jpg"
+    }
+  ],
+  "Anime": [
+    {
+      "Word": "Fullmetal Alchemist: Brotherhood",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Fullmetal_Alchemist_Brotherhood.jpg"
+    },
+    {
+      "Word": "Steins;Gate",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/SteinsGate.jpg"
+    },
+    {
+      "Word": "Hunter x Hunter (2011)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hunter_x_Hunter_2011.jpg"
+    },
+    {
+      "Word": "Ginga Eiyuu Densetsu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ginga_Eiyuu_Densetsu.jpg"
+    },
+    {
+      "Word": "Fruits Basket: The Final",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Fruits_Basket_The_Final.jpg"
+    },
+    {
+      "Word": "Koe no Katachi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Koe_no_Katachi.jpg"
+    },
+    {
+      "Word": "Clannad: After Story",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Clannad_After_Story.jpg"
+    },
+    {
+      "Word": "Gintama",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gintama.jpg"
+    },
+    {
+      "Word": "Kimi no Na wa.",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kimi_no_Na_wa..jpg"
+    },
+    {
+      "Word": "Code Geass: Hangyaku no Lelouch R2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Code_Geass_Hangyaku_no_Lelouch_R2.jpg"
+    },
+    {
+      "Word": "Haikyuu!!: Karasuno Koukou vs. Shiratorizawa Gakuen Koukou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Haikyuu_Karasuno_Koukou_vs._Shiratorizawa_Gakuen_Koukou.jpg"
+    },
+    {
+      "Word": "Mob Psycho 100 II",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mob_Psycho_100_II.jpg"
+    },
+    {
+      "Word": "Kizumonogatari III: Reiketsu-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kizumonogatari_III_Reiketsu-hen.jpg"
+    },
+    {
+      "Word": "Sen to Chihiro no Kamikakushi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Sen_to_Chihiro_no_Kamikakushi.jpg"
+    },
+    {
+      "Word": "Violet Evergarden Movie",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Violet_Evergarden_Movie.jpg"
+    },
+    {
+      "Word": "Monogatari Series: Second Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Monogatari_Series_Second_Season.jpg"
+    },
+    {
+      "Word": "Monster",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Monster.jpg"
+    },
+    {
+      "Word": "Shouwa Genroku Rakugo Shinjuu: Sukeroku Futatabi-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shouwa_Genroku_Rakugo_Shinjuu_Sukeroku_Futatabi-hen.jpg"
+    },
+    {
+      "Word": "Cowboy Bebop",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Cowboy_Bebop.jpg"
+    },
+    {
+      "Word": "Jujutsu Kaisen (TV)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Jujutsu_Kaisen_TV.jpg"
+    },
+    {
+      "Word": "Kimetsu no Yaiba Movie: Mugen Ressha-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kimetsu_no_Yaiba_Movie_Mugen_Ressha-hen.jpg"
+    },
+    {
+      "Word": "Mushishi Zoku Shou 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mushishi_Zoku_Shou_2nd_Season.jpg"
+    },
+    {
+      "Word": "Hajime no Ippo",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hajime_no_Ippo.jpg"
+    },
+    {
+      "Word": "Made in Abyss",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Made_in_Abyss.jpg"
+    },
+    {
+      "Word": "Made in Abyss Movie 3: Fukaki Tamashii no Reimei",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Made_in_Abyss_Movie_3_Fukaki_Tamashii_no_Reimei.jpg"
+    },
+    {
+      "Word": "Mushishi Zoku Shou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mushishi_Zoku_Shou.jpg"
+    },
+    {
+      "Word": "Rurouni Kenshin: Meiji Kenkaku Romantan - Tsuioku-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Rurouni_Kenshin_Meiji_Kenkaku_Romantan_-_Tsuioku-hen.jpg"
+    },
+    {
+      "Word": "Shigatsu wa Kimi no Uso",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shigatsu_wa_Kimi_no_Uso.jpg"
+    },
+    {
+      "Word": "Vinland Saga",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Vinland_Saga.jpg"
+    },
+    {
+      "Word": "Code Geass: Hangyaku no Lelouch",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Code_Geass_Hangyaku_no_Lelouch.jpg"
+    },
+    {
+      "Word": "Great Teacher Onizuka",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Great_Teacher_Onizuka.jpg"
+    },
+    {
+      "Word": "Mononoke Hime",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mononoke_Hime.jpg"
+    },
+    {
+      "Word": "Mushishi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mushishi.jpg"
+    },
+    {
+      "Word": "Haikyuu!! Second Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Haikyuu_Second_Season.jpg"
+    },
+    {
+      "Word": "Kaguya-sama wa Kokurasetai?: Tensai-tachi no Renai Zunousen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kaguya-sama_wa_Kokurasetai_Tensai-tachi_no_Renai_Zunousen.jpg"
+    },
+    {
+      "Word": "Hajime no Ippo: New Challenger",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hajime_no_Ippo_New_Challenger.jpg"
+    },
+    {
+      "Word": "Howl no Ugoku Shiro",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Howl_no_Ugoku_Shiro.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou Shi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_Shi.jpg"
+    },
+    {
+      "Word": "Seishun Buta Yarou wa Yumemiru Shoujo no Yume wo Minai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Seishun_Buta_Yarou_wa_Yumemiru_Shoujo_no_Yume_wo_Minai.jpg"
+    },
+    {
+      "Word": "Tengen Toppa Gurren Lagann",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tengen_Toppa_Gurren_Lagann.jpg"
+    },
+    {
+      "Word": "Violet Evergarden",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Violet_Evergarden.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou Roku",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_Roku.jpg"
+    },
+    {
+      "Word": "Suzumiya Haruhi no Shoushitsu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Suzumiya_Haruhi_no_Shoushitsu.jpg"
+    },
+    {
+      "Word": "Death Note",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Death_Note.jpg"
+    },
+    {
+      "Word": "Fumetsu no Anata e",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Fumetsu_no_Anata_e.jpg"
+    },
+    {
+      "Word": "Mushishi Zoku Shou: Suzu no Shizuku",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mushishi_Zoku_Shou_Suzu_no_Shizuku.jpg"
+    },
+    {
+      "Word": "Ookami Kodomo no Ame to Yuki",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ookami_Kodomo_no_Ame_to_Yuki.jpg"
+    },
+    {
+      "Word": "Ping Pong the Animation",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ping_Pong_the_Animation.jpg"
+    },
+    {
+      "Word": "Yakusoku no Neverland",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yakusoku_no_Neverland.jpg"
+    },
+    {
+      "Word": "Kizumonogatari II: Nekketsu-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kizumonogatari_II_Nekketsu-hen.jpg"
+    },
+    {
+      "Word": "Yojouhan Shinwa Taikei",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yojouhan_Shinwa_Taikei.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou San",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_San.jpg"
+    },
+    {
+      "Word": "Shouwa Genroku Rakugo Shinjuu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shouwa_Genroku_Rakugo_Shinjuu.jpg"
+    },
+    {
+      "Word": "Hajime no Ippo: Rising",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hajime_no_Ippo_Rising.jpg"
+    },
+    {
+      "Word": "Kimetsu no Yaiba",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kimetsu_no_Yaiba.jpg"
+    },
+    {
+      "Word": "Kimi no Suizou wo Tabetai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kimi_no_Suizou_wo_Tabetai.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou Go",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_Go.jpg"
+    },
+    {
+      "Word": "Re:Zero kara Hajimeru Isekai Seikatsu 2nd Season Part 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/ReZero_kara_Hajimeru_Isekai_Seikatsu_2nd_Season_Part_2.jpg"
+    },
+    {
+      "Word": "Mushishi: Hihamukage",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mushishi_Hihamukage.jpg"
+    },
+    {
+      "Word": "Bakuman. 3rd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Bakuman._3rd_Season.jpg"
+    },
+    {
+      "Word": "Kara no Kyoukai 5: Mujun Rasen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kara_no_Kyoukai_5_Mujun_Rasen.jpg"
+    },
+    {
+      "Word": "Sora yori mo Tooi Basho",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Sora_yori_mo_Tooi_Basho.jpg"
+    },
+    {
+      "Word": "Zoku Natsume Yuujinchou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Zoku_Natsume_Yuujinchou.jpg"
+    },
+    {
+      "Word": "One Piece",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Piece.jpg"
+    },
+    {
+      "Word": "Yuru Camp\u25B3 Season 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yuru_Camp_Season_2.jpg"
+    },
+    {
+      "Word": "Fruits Basket 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Fruits_Basket_2nd_Season.jpg"
+    },
+    {
+      "Word": "Haikyuu!!: To the Top 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Haikyuu_To_the_Top_2nd_Season.jpg"
+    },
+    {
+      "Word": "Koukaku Kidoutai: Stand Alone Complex 2nd GIG",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Koukaku_Kidoutai_Stand_Alone_Complex_2nd_GIG.jpg"
+    },
+    {
+      "Word": "One Punch Man",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Punch_Man.jpg"
+    },
+    {
+      "Word": "Neon Genesis Evangelion: The End of Evangelion",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Neon_Genesis_Evangelion_The_End_of_Evangelion.jpg"
+    },
+    {
+      "Word": "Ansatsu Kyoushitsu 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ansatsu_Kyoushitsu_2nd_Season.jpg"
+    },
+    {
+      "Word": "Slam Dunk",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Slam_Dunk.jpg"
+    },
+    {
+      "Word": "Vivy: Fluorite Eye's Song",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Vivy_Fluorite_Eyes_Song.jpg"
+    },
+    {
+      "Word": "Rainbow: Nisha Rokubou no Shichinin",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Rainbow_Nisha_Rokubou_no_Shichinin.jpg"
+    },
+    {
+      "Word": "Shingeki no Kyojin",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shingeki_no_Kyojin.jpg"
+    },
+    {
+      "Word": "Uchuu Kyoudai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Uchuu_Kyoudai.jpg"
+    },
+    {
+      "Word": "Aria the Origination",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Aria_the_Origination.jpg"
+    },
+    {
+      "Word": "Holo no Graffiti",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Holo_no_Graffiti.jpg"
+    },
+    {
+      "Word": "Hotaru no Haka",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hotaru_no_Haka.jpg"
+    },
+    {
+      "Word": "Banana Fish",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Banana_Fish.jpg"
+    },
+    {
+      "Word": "Chihayafuru 3",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Chihayafuru_3.jpg"
+    },
+    {
+      "Word": "Kenpuu Denki Berserk",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kenpuu_Denki_Berserk.jpg"
+    },
+    {
+      "Word": "Perfect Blue",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Perfect_Blue.jpg"
+    },
+    {
+      "Word": "Samurai Champloo",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Samurai_Champloo.jpg"
+    },
+    {
+      "Word": "Haikyuu!!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Haikyuu.jpg"
+    },
+    {
+      "Word": "Mo Dao Zu Shi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mo_Dao_Zu_Shi.jpg"
+    },
+    {
+      "Word": "Mob Psycho 100",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mob_Psycho_100.jpg"
+    },
+    {
+      "Word": "Zoku Owarimonogatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Zoku_Owarimonogatari.jpg"
+    },
+    {
+      "Word": "Nana",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Nana.jpg"
+    },
+    {
+      "Word": "Nichijou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Nichijou.jpg"
+    },
+    {
+      "Word": "Saenai Heroine no Sodatekata Fine",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Saenai_Heroine_no_Sodatekata_Fine.jpg"
+    },
+    {
+      "Word": "Mushishi Zoku Shou: Odoro no Michi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mushishi_Zoku_Shou_Odoro_no_Michi.jpg"
+    },
+    {
+      "Word": "Owarimonogatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Owarimonogatari.jpg"
+    },
+    {
+      "Word": "Saiki Kusuo no \u03A8-nan 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Saiki_Kusuo_no_-nan_2.jpg"
+    },
+    {
+      "Word": "Yuu\u2606Yuu\u2606Hakusho",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/YuuYuuHakusho.jpg"
+    },
+    {
+      "Word": "Golden Kamuy 3rd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Golden_Kamuy_3rd_Season.jpg"
+    },
+    {
+      "Word": "Koukaku Kidoutai: Stand Alone Complex",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Koukaku_Kidoutai_Stand_Alone_Complex.jpg"
+    },
+    {
+      "Word": "Mo Dao Zu Shi 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mo_Dao_Zu_Shi_2nd_Season.jpg"
+    },
+    {
+      "Word": "Re:Zero kara Hajimeru Isekai Seikatsu 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/ReZero_kara_Hajimeru_Isekai_Seikatsu_2nd_Season.jpg"
+    },
+    {
+      "Word": "Sayonara no Asa ni Yakusoku no Hana wo Kazarou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Sayonara_no_Asa_ni_Yakusoku_no_Hana_wo_Kazarou.jpg"
+    },
+    {
+      "Word": "Mononoke",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mononoke.jpg"
+    },
+    {
+      "Word": "Saiki Kusuo no \u03A8-nan",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Saiki_Kusuo_no_-nan.jpg"
+    },
+    {
+      "Word": "Gotcha!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gotcha.jpg"
+    },
+    {
+      "Word": "Kara no Kyoukai 7: Satsujin Kousatsu (Go)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kara_no_Kyoukai_7_Satsujin_Kousatsu_Go.jpg"
+    },
+    {
+      "Word": "Kaze ga Tsuyoku Fuiteiru",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kaze_ga_Tsuyoku_Fuiteiru.jpg"
+    },
+    {
+      "Word": "3-gatsu no Lion",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/3-gatsu_no_Lion.jpg"
+    },
+    {
+      "Word": "Cross Game",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Cross_Game.jpg"
+    },
+    {
+      "Word": "Josee to Tora to Sakana-tachi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Josee_to_Tora_to_Sakana-tachi.jpg"
+    },
+    {
+      "Word": "Kono Oto Tomare! 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kono_Oto_Tomare_2nd_Season.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou Movie: Utsusemi ni Musubu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_Movie_Utsusemi_ni_Musubu.jpg"
+    },
+    {
+      "Word": "Yahari Ore no Seishun Love Comedy wa Machigatteiru. Kan",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yahari_Ore_no_Seishun_Love_Comedy_wa_Machigatteiru._Kan.jpg"
+    },
+    {
+      "Word": "Non Non Biyori Nonstop",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Non_Non_Biyori_Nonstop.jpg"
+    },
+    {
+      "Word": "Usagi Drop",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Usagi_Drop.jpg"
+    },
+    {
+      "Word": "Baccano!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Baccano.jpg"
+    },
+    {
+      "Word": "Chihayafuru 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Chihayafuru_2.jpg"
+    },
+    {
+      "Word": "Douluo Dalu: Xiaowu Juebie",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Douluo_Dalu_Xiaowu_Juebie.jpg"
+    },
+    {
+      "Word": "Grand Blue",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Grand_Blue.jpg"
+    },
+    {
+      "Word": "Houseki no Kuni (TV)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Houseki_no_Kuni_TV.jpg"
+    },
+    {
+      "Word": "Hunter x Hunter",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hunter_x_Hunter.jpg"
+    },
+    {
+      "Word": "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kaguya-sama_wa_Kokurasetai_Tensai-tachi_no_Renai_Zunousen.jpg"
+    },
+    {
+      "Word": "Barakamon",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Barakamon.jpg"
+    },
+    {
+      "Word": "Kizumonogatari I: Tekketsu-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kizumonogatari_I_Tekketsu-hen.jpg"
+    },
+    {
+      "Word": "Mushoku Tensei: Isekai Ittara Honki Dasu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mushoku_Tensei_Isekai_Ittara_Honki_Dasu.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou Roku Specials",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_Roku_Specials.jpg"
+    },
+    {
+      "Word": "Violet Evergarden Gaiden: Eien to Jidou Shuki Ningyou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Violet_Evergarden_Gaiden_Eien_to_Jidou_Shuki_Ningyou.jpg"
+    },
+    {
+      "Word": "Shiguang Daili Ren",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shiguang_Daili_Ren.jpg"
+    },
+    {
+      "Word": "Tensei shitara Slime Datta Ken 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tensei_shitara_Slime_Datta_Ken_2nd_Season.jpg"
+    },
+    {
+      "Word": "Ano Hi Mita Hana no Namae wo Bokutachi wa Mada Shiranai.",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ano_Hi_Mita_Hana_no_Namae_wo_Bokutachi_wa_Mada_Shiranai..jpg"
+    },
+    {
+      "Word": "Cowboy Bebop: Tengoku no Tobira",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Cowboy_Bebop_Tengoku_no_Tobira.jpg"
+    },
+    {
+      "Word": "Hellsing Ultimate",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hellsing_Ultimate.jpg"
+    },
+    {
+      "Word": "Kaze no Tani no Nausica",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kaze_no_Tani_no_Nausica.jpg"
+    },
+    {
+      "Word": "Luo Xiao Hei Zhan Ji (Movie)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Luo_Xiao_Hei_Zhan_Ji_Movie.jpg"
+    },
+    {
+      "Word": "Bakuman. 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Bakuman._2nd_Season.jpg"
+    },
+    {
+      "Word": "Kiseijuu: Sei no Kakuritsu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kiseijuu_Sei_no_Kakuritsu.jpg"
+    },
+    {
+      "Word": "Kamisama Hajimemashita: Kako-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kamisama_Hajimemashita_Kako-hen.jpg"
+    },
+    {
+      "Word": "Kingdom 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kingdom_2nd_Season.jpg"
+    },
+    {
+      "Word": "Kingdom 3rd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kingdom_3rd_Season.jpg"
+    },
+    {
+      "Word": "Mahou Shoujo Madoka Magica",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mahou_Shoujo_MadokaMagica.jpg"
+    },
+    {
+      "Word": "Psycho-Pass",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Psycho-Pass.jpg"
+    },
+    {
+      "Word": "Tenki no Ko",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tenki_no_Ko.jpg"
+    },
+    {
+      "Word": "Heaven Official's Blessing",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tian_Guan_Ci_Fu.jpg"
+    },
+    {
+      "Word": "Uchuu Senkan Yamato 2199",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Uchuu_Senkan_Yamato_2199.jpg"
+    },
+    {
+      "Word": "Haikyuu!!: To the Top",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Haikyuu_To_the_Top.jpg"
+    },
+    {
+      "Word": "Bakemonogatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Bakemonogatari.jpg"
+    },
+    {
+      "Word": "Given",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Given.jpg"
+    },
+    {
+      "Word": "Hotarubi no Mori e",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hotarubi_no_Mori_e.jpg"
+    },
+    {
+      "Word": "Katanagatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Katanagatari.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou: Itsuka Yuki no Hi ni",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_Itsuka_Yuki_no_Hi_ni.jpg"
+    },
+    {
+      "Word": "One Outs",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Outs.jpg"
+    },
+    {
+      "Word": "Ookami to Koushinryou II",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ookami_to_Koushinryou_II.jpg"
+    },
+    {
+      "Word": "Romeo no Aoi Sora",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Romeo_no_Aoi_Sora.jpg"
+    },
+    {
+      "Word": "Sakamichi no Apollon",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Sakamichi_no_Apollon.jpg"
+    },
+    {
+      "Word": "Seishun Buta Yarou wa Bunny Girl Senpai no Yume wo Minai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Seishun_Buta_Yarou_wa_Bunny_Girl_Senpai_no_Yume_wo_Minai.jpg"
+    },
+    {
+      "Word": "Boku dake ga Inai Machi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Boku_dake_ga_Inai_Machi.jpg"
+    },
+    {
+      "Word": "Evangelion: 2.0 You Can (Not) Advance",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Evangelion_2.0_You_Can_Not_Advance.jpg"
+    },
+    {
+      "Word": "Kemono no Souja Erin",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kemono_no_Souja_Erin.jpg"
+    },
+    {
+      "Word": "Made in Abyss Movie 2: Hourou Suru Tasogare",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Made_in_Abyss_Movie_2_Hourou_Suru_Tasogare.jpg"
+    },
+    {
+      "Word": "Major: World Series",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Major_World_Series.jpg"
+    },
+    {
+      "Word": "Doukyuusei (Movie)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Doukyuusei_Movie.jpg"
+    },
+    {
+      "Word": "K-On! Movie",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/K-On_Movie.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou.jpg"
+    },
+    {
+      "Word": "Natsume Yuujinchou Go Specials",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Natsume_Yuujinchou_Go_Specials.jpg"
+    },
+    {
+      "Word": "NHK ni Youkoso!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/NHK_ni_Youkoso.jpg"
+    },
+    {
+      "Word": "Shelter",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shelter.jpg"
+    },
+    {
+      "Word": "Shinsekai yori",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shinsekai_yori.jpg"
+    },
+    {
+      "Word": "Shirobako",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shirobako.jpg"
+    },
+    {
+      "Word": "Versailles no Bara",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Versailles_no_Bara.jpg"
+    },
+    {
+      "Word": "Neon Genesis Evangelion",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Neon_Genesis_Evangelion.jpg"
+    },
+    {
+      "Word": "Dr. Stone",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Dr._Stone.jpg"
+    },
+    {
+      "Word": "Fate/Zero",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/FateZero.jpg"
+    },
+    {
+      "Word": "Great Pretender",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Great_Pretender.jpg"
+    },
+    {
+      "Word": "Hunter x Hunter: Original Video Animation",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hunter_x_Hunter_Original_Video_Animation.jpg"
+    },
+    {
+      "Word": "Kino no Tabi: The Beautiful World",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kino_no_Tabi_The_Beautiful_World.jpg"
+    },
+    {
+      "Word": "Kuroko no Basket 3rd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuroko_no_Basket_3rd_Season.jpg"
+    },
+    {
+      "Word": "Bakemono no Ko",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Bakemono_no_Ko.jpg"
+    },
+    {
+      "Word": "Beck",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Beck.jpg"
+    },
+    {
+      "Word": "Diamond no Ace: Second Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Diamond_no_Ace_Second_Season.jpg"
+    },
+    {
+      "Word": "Nodame Cantabile",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Nodame_Cantabile.jpg"
+    },
+    {
+      "Word": "Rurouni Kenshin: Meiji Kenkaku Romantan",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Rurouni_Kenshin_Meiji_Kenkaku_Romantan.jpg"
+    },
+    {
+      "Word": "Tsubasa: Tokyo Revelations",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tsubasa_Tokyo_Revelations.jpg"
+    },
+    {
+      "Word": "Violet Evergarden: Kitto \u0022Ai\u0022 wo Shiru Hi ga Kuru no Darou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Violet_Evergarden_Kitto_Ai_wo_Shiru_Hi_ga_Kuru_no_Darou.jpg"
+    },
+    {
+      "Word": "Planetes",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Planetes.jpg"
+    },
+    {
+      "Word": "Stranger: Mukou Hadan",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Stranger_Mukou_Hadan.jpg"
+    },
+    {
+      "Word": "Yuukoku no Moriarty 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yuukoku_no_Moriarty_2nd_Season.jpg"
+    },
+    {
+      "Word": "Gin no Saji 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gin_no_Saji_2nd_Season.jpg"
+    },
+    {
+      "Word": "Hibike! Euphonium 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hibike_Euphonium_2.jpg"
+    },
+    {
+      "Word": "Initial D First Stage",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Initial_D_First_Stage.jpg"
+    },
+    {
+      "Word": "Kawaki wo Ameku",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kawaki_wo_Ameku.jpg"
+    },
+    {
+      "Word": "Koukaku Kidoutai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Koukaku_Kidoutai.jpg"
+    },
+    {
+      "Word": "Redline",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Redline.jpg"
+    },
+    {
+      "Word": "Tenkuu no Shiro Laputa",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tenkuu_no_Shiro_Laputa.jpg"
+    },
+    {
+      "Word": "Tokyo Godfathers",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tokyo_Godfathers.jpg"
+    },
+    {
+      "Word": "Tonari no Totoro",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tonari_no_Totoro.jpg"
+    },
+    {
+      "Word": "No Game No Life: Zero",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/No_Game_No_Life_Zero.jpg"
+    },
+    {
+      "Word": "Nomad: Megalo Box 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Nomad_Megalo_Box_2.jpg"
+    },
+    {
+      "Word": "Quanzhi Gaoshou Specials",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Quanzhi_Gaoshou_Specials.jpg"
+    },
+    {
+      "Word": "Ashita no Joe",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ashita_no_Joe.jpg"
+    },
+    {
+      "Word": "Douluo Dalu: Xingdou Xian Ji Pian",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Douluo_Dalu_Xingdou_Xian_Ji_Pian.jpg"
+    },
+    {
+      "Word": "Gyakkyou Burai Kaiji: Ultimate Survivor",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gyakkyou_Burai_Kaiji_Ultimate_Survivor.jpg"
+    },
+    {
+      "Word": "Hajime no Ippo: Champion Road",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hajime_no_Ippo_Champion_Road.jpg"
+    },
+    {
+      "Word": "Hunter x Hunter: Greed Island Final",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hunter_x_Hunter_Greed_Island_Final.jpg"
+    },
+    {
+      "Word": "Re:Zero kara Hajimeru Isekai Seikatsu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/ReZero_kara_Hajimeru_Isekai_Seikatsu.jpg"
+    },
+    {
+      "Word": "Sennen Joyuu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Sennen_Joyuu.jpg"
+    },
+    {
+      "Word": "Stand By Me Doraemon 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Stand_By_Me_Doraemon_2.jpg"
+    },
+    {
+      "Word": "Yuru Camp",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yuru_Camp.jpg"
+    },
+    {
+      "Word": "Nodame Cantabile: Finale",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Nodame_Cantabile_Finale.jpg"
+    },
+    {
+      "Word": "Ookami to Koushinryou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ookami_to_Koushinryou.jpg"
+    },
+    {
+      "Word": "Space Dandy 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/SpaceDandy_2nd_Season.jpg"
+    },
+    {
+      "Word": "Youjo Senki Movie",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Youjo_Senki_Movie.jpg"
+    },
+    {
+      "Word": "Boku no Hero Academia 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Boku_no_Hero_Academia_2nd_Season.jpg"
+    },
+    {
+      "Word": "Danshi Koukousei no Nichijou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Danshi_Koukousei_no_Nichijou.jpg"
+    },
+    {
+      "Word": "Kuroko no Basket 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuroko_no_Basket_2nd_Season.jpg"
+    },
+    {
+      "Word": "Magi: The Kingdom of Magic",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Magi_The_Kingdom_of_Magic.jpg"
+    },
+    {
+      "Word": "Douluo Dalu: Hanhai Qian Kun",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Douluo_Dalu_Hanhai_Qian_Kun.jpg"
+    },
+    {
+      "Word": "Gyakkyou Burai Kaiji: Hakairoku-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gyakkyou_Burai_Kaiji_Hakairoku-hen.jpg"
+    },
+    {
+      "Word": "Hachimitsu to Clover II",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hachimitsu_to_Clover_II.jpg"
+    },
+    {
+      "Word": "Horimiya",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Horimiya.jpg"
+    },
+    {
+      "Word": "Kuroshitsuji Movie: Book of the Atlantic",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuroshitsuji_Movie_Book_of_the_Atlantic.jpg"
+    },
+    {
+      "Word": "Non Non Biyori Movie: Vacation",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Non_Non_Biyori_Movie_Vacation.jpg"
+    },
+    {
+      "Word": "Wu Liuqi Zhi Zui Qiang Fa Xing Shi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Wu_Liuqi_Zhi_Zui_Qiang_Fa_Xing_Shi.jpg"
+    },
+    {
+      "Word": "Yahari Ore no Seishun Love Comedy wa Machigatteiru. Zoku",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yahari_Ore_no_Seishun_Love_Comedy_wa_Machigatteiru._Zoku.jpg"
+    },
+    {
+      "Word": "Shokugeki no Souma",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shokugeki_no_Souma.jpg"
+    },
+    {
+      "Word": "SKET Dance",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/SKET_Dance.jpg"
+    },
+    {
+      "Word": "Wu Liuqi Zhi Xuanwu Guo Pian",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Wu_Liuqi_Zhi_Xuanwu_Guo_Pian.jpg"
+    },
+    {
+      "Word": "xxxHOLiC Kei",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/xxxHOLiC_Kei.jpg"
+    },
+    {
+      "Word": "Initial D Final Stage",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Initial_D_Final_Stage.jpg"
+    },
+    {
+      "Word": "Diamond no Ace: Act II",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Diamond_no_Ace_Act_II.jpg"
+    },
+    {
+      "Word": "Hajime no Ippo: Mashiba vs. Kimura",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hajime_no_Ippo_Mashiba_vs._Kimura.jpg"
+    },
+    {
+      "Word": "Kono Sekai no Katasumi ni",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kono_Sekai_no_Katasumi_ni.jpg"
+    },
+    {
+      "Word": "Majo no Takkyuubin",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Majo_no_Takkyuubin.jpg"
+    },
+    {
+      "Word": "Mimi wo Sumaseba",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mimi_wo_Sumaseba.jpg"
+    },
+    {
+      "Word": "Trigun",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Trigun.jpg"
+    },
+    {
+      "Word": "ReLIFE: Kanketsu-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/ReLIFE_Kanketsu-hen.jpg"
+    },
+    {
+      "Word": "Toaru Kagaku no Railgun T",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Toaru_Kagaku_no_Railgun_T.jpg"
+    },
+    {
+      "Word": "xxxHOLiC Rou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/xxxHOLiC_Rou.jpg"
+    },
+    {
+      "Word": "Yoru wa Mijikashi Arukeyo Otome",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yoru_wa_Mijikashi_Arukeyo_Otome.jpg"
+    },
+    {
+      "Word": "Bakuman.",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Bakuman..jpg"
+    },
+    {
+      "Word": "Cardcaptor Sakura Movie 2: Fuuin Sareta Card",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Cardcaptor_Sakura_Movie_2_Fuuin_Sareta_Card.jpg"
+    },
+    {
+      "Word": "Chihayafuru",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Chihayafuru.jpg"
+    },
+    {
+      "Word": "Douluo Dalu: Qian Hua Xi Jin",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Douluo_Dalu_Qian_Hua_Xi_Jin.jpg"
+    },
+    {
+      "Word": "Ginga Eiyuu Densetsu: Die Neue These - Seiran 3",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ginga_Eiyuu_Densetsu_Die_Neue_These_-_Seiran_3.jpg"
+    },
+    {
+      "Word": "Kaguya-hime no Monogatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kaguya-hime_no_Monogatari.jpg"
+    },
+    {
+      "Word": "Little Busters!: Refrain",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Little_Busters_Refrain.jpg"
+    },
+    {
+      "Word": "Dororo",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Dororo.jpg"
+    },
+    {
+      "Word": "Dr. Stone: Stone Wars",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Dr._Stone_Stone_Wars.jpg"
+    },
+    {
+      "Word": "Fate/stay night: Unlimited Blade Works",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Fatestay_night_Unlimited_Blade_Works.jpg"
+    },
+    {
+      "Word": "Girls \u0026 Panzer Movie",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Girls__Panzer_Movie.jpg"
+    },
+    {
+      "Word": "Golden Kamuy 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Golden_Kamuy_2nd_Season.jpg"
+    },
+    {
+      "Word": "Higurashi no Naku Koro ni Kai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Higurashi_no_Naku_Koro_ni_Kai.jpg"
+    },
+    {
+      "Word": "InuYasha: Kanketsu-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/InuYasha_Kanketsu-hen.jpg"
+    },
+    {
+      "Word": "Saiki Kusuo no \u03A8-nan: Kanketsu-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Saiki_Kusuo_no_-nan_Kanketsu-hen.jpg"
+    },
+    {
+      "Word": "One Piece Movie 14: Stampede",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Piece_Movie_14_Stampede.jpg"
+    },
+    {
+      "Word": "One Piece: Episode of Merry - Mou Hitori no Nakama no Monogatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Piece_Episode_of_Merry_-_Mou_Hitori_no_Nakama_no_Monogatari.jpg"
+    },
+    {
+      "Word": "Shoujo Kakumei Utena",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shoujo_Kakumei_Utena.jpg"
+    },
+    {
+      "Word": "Ballroom e Youkoso",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ballroom_e_Youkoso.jpg"
+    },
+    {
+      "Word": "Berserk: Ougon Jidai-hen III - Kourin",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Berserk_Ougon_Jidai-hen_III_-_Kourin.jpg"
+    },
+    {
+      "Word": "Bungou Stray Dogs 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Bungou_Stray_Dogs_2nd_Season.jpg"
+    },
+    {
+      "Word": "Douluo Dalu: Haishen Zhi Guang",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Douluo_Dalu_Haishen_Zhi_Guang.jpg"
+    },
+    {
+      "Word": "Fruits Basket 1st Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Fruits_Basket_1st_Season.jpg"
+    },
+    {
+      "Word": "Hunter x Hunter: Greed Island",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hunter_x_Hunter_Greed_Island.jpg"
+    },
+    {
+      "Word": "Liz to Aoi Tori",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Liz_to_Aoi_Tori.jpg"
+    },
+    {
+      "Word": "Aria the Natural",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Aria_the_Natural.jpg"
+    },
+    {
+      "Word": "Asobi Asobase",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Asobi_Asobase.jpg"
+    },
+    {
+      "Word": "Black Lagoon: The Second Barrage",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Black_Lagoon_The_Second_Barrage.jpg"
+    },
+    {
+      "Word": "Bungou Stray Dogs 3rd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Bungou_Stray_Dogs_3rd_Season.jpg"
+    },
+    {
+      "Word": "Death Parade",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Death_Parade.jpg"
+    },
+    {
+      "Word": "Digimon Adventure: Last Evolution Kizuna",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Digimon_Adventure_Last_Evolution_Kizuna.jpg"
+    },
+    {
+      "Word": "Hinamatsuri (TV)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hinamatsuri_TV.jpg"
+    },
+    {
+      "Word": "Kyoukai no Kanata Movie 2: I'll Be Here - Mirai-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kyoukai_no_Kanata_Movie_2_Ill_Be_Here_-_Mirai-hen.jpg"
+    },
+    {
+      "Word": "Maison Ikkoku",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Maison_Ikkoku.jpg"
+    },
+    {
+      "Word": "Naruto: Shippuuden",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Naruto_Shippuuden.jpg"
+    },
+    {
+      "Word": "Non Non Biyori Repeat",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Non_Non_Biyori_Repeat.jpg"
+    },
+    {
+      "Word": "Noragami Aragoto",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Noragami_Aragoto.jpg"
+    },
+    {
+      "Word": "Ouran Koukou Host Club",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ouran_Koukou_Host_Club.jpg"
+    },
+    {
+      "Word": "Senki Zesshou Symphogear XV",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Senki_Zesshou_Symphogear_XV.jpg"
+    },
+    {
+      "Word": "Shoujo Shuumatsu Ryokou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shoujo_Shuumatsu_Ryokou.jpg"
+    },
+    {
+      "Word": "Toradora!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Toradora.jpg"
+    },
+    {
+      "Word": "Working!!!: Lord of the Takanashi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Working_Lord_of_the_Takanashi.jpg"
+    },
+    {
+      "Word": "Boku no Hero Academia 3rd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Boku_no_Hero_Academia_3rd_Season.jpg"
+    },
+    {
+      "Word": "Douluo Dalu: Jingying Sai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Douluo_Dalu_Jingying_Sai.jpg"
+    },
+    {
+      "Word": "5-toubun no Hanayome \u222C",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/5-toubun_no_Hanayome_.jpg"
+    },
+    {
+      "Word": "Akira",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Akira.jpg"
+    },
+    {
+      "Word": "Gankutsuou",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gankutsuou.jpg"
+    },
+    {
+      "Word": "Kamisama Hajimemashita\u25CE",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kamisama_Hajimemashita.jpg"
+    },
+    {
+      "Word": "Lupin III: Part 5",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Lupin_III_Part_5.jpg"
+    },
+    {
+      "Word": "Mo Dao Zu Shi Q",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mo_Dao_Zu_Shi_Q.jpg"
+    },
+    {
+      "Word": "Nisemonogatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Nisemonogatari.jpg"
+    },
+    {
+      "Word": "One Piece Film: Z",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Piece_Film_Z.jpg"
+    },
+    {
+      "Word": "Quanzhi Gaoshou Zhi Dianfeng Rongyao",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Quanzhi_Gaoshou_Zhi_Dianfeng_Rongyao.jpg"
+    },
+    {
+      "Word": "Toki wo Kakeru Shoujo",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Toki_wo_Kakeru_Shoujo.jpg"
+    },
+    {
+      "Word": "No Game No Life",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/No_Game_No_Life.jpg"
+    },
+    {
+      "Word": "Nodame Cantabile: Paris-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Nodame_Cantabile_Paris-hen.jpg"
+    },
+    {
+      "Word": "Sakura-sou no Pet na Kanojo",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Sakura-sou_no_Pet_na_Kanojo.jpg"
+    },
+    {
+      "Word": "Seirei no Moribito",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Seirei_no_Moribito.jpg"
+    },
+    {
+      "Word": "Shokugeki no Souma: Ni no Sara",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shokugeki_no_Souma_Ni_no_Sara.jpg"
+    },
+    {
+      "Word": "Cardcaptor Sakura",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Cardcaptor_Sakura.jpg"
+    },
+    {
+      "Word": "Detective Conan",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Detective_Conan.jpg"
+    },
+    {
+      "Word": "Durarara!!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Durarara.jpg"
+    },
+    {
+      "Word": "Eizouken ni wa Te wo Dasu na!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Eizouken_ni_wa_Te_wo_Dasu_na.jpg"
+    },
+    {
+      "Word": "Fate/Grand Carnival",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/FateGrand_Carnival.jpg"
+    },
+    {
+      "Word": "Kaiba",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kaiba.jpg"
+    },
+    {
+      "Word": "Katekyo Hitman Reborn!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Katekyo_Hitman_Reborn.jpg"
+    },
+    {
+      "Word": "Mahou Shoujo Lyrical Nanoha: The Movie 2nd A's",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mahou_Shoujo_Lyrical_Nanoha_The_Movie_2nd_As.jpg"
+    },
+    {
+      "Word": "Dragon Ball Z",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Dragon_Ball_Z.jpg"
+    },
+    {
+      "Word": "Fullmetal Alchemist",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Fullmetal_Alchemist.jpg"
+    },
+    {
+      "Word": "Ginga Eiyuu Densetsu Gaiden",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ginga_Eiyuu_Densetsu_Gaiden.jpg"
+    },
+    {
+      "Word": "Given Movie",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Given_Movie.jpg"
+    },
+    {
+      "Word": "K-On!!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/K-On.jpg"
+    },
+    {
+      "Word": "Lupin III: Cagliostro no Shiro",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Lupin_III_Cagliostro_no_Shiro.jpg"
+    },
+    {
+      "Word": "One Piece Film: Strong World",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Piece_Film_Strong_World.jpg"
+    },
+    {
+      "Word": "Tanoshii Muumin Ikka",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tanoshii_Muumin_Ikka.jpg"
+    },
+    {
+      "Word": "One Piece: Episode of Nami - Koukaishi no Namida to Nakama no Kizuna",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/One_Piece_Episode_of_Nami_-_Koukaishi_no_Namida_to_Nakama_no_Kizuna.jpg"
+    },
+    {
+      "Word": "Princess Tutu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Princess_Tutu.jpg"
+    },
+    {
+      "Word": "Tokyo Revengers",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tokyo_Revengers.jpg"
+    },
+    {
+      "Word": "Tsuki ga Kirei",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tsuki_ga_Kirei.jpg"
+    },
+    {
+      "Word": "Chuunibyou demo Koi ga Shitai! Movie: Take On Me",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Chuunibyou_demo_Koi_ga_Shitai_Movie_Take_On_Me.jpg"
+    },
+    {
+      "Word": "Douluo Dalu: Hao Tian Yang Wei",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Douluo_Dalu_Hao_Tian_Yang_Wei.jpg"
+    },
+    {
+      "Word": "Honzuki no Gekokujou: Shisho ni Naru Tame ni wa Shudan wo Erandeiraremasen 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Honzuki_no_Gekokujou_Shisho_ni_Naru_Tame_ni_wa_Shudan_wo_Erandeiraremasen_2nd_Season.jpg"
+    },
+    {
+      "Word": "Initial D Fourth Stage",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Initial_D_Fourth_Stage.jpg"
+    },
+    {
+      "Word": "Interstella5555: The 5tory of The 5ecret 5tar 5ystem",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Interstella5555_The_5tory_of_The_5ecret_5tar_5ystem.jpg"
+    },
+    {
+      "Word": "Kono Subarashii Sekai ni Shukufuku wo!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kono_Subarashii_Sekai_ni_Shukufuku_wo.jpg"
+    },
+    {
+      "Word": "Made in Abyss Movie 1: Tabidachi no Yoake",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Made_in_Abyss_Movie_1_Tabidachi_no_Yoake.jpg"
+    },
+    {
+      "Word": "Baccano! Specials",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Baccano_Specials.jpg"
+    },
+    {
+      "Word": "Detroit Metal City",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Detroit_Metal_City.jpg"
+    },
+    {
+      "Word": "Hyouka",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hyouka.jpg"
+    },
+    {
+      "Word": "Kanata no Astra",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kanata_no_Astra.jpg"
+    },
+    {
+      "Word": "Koukaku Kidoutai: Stand Alone Complex - Solid State Society",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Koukaku_Kidoutai_Stand_Alone_Complex_-_Solid_State_Society.jpg"
+    },
+    {
+      "Word": "Kuragehime",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuragehime.jpg"
+    },
+    {
+      "Word": "Mahoutsukai no Yome: Hoshi Matsu Hito",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mahoutsukai_no_Yome_Hoshi_Matsu_Hito.jpg"
+    },
+    {
+      "Word": "Mobile Suit Gundam 00",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mobile_Suit_Gundam_00.jpg"
+    },
+    {
+      "Word": "Tsukimonogatari",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tsukimonogatari.jpg"
+    },
+    {
+      "Word": "Uchouten Kazoku 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Uchouten_Kazoku_2.jpg"
+    },
+    {
+      "Word": "Pui Pui Molcar",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Pui_Pui_Molcar.jpg"
+    },
+    {
+      "Word": "Saiki Kusuo no \u03A8-nan: \u03A8-shidou-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Saiki_Kusuo_no_-nan_-shidou-hen.jpg"
+    },
+    {
+      "Word": "Tsubasa: Shunraiki",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tsubasa_Shunraiki.jpg"
+    },
+    {
+      "Word": "Zankyou no Terror",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Zankyou_no_Terror.jpg"
+    },
+    {
+      "Word": "Angel Beats!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Angel_Beats.jpg"
+    },
+    {
+      "Word": "Ginga Eiyuu Densetsu: Arata Naru Tatakai no Overture",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ginga_Eiyuu_Densetsu_Arata_Naru_Tatakai_no_Overture.jpg"
+    },
+    {
+      "Word": "IDOLiSH7: Second Beat!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/IDOLiSH7_Second_Beat.jpg"
+    },
+    {
+      "Word": "Initial D Second Stage",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Initial_D_Second_Stage.jpg"
+    },
+    {
+      "Word": "Kuroko no Basket",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuroko_no_Basket.jpg"
+    },
+    {
+      "Word": "Ansatsu Kyoushitsu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ansatsu_Kyoushitsu.jpg"
+    },
+    {
+      "Word": "Diamond no Ace",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Diamond_no_Ace.jpg"
+    },
+    {
+      "Word": "Dragon Ball Super: Broly",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Dragon_Ball_Super_Broly.jpg"
+    },
+    {
+      "Word": "Haikyuu!! Movie 4: Concept no Tatakai",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Haikyuu_Movie_4_Concept_no_Tatakai.jpg"
+    },
+    {
+      "Word": "Karakai Jouzu no Takagi-san 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Karakai_Jouzu_no_Takagi-san_2.jpg"
+    },
+    {
+      "Word": "Kaze Tachinu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kaze_Tachinu.jpg"
+    },
+    {
+      "Word": "Skip Beat!",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Skip_Beat.jpg"
+    },
+    {
+      "Word": "Saint Seiya: The Lost Canvas - Meiou Shinwa 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Saint_Seiya_The_Lost_Canvas_-_Meiou_Shinwa_2.jpg"
+    },
+    {
+      "Word": "Tamayura: Sotsugyou Shashin Part 4 - Ashita",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tamayura_Sotsugyou_Shashin_Part_4_-_Ashita.jpg"
+    },
+    {
+      "Word": "Wonder Egg Priority",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Wonder_Egg_Priority.jpg"
+    },
+    {
+      "Word": "World Trigger 2nd Season",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/World_Trigger_2nd_Season.jpg"
+    },
+    {
+      "Word": "Yowamushi Pedal: Grande Road",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yowamushi_Pedal_Grande_Road.jpg"
+    },
+    {
+      "Word": "Darker than Black: Kuro no Keiyakusha",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Darker_than_Black_Kuro_no_Keiyakusha.jpg"
+    },
+    {
+      "Word": "Evangelion: 3.0\u002B1.0 Thrice Upon a Time",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Evangelion_3.01.0_Thrice_Upon_a_Time.jpg"
+    },
+    {
+      "Word": "Gin no Saji",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gin_no_Saji.jpg"
+    },
+    {
+      "Word": "Hajime no Ippo: Boxer no Kobushi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hajime_no_Ippo_Boxer_no_Kobushi.jpg"
+    },
+    {
+      "Word": "Hikaru no Go",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hikaru_no_Go.jpg"
+    },
+    {
+      "Word": "JoJo no Kimyou na Bouken Part 3: Stardust Crusaders",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/JoJo_no_Kimyou_na_Bouken_Part_3_Stardust_Crusaders.jpg"
+    },
+    {
+      "Word": "Kamisama Hajimemashita: Kamisama, Shiawase ni Naru",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kamisama_Hajimemashita_Kamisama_Shiawase_ni_Naru.jpg"
+    },
+    {
+      "Word": "Kuroko no Basket: Saikou no Present Desu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuroko_no_Basket_Saikou_no_Present_Desu.jpg"
+    },
+    {
+      "Word": "Kuroshitsuji: Book of Circus",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuroshitsuji_Book_of_Circus.jpg"
+    },
+    {
+      "Word": "Akatsuki no Yona OVA",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Akatsuki_no_Yona_OVA.jpg"
+    },
+    {
+      "Word": "Dorohedoro",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Dorohedoro.jpg"
+    },
+    {
+      "Word": "Durarara!!x2 Ketsu",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Durararax2_Ketsu.jpg"
+    },
+    {
+      "Word": "Ginga Eiyuu Densetsu: Die Neue These - Seiran 2",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ginga_Eiyuu_Densetsu_Die_Neue_These_-_Seiran_2.jpg"
+    },
+    {
+      "Word": "Gosick",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Gosick.jpg"
+    },
+    {
+      "Word": "Hidamari Sketch: Sae Hiro Sotsugyou-hen",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Hidamari_Sketch_Sae_Hiro_Sotsugyou-hen.jpg"
+    },
+    {
+      "Word": "Koukaku Kidoutai: Stand Alone Complex - The Laughing Man",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Koukaku_Kidoutai_Stand_Alone_Complex_-_The_Laughing_Man.jpg"
+    },
+    {
+      "Word": "Kuroshitsuji: Book of Murder",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kuroshitsuji_Book_of_Murder.jpg"
+    },
+    {
+      "Word": "Mirai Shounen Conan",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Mirai_Shounen_Conan.jpg"
+    },
+    {
+      "Word": "Omoide no Marnie",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Omoide_no_Marnie.jpg"
+    },
+    {
+      "Word": "Shijou Saikyou no Deshi Kenichi",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shijou_Saikyou_no_Deshi_Kenichi.jpg"
+    },
+    {
+      "Word": "Shokugeki no Souma: San no Sara",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Shokugeki_no_Souma_San_no_Sara.jpg"
+    },
+    {
+      "Word": "Tensei shitara Slime Datta Ken",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Tensei_shitara_Slime_Datta_Ken.jpg"
+    },
+    {
+      "Word": "Ramayana: The Legend of Prince Rama",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ramayana_The_Legend_of_Prince_Rama.jpg"
+    },
+    {
+      "Word": "Summer Wars",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Summer_Wars.jpg"
+    },
+    {
+      "Word": "Yuusha-Ou GaoGaiGar Final",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Yuusha-Ou_GaoGaiGar_Final.jpg"
+    },
+    {
+      "Word": "Dennou Coil",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Dennou_Coil.jpg"
+    },
+    {
+      "Word": "Ginga Eiyuu Densetsu Gaiden (1999)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Ginga_Eiyuu_Densetsu_Gaiden_1999.jpg"
+    },
+    {
+      "Word": "Glass no Kamen (2005)",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Glass_no_Kamen_2005.jpg"
+    },
+    {
+      "Word": "Kill la Kill",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Kill_la_Kill.jpg"
+    },
+    {
+      "Word": "Koukyoushihen Eureka Seven",
+      "ImageUrl": "https://cdn.nadeko.bot/animu/Koukyoushihen_Eureka_Seven.jpg"
     }
   ]
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Common;
@@ -9,21 +10,21 @@ using NadekoBot.Core.Modules.Searches.Common;
 using NadekoBot.Core.Modules.Searches.Common.StreamNotifications;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using Discord;
 using Discord.WebSocket;
 using NadekoBot.Common.Collections;
+using NadekoBot.Common.Replacements;
+using Serilog;
 
-#nullable enable
 namespace NadekoBot.Modules.Searches.Services
 {
     public class StreamNotificationService : INService
     {
         private readonly DbService _db;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly Random _rng = new NadekoRandom();
         private readonly DiscordSocketClient _client;
         private readonly NotifChecker _streamTracker;
@@ -38,9 +39,10 @@ namespace NadekoBot.Modules.Searches.Services
 
         private readonly ConnectionMultiplexer _multi;
         private readonly IBotCredentials _creds;
+        private readonly Timer _notifCleanupTimer;
 
         public StreamNotificationService(DbService db, DiscordSocketClient client,
-            NadekoStrings strings, IDataCache cache, IBotCredentials creds, IHttpClientFactory httpFactory,
+            IBotStrings strings, IDataCache cache, IBotCredentials creds, IHttpClientFactory httpFactory,
             NadekoBot bot)
         {
             _db = db;
@@ -107,6 +109,46 @@ namespace NadekoBot.Modules.Searches.Services
                 _streamTracker.OnStreamsOffline += OnStreamsOffline;
                 _streamTracker.OnStreamsOnline += OnStreamsOnline;
                 _ = _streamTracker.RunAsync();
+                _notifCleanupTimer = new Timer(_ =>
+                {
+                    try
+                    {
+                        var errorLimit = TimeSpan.FromHours(12);
+                        var failingStreams = _streamTracker.GetFailingStreams(errorLimit, true)
+                            .ToList();
+
+                        if (!failingStreams.Any())
+                            return;
+
+                        var deleteGroups = failingStreams.GroupBy(x => x.Type)
+                            .ToDictionary(x => x.Key, x => x.Select(x => x.Name).ToList());
+
+                        using (var uow = _db.GetDbContext())
+                        {
+                            foreach (var kvp in deleteGroups)
+                            {
+                                Log.Information($"Deleting {kvp.Value.Count} {kvp.Key} streams because " +
+                                          $"they've been erroring for more than {errorLimit}: {string.Join(", ", kvp.Value)}");
+
+                                var toDelete = uow._context.Set<FollowedStream>()
+                                    .AsQueryable()
+                                    .Where(x => x.Type == kvp.Key && kvp.Value.Contains(x.Username))
+                                    .ToList();
+
+                                uow._context.RemoveRange(toDelete);
+                                uow.SaveChanges();
+                                
+                                foreach(var loginToDelete in kvp.Value)
+                                    _streamTracker.UntrackStreamByKey(new StreamDataKey(kvp.Key, loginToDelete));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Error cleaning up FollowedStreams");
+                        Log.Error(ex.ToString());
+                    }
+                }, null, TimeSpan.FromMinutes(30), TimeSpan.FromMinutes(30));
 
                 sub.Subscribe($"{_creds.RedisKey()}_follow_stream", HandleFollowStream);
                 sub.Subscribe($"{_creds.RedisKey()}_unfollow_stream", HandleUnfollowStream);
@@ -212,11 +254,20 @@ namespace NadekoBot.Modules.Searches.Services
                         .Select(fs =>
                         {
                             var textChannel = _client.GetGuild(fs.GuildId)?.GetTextChannel(fs.ChannelId);
+                            
                             if (textChannel is null)
                                 return Task.CompletedTask;
-                            return textChannel.EmbedAsync(
-                                GetEmbed(fs.GuildId, stream),
-                                msg: string.IsNullOrWhiteSpace(fs.Message) ? "" : fs.Message);
+                            
+                            var rep = new ReplacementBuilder()
+                                .WithOverride("%user%", () => fs.Username)
+                                .WithOverride("%platform%", () => fs.Type.ToString())
+                                .Build();
+                            
+                            var message = string.IsNullOrWhiteSpace(fs.Message)
+                                ? ""
+                                : rep.Replace(fs.Message);
+
+                            return textChannel.EmbedAsync(GetEmbed(fs.GuildId, stream), message);
                         });
 
                     await Task.WhenAll(sendTasks);
@@ -285,7 +336,7 @@ namespace NadekoBot.Modules.Searches.Services
 
         public int ClearAllStreams(ulong guildId)
         {
-            // todo clear streams
+            // todo future clear streams
             int count;
             using (var uow = _db.GetDbContext())
             {
@@ -298,7 +349,7 @@ namespace NadekoBot.Modules.Searches.Services
             return count;
         }
 
-        public async Task<FollowedStream?> UnfollowStreamAsync(ulong guildId, int index)
+        public async Task<FollowedStream> UnfollowStreamAsync(ulong guildId, int index)
         {
             FollowedStream fs;
             using (var uow = _db.GetDbContext())
@@ -347,7 +398,7 @@ namespace NadekoBot.Modules.Searches.Services
                 CommandFlags.FireAndForget);
         }
 
-        public async Task<StreamData?> FollowStream(ulong guildId, ulong channelId, string url)
+        public async Task<StreamData> FollowStream(ulong guildId, ulong channelId, string url)
         {
             // this will 
             var data = await _streamTracker.GetStreamDataByUrlAsync(url);
@@ -420,11 +471,8 @@ namespace NadekoBot.Modules.Searches.Services
             return embed;
         }
 
-        private string GetText(ulong guildId, string key, params object[] replacements) =>
-            _strings.GetText(key,
-                guildId,
-                "Searches".ToLowerInvariant(),
-                replacements);
+        private string GetText(ulong guildId, string key, params object[] replacements)
+            => _strings.GetText(key, guildId, replacements);
 
         public bool ToggleStreamOffline(ulong guildId)
         {
@@ -448,7 +496,7 @@ namespace NadekoBot.Modules.Searches.Services
             return newValue;
         }
 
-        public Task<StreamData?> GetStreamDataAsync(string url)
+        public Task<StreamData> GetStreamDataAsync(string url)
         {
             return _streamTracker.GetStreamDataByUrlAsync(url);
         }
@@ -476,7 +524,7 @@ namespace NadekoBot.Modules.Searches.Services
             }
         }
 
-        public bool SetStreamMessage(ulong guildId, int index, string message, out FollowedStream? fs)
+        public bool SetStreamMessage(ulong guildId, int index, string message, out FollowedStream fs)
         {
             using (var uow = _db.GetDbContext())
             {
@@ -508,6 +556,23 @@ namespace NadekoBot.Modules.Searches.Services
             }
 
             return true;
+        }
+
+        public int SetStreamMessageForAll(ulong guildId, string message)
+        {
+            using var uow = _db.GetDbContext();
+
+            var all = uow._context.Set<FollowedStream>()
+                .ToList();
+
+            if (all.Count == 0)
+                return 0;
+
+            all.ForEach(x => x.Message = message);
+
+            uow.SaveChanges();
+
+            return all.Count;
         }
     }
 }

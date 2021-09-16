@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Discord
 {
@@ -174,7 +170,7 @@ namespace Discord
         //
         // Summary:
         //     Allows management and editing of channels.
-        ManageChannels = 16,
+        ManageChannel = 16,
         //
         // Summary:
         //     Allows for the addition of reactions to messages.

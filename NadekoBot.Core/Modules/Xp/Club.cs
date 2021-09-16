@@ -3,7 +3,6 @@ using Discord.Commands;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
-using NadekoBot.Modules.Xp.Common;
 using NadekoBot.Modules.Xp.Services;
 using System;
 using System.Linq;
@@ -97,7 +96,7 @@ namespace NadekoBot.Modules.Xp
                 var club = _service.GetClubByMember(user);
                 if (club == null)
                 {
-                    await ReplyErrorLocalizedAsync("club_not_exists").ConfigureAwait(false);
+                    await ErrorLocalizedAsync("club_user_not_in_club", Format.Bold(user.ToString()));
                     return;
                 }
 
@@ -139,11 +138,11 @@ namespace NadekoBot.Modules.Xp
                         .WithOkColor()
                         .WithTitle($"{club.ToString()}")
                         .WithDescription(GetText("level_x", lvl.Level) + $" ({club.Xp} xp)")
-                        .AddField("Description", string.IsNullOrWhiteSpace(club.Description) ? "-" : club.Description,
+                        .AddField(GetText("desc"), string.IsNullOrWhiteSpace(club.Description) ? "-" : club.Description,
                             false)
-                        .AddField("Owner", club.Owner.ToString(), true)
-                        .AddField("Level Req.", club.MinimumLevelReq.ToString(), true)
-                        .AddField("Members", string.Join("\n", users
+                        .AddField(GetText("owner"), club.Owner.ToString(), true)
+                        .AddField(GetText("level_req"), club.MinimumLevelReq.ToString(), true)
+                        .AddField(GetText("members"), string.Join("\n", users
                             .Skip(page * 10)
                             .Take(10)
                             .Select(x =>

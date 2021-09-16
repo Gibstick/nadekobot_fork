@@ -1,7 +1,6 @@
 ﻿using Discord;
 using NadekoBot.Common;
 using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Games.Common;
 using NadekoBot.Modules.Games.Common.Acrophobia;
@@ -9,39 +8,33 @@ using NadekoBot.Modules.Games.Common.Hangman;
 using NadekoBot.Modules.Games.Common.Nunchi;
 using NadekoBot.Modules.Games.Common.Trivia;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 
 namespace NadekoBot.Modules.Games.Services
 {
     public class GamesService : INService, IUnloadableService
     {
-        private readonly IBotConfigProvider _bc;
+        private readonly GamesConfigService _gamesConfig;
 
         public ConcurrentDictionary<ulong, GirlRating> GirlRatings { get; } = new ConcurrentDictionary<ulong, GirlRating>();
 
-        public ImmutableArray<string> EightBallResponses { get; }
+        public IReadOnlyList<string> EightBallResponses => _gamesConfig.Data.EightBallResponses;
 
         private readonly Timer _t;
-        private readonly CommandHandler _cmd;
-        private readonly NadekoStrings _strings;
-        private readonly IImageCache _images;
-        private readonly Logger _log;
-        private readonly NadekoRandom _rng;
-        private readonly ICurrencyService _cs;
-        private readonly FontProvider _fonts;
         private readonly IHttpClientFactory _httpFactory;
+        private readonly IMemoryCache _8BallCache;
+        private readonly Random _rng;
 
-        public string TypingArticlesPath { get; } = "data/typing_articles3.json";
-        private readonly CommandHandler _cmdHandler;
+        private const string TypingArticlesPath = "data/typing_articles3.json";
 
         public List<TypingArticle> TypingArticles { get; } = new List<TypingArticle>();
 
@@ -69,25 +62,17 @@ namespace NadekoBot.Modules.Games.Services
             public string Dan { get; set; }
         }
 
-        public GamesService(CommandHandler cmd, IBotConfigProvider bc, NadekoBot bot,
-            NadekoStrings strings, IDataCache data, CommandHandler cmdHandler,
-            ICurrencyService cs, FontProvider fonts, IHttpClientFactory httpFactory)
+        public GamesService(GamesConfigService gamesConfig, IHttpClientFactory httpFactory)
         {
-            _bc = bc;
-            _cmd = cmd;
-            _strings = strings;
-            _images = data.LocalImages;
-            _cmdHandler = cmdHandler;
-            _log = LogManager.GetCurrentClassLogger();
-            _rng = new NadekoRandom();
-            _cs = cs;
-            _fonts = fonts;
+            _gamesConfig = gamesConfig;
             _httpFactory = httpFactory;
+            _8BallCache = new MemoryCache(new MemoryCacheOptions()
+            {
+                SizeLimit = 500_000
+            });
 
             Ratings = new AsyncLazy<RatingTexts>(GetRatingTexts);
-
-            //8ball
-            EightBallResponses = _bc.BotConfig.EightBallResponses.Select(ebr => ebr.Text).ToImmutableArray();
+            _rng = new NadekoRandom();
 
             //girl ratings
             _t = new Timer((_) =>
@@ -102,7 +87,7 @@ namespace NadekoBot.Modules.Games.Services
             }
             catch (Exception ex)
             {
-                _log.Warn("Error while loading typing articles {0}", ex.ToString());
+                Log.Warning("Error while loading typing articles {0}", ex.ToString());
                 TypingArticles = new List<TypingArticle>();
             }
         }
@@ -136,25 +121,39 @@ namespace NadekoBot.Modules.Games.Services
             NunchiGames.Clear();
         }
 
-        private void DisposeElems(IEnumerable<IDisposable> xs)
-        {
-            xs.ForEach(x => x.Dispose());
-        }
-
         public void AddTypingArticle(IUser user, string text)
         {
             TypingArticles.Add(new TypingArticle
             {
                 Source = user.ToString(),
                 Extra = $"Text added on {DateTime.UtcNow} by {user}.",
-                Text = text.SanitizeMentions(),
+                Text = text.SanitizeMentions(true),
             });
 
             File.WriteAllText(TypingArticlesPath, JsonConvert.SerializeObject(TypingArticles));
         }
-        private ConcurrentDictionary<ulong, object> _locks { get; } = new ConcurrentDictionary<ulong, object>();
 
-        private string GetText(ITextChannel ch, string key, params object[] rep)
-            => _strings.GetText(key, ch.GuildId, "Games".ToLowerInvariant(), rep);
+        public string GetEightballResponse(ulong userId, string question)
+        {
+            return _8BallCache.GetOrCreate($"8ball:{userId}:{question}", e =>
+            {
+                e.Size = question.Length;
+                e.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(12);
+                return EightBallResponses[_rng.Next(0, EightBallResponses.Count)];;
+            });
+        }
+
+        public TypingArticle RemoveTypingArticle(int index)
+        {
+            var articles = TypingArticles;
+            if (index < 0 || index >= articles.Count)
+                return null;
+
+            var removed = articles[index];
+            TypingArticles.RemoveAt(index);
+                
+            File.WriteAllText(TypingArticlesPath, JsonConvert.SerializeObject(articles));
+            return removed;
+        }
     }
 }

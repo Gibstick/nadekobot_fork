@@ -14,6 +14,7 @@ namespace NadekoBot.Core.Services.Database.Repositories
         decimal GetTotalValue();
         int AffinityCount(ulong userId);
         WaifuInfoStats GetWaifuInfo(ulong id);
+        public ulong GetWaifuUserId(ulong ownerId, string name);
     }
 
     public class WaifuInfoStats
@@ -26,6 +27,7 @@ namespace NadekoBot.Core.Services.Database.Repositories
         public int DivorceCount { get; set; }
         public int ClaimCount { get; set; }
         public List<WaifuItem> Items { get; set; }
-        public List<string> Claims30 { get; set; }
+        public List<string> Claims { get; set; }
+        public List<string> Fans { get; set; }
     }
 }

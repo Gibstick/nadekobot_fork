@@ -1,14 +1,10 @@
 ﻿using AngleSharp;
-using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using AngleSharp.Html.Parser;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
-using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Modules.Searches.Common;
 using NadekoBot.Core.Services;
 using NadekoBot.Extensions;
@@ -26,24 +22,29 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using NadekoBot.Modules.Administration.Services;
+using Serilog;
 using Configuration = AngleSharp.Configuration;
 
 namespace NadekoBot.Modules.Searches
 {
-    public partial class Searches : NadekoTopLevelModule<SearchesService>
+    public partial class Searches : NadekoModule<SearchesService>
     {
         private readonly IBotCredentials _creds;
         private readonly IGoogleApiService _google;
         private readonly IHttpClientFactory _httpFactory;
         private readonly IMemoryCache _cache;
         private static readonly NadekoRandom _rng = new NadekoRandom();
+        private readonly GuildTimezoneService _tzSvc;
 
-        public Searches(IBotCredentials creds, IGoogleApiService google, IHttpClientFactory factory, IMemoryCache cache)
+        public Searches(IBotCredentials creds, IGoogleApiService google, IHttpClientFactory factory, IMemoryCache cache,
+            GuildTimezoneService tzSvc)
         {
             _creds = creds;
             _google = google;
             _httpFactory = factory;
             _cache = cache;
+            _tzSvc = tzSvc;
         }
 
         //for anonymasen :^)
@@ -65,49 +66,6 @@ namespace NadekoBot.Modules.Searches
         }
 
         [NadekoCommand, Usage, Description, Aliases]
-        [RequireContext(ContextType.Guild)]
-        [UserPerm(GuildPerm.ManageMessages)]
-        [Priority(1)]
-        public async Task Say(ITextChannel channel, [Leftover] string message)
-        {
-            if (string.IsNullOrWhiteSpace(message))
-                return;
-
-            var rep = new ReplacementBuilder()
-                        .WithDefault(ctx.User, channel, (SocketGuild)ctx.Guild, (DiscordSocketClient)ctx.Client)
-                        .Build();
-
-            if (CREmbed.TryParse(message, out var embedData))
-            {
-                rep.Replace(embedData);
-                try
-                {
-                    await channel.EmbedAsync(embedData.ToEmbed(), embedData.PlainText?.SanitizeMentions() ?? "").ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    _log.Warn(ex);
-                }
-            }
-            else
-            {
-                var msg = rep.Replace(message);
-                if (!string.IsNullOrWhiteSpace(msg))
-                {
-                    await channel.SendConfirmAsync(msg).ConfigureAwait(false);
-                }
-            }
-        }
-
-        [NadekoCommand, Usage, Description, Aliases]
-        [RequireContext(ContextType.Guild)]
-        [UserPerm(GuildPerm.ManageMessages)]
-        [Priority(0)]
-        public Task Say([Leftover] string message) =>
-            Say((ITextChannel)ctx.Channel, message);
-
-        // done in 3.0
-        [NadekoCommand, Usage, Description, Aliases]
         public async Task Weather([Leftover] string query)
         {
             if (!await ValidateQuery(ctx.Channel, query).ConfigureAwait(false))
@@ -124,6 +82,15 @@ namespace NadekoBot.Modules.Searches
             else
             {
                 Func<double, double> f = StandardConversions.CelsiusToFahrenheit;
+                
+                var tz = Context.Guild is null
+                    ? TimeZoneInfo.Utc
+                    : _tzSvc.GetTimeZoneOrUtc(Context.Guild.Id);
+                var sunrise = data.Sys.Sunrise.ToUnixTimestamp();
+                var sunset = data.Sys.Sunset.ToUnixTimestamp();
+                sunrise = sunrise.ToOffset(tz.GetUtcOffset(sunrise));
+                sunset = sunset.ToOffset(tz.GetUtcOffset(sunset));
+                var timezone = $"UTC{sunrise:zzz}";
 
                 embed.AddField(fb => fb.WithName("🌍 " + Format.Bold(GetText("location"))).WithValue($"[{data.Name + ", " + data.Sys.Country}](https://openweathermap.org/city/{data.Id})").WithIsInline(true))
                     .AddField(fb => fb.WithName("📏 " + Format.Bold(GetText("latlong"))).WithValue($"{data.Coord.Lat}, {data.Coord.Lon}").WithIsInline(true))
@@ -132,15 +99,14 @@ namespace NadekoBot.Modules.Searches
                     .AddField(fb => fb.WithName("💨 " + Format.Bold(GetText("wind_speed"))).WithValue(data.Wind.Speed + " m/s").WithIsInline(true))
                     .AddField(fb => fb.WithName("🌡 " + Format.Bold(GetText("temperature"))).WithValue($"{data.Main.Temp:F1}°C / {f(data.Main.Temp):F1}°F").WithIsInline(true))
                     .AddField(fb => fb.WithName("🔆 " + Format.Bold(GetText("min_max"))).WithValue($"{data.Main.TempMin:F1}°C - {data.Main.TempMax:F1}°C\n{f(data.Main.TempMin):F1}°F - {f(data.Main.TempMax):F1}°F").WithIsInline(true))
-                    .AddField(fb => fb.WithName("🌄 " + Format.Bold(GetText("sunrise"))).WithValue($"{data.Sys.Sunrise.ToUnixTimestamp():HH:mm} UTC").WithIsInline(true))
-                    .AddField(fb => fb.WithName("🌇 " + Format.Bold(GetText("sunset"))).WithValue($"{data.Sys.Sunset.ToUnixTimestamp():HH:mm} UTC").WithIsInline(true))
+                    .AddField(fb => fb.WithName("🌄 " + Format.Bold(GetText("sunrise"))).WithValue($"{sunrise:HH:mm} {timezone}").WithIsInline(true))
+                    .AddField(fb => fb.WithName("🌇 " + Format.Bold(GetText("sunset"))).WithValue($"{sunset:HH:mm} {timezone}").WithIsInline(true))
                     .WithOkColor()
                     .WithFooter(efb => efb.WithText("Powered by openweathermap.org").WithIconUrl($"http://openweathermap.org/img/w/{data.Weather[0].Icon}.png"));
             }
             await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Time([Leftover] string query)
         {
@@ -187,7 +153,6 @@ namespace NadekoBot.Modules.Searches
             await ctx.Channel.SendMessageAsync(embed: eb.Build()).ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Youtube([Leftover] string query = null)
         {
@@ -204,7 +169,6 @@ namespace NadekoBot.Modules.Searches
             await ctx.Channel.SendMessageAsync(result).ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Movie([Leftover] string query = null)
         {
@@ -229,23 +193,18 @@ namespace NadekoBot.Modules.Searches
                 .WithImageUrl(movie.Poster)).ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public Task RandomCat() => InternalRandomImage(SearchesService.ImageTag.Cats);
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public Task RandomDog() => InternalRandomImage(SearchesService.ImageTag.Dogs);
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public Task RandomFood() => InternalRandomImage(SearchesService.ImageTag.Food);
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public Task RandomBird() => InternalRandomImage(SearchesService.ImageTag.Birds);
 
-        // done in 3.0
         private Task InternalRandomImage(SearchesService.ImageTag tag)
         {
             var url = _service.GetRandomImageUrl(tag);
@@ -254,7 +213,6 @@ namespace NadekoBot.Modules.Searches
                 .WithImageUrl(url));
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Image([Leftover] string query = null)
         {
@@ -277,7 +235,7 @@ namespace NadekoBot.Modules.Searches
             }
             catch
             {
-                _log.Warn("Falling back to Imgur");
+                Log.Warning("Falling back to Imgur");
 
                 var fullQueryLink = $"http://imgur.com/search?q={ query }";
                 var config = Configuration.Default.WithDefaultLoader();
@@ -362,7 +320,7 @@ namespace NadekoBot.Modules.Searches
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error shortening a link: {Message}", ex.Message);
+                    Log.Error(ex, "Error shortening a link: {Message}", ex.Message);
                     return;
                 }
             }
@@ -376,70 +334,70 @@ namespace NadekoBot.Modules.Searches
                 .ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Google([Leftover] string query = null)
         {
-            var oterms = query?.Trim();
+            query = query?.Trim();
             if (!await ValidateQuery(ctx.Channel, query).ConfigureAwait(false))
                 return;
 
-            query = WebUtility.UrlEncode(oterms).Replace(' ', '+');
-
-            var fullQueryLink = $"https://www.google.ca/search?q={ query }&safe=on&lr=lang_eng&hl=en&ie=utf-8&oe=utf-8";
-
-            using (var msg = new HttpRequestMessage(HttpMethod.Get, fullQueryLink))
+            _ = ctx.Channel.TriggerTypingAsync();
+            
+            var data = await _service.GoogleSearchAsync(query);
+            if (data is null)
             {
-                msg.Headers.AddFakeHeaders();
-                var parser = new HtmlParser();
-                var test = "";
-                using (var http = _httpFactory.CreateClient())
-                using (var response = await http.SendAsync(msg).ConfigureAwait(false))
-                using (var document = await parser.ParseDocumentAsync(test = await response.Content.ReadAsStringAsync().ConfigureAwait(false)).ConfigureAwait(false))
-                {
-                    var elems = document.QuerySelectorAll("div.g");
-
-                    var resultsElem = document.QuerySelectorAll("#resultStats").FirstOrDefault();
-                    var totalResults = resultsElem?.TextContent;
-                    //var time = resultsElem.Children.FirstOrDefault()?.TextContent
-                    //^ this doesn't work for some reason, <nobr> is completely missing in parsed collection
-                    if (!elems.Any())
-                        return;
-
-                    var results = elems.Select<IElement, GoogleSearchResult?>(elem =>
-                    {
-                        var aTag = elem.QuerySelector("a") as IHtmlAnchorElement; // <h3> -> <a>
-                        var href = aTag?.Href;
-                        var name = aTag?.QuerySelector("h3")?.TextContent;
-                        if (href == null || name == null)
-                            return null;
-
-                        var txt = elem.QuerySelectorAll(".st").FirstOrDefault()?.TextContent;
-
-                        if (txt == null)
-                            return null;
-
-                        return new GoogleSearchResult(name, href, txt);
-                    }).Where(x => x != null).Take(5);
-
-                    var embed = new EmbedBuilder()
-                        .WithOkColor()
-                        .WithAuthor(eab => eab.WithName(GetText("search_for") + " " + oterms.TrimTo(50))
-                            .WithUrl(fullQueryLink)
-                            .WithIconUrl("http://i.imgur.com/G46fm8J.png"))
-                        .WithTitle(ctx.User.ToString())
-                        .WithFooter(efb => efb.WithText(totalResults));
-
-                    var desc = await Task.WhenAll(results.Select(async res =>
-                            $"[{Format.Bold(res?.Title)}]({(await _google.ShortenUrl(res?.Link).ConfigureAwait(false))})\n{res?.Text?.TrimTo(400 - res.Value.Title.Length - res.Value.Link.Length)}\n\n"))
-                        .ConfigureAwait(false);
-                    var descStr = string.Concat(desc);
-                    await ctx.Channel.EmbedAsync(embed.WithDescription(descStr)).ConfigureAwait(false);
-                }
+                await ReplyErrorLocalizedAsync("no_results");
+                return;
             }
+            
+            var desc = data.Results.Take(5).Select(res =>
+                $@"[**{res.Title}**]({res.Link})
+{res.Text.TrimTo(400 - res.Title.Length - res.Link.Length)}");
+
+            var descStr = string.Join("\n\n", desc);
+
+            var embed = new EmbedBuilder()
+                .WithAuthor(ctx.User.ToString(),
+                    iconUrl: "http://i.imgur.com/G46fm8J.png")
+                .WithTitle(ctx.User.ToString())
+                .WithFooter(efb => efb.WithText(data.TotalResults))
+                .WithDescription($"{GetText("search_for")} **{query}**\n\n" +descStr)
+                .WithOkColor();
+
+            await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
+        }
+        
+        [NadekoCommand, Usage, Description, Aliases]
+        public async Task DuckDuckGo([Leftover] string query = null)
+        {
+            query = query?.Trim();
+            if (!await ValidateQuery(ctx.Channel, query).ConfigureAwait(false))
+                return;
+
+            _ = ctx.Channel.TriggerTypingAsync();
+            
+            var data = await _service.DuckDuckGoSearchAsync(query);
+            if (data is null)
+            {
+                await ReplyErrorLocalizedAsync("no_results");
+                return;
+            }
+            
+            var desc = data.Results.Take(5).Select(res =>
+                $@"[**{res.Title}**]({res.Link})
+{res.Text.TrimTo(380 - res.Title.Length - res.Link.Length)}");
+
+            var descStr = string.Join("\n\n", desc);
+            
+            var embed = new EmbedBuilder()
+                .WithAuthor(ctx.User.ToString(),
+                    iconUrl: "https://upload.wikimedia.org/wikipedia/en/9/90/The_DuckDuckGo_Duck.png")
+                .WithDescription($"{GetText("search_for")} **{query}**\n\n" + descStr)
+                .WithOkColor();
+
+            await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task MagicTheGathering([Leftover] string search)
         {
@@ -466,7 +424,6 @@ namespace NadekoBot.Modules.Searches
             await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Hearthstone([Leftover] string name)
         {
@@ -497,7 +454,6 @@ namespace NadekoBot.Modules.Searches
             await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task UrbanDict([Leftover] string query = null)
         {
@@ -533,7 +489,6 @@ namespace NadekoBot.Modules.Searches
 
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Define([Leftover] string word)
         {
@@ -559,7 +514,7 @@ namespace NadekoBot.Modules.Searches
 
                     if (!datas.Any())
                     {
-                        _log.Warn("Definition not found: {Word}", word);
+                        Log.Warning("Definition not found: {Word}", word);
                         await ReplyErrorLocalizedAsync("define_unknown").ConfigureAwait(false);
                     }
 
@@ -575,7 +530,7 @@ namespace NadekoBot.Modules.Searches
                         WordType: string.IsNullOrWhiteSpace(data.PartOfSpeech) ? "-" : data.PartOfSpeech
                     )).ToList();
 
-                    _log.Info($"Sending {col.Count} definition for: {word}");
+                    Log.Information($"Sending {col.Count} definition for: {word}");
 
                     await ctx.SendPaginatedConfirmAsync(0, page =>
                     {
@@ -595,12 +550,11 @@ namespace NadekoBot.Modules.Searches
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error retrieving definition data for: {Word}", word);
+                    Log.Error(ex, "Error retrieving definition data for: {Word}", word);
                 }
             }
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Catfact()
         {
@@ -645,7 +599,6 @@ namespace NadekoBot.Modules.Searches
         public Task Safebooru([Leftover] string tag = null)
             => InternalDapiCommand(ctx.Message, tag, DapiSearchType.Safebooru);
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Wiki([Leftover] string query = null)
         {
@@ -693,7 +646,6 @@ namespace NadekoBot.Modules.Searches
             }
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
         public async Task Avatar([Leftover] IGuildUser usr = null)
@@ -715,7 +667,6 @@ namespace NadekoBot.Modules.Searches
                 .WithThumbnailUrl(avatarUrl.ToString()), ctx.User.Mention).ConfigureAwait(false);
         }
         
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Wikia(string target, [Leftover] string query)
         {
@@ -757,7 +708,6 @@ namespace NadekoBot.Modules.Searches
             }
         }
 
-        // done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
         public async Task Bible(string book, string chapterAndVerse)

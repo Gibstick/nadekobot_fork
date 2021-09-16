@@ -7,7 +7,6 @@ using NadekoBot.Common.Collections;
 using NadekoBot.Core.Services;
 using NadekoBot.Modules.Administration.Services;
 using Newtonsoft.Json;
-using NLog;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
@@ -25,20 +24,32 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Numerics;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AngleSharp.Attributes;
+using NadekoBot.Common.Attributes;
+using Serilog;
 
 namespace NadekoBot.Extensions
 {
     public static class Extensions
     {
-        private static Logger _log = LogManager.GetCurrentClassLogger();
-
         public static Regex UrlRegex = new Regex(@"^(https?|ftp)://(?<path>[^\s/$.?#].[^\s]*)$", RegexOptions.Compiled);
+
+        public static TOut[] Map<TIn, TOut>(this TIn[] arr, Func<TIn, TOut> f)
+            => Array.ConvertAll(arr, x => f(x));
+
+        public static Task<IUserMessage> EmbedAsync(this IMessageChannel channel, CREmbed crEmbed, bool sanitizeAll = false)
+        {
+            var plainText = sanitizeAll
+                ? crEmbed.PlainText?.SanitizeAllMentions() ?? ""
+                : crEmbed.PlainText?.SanitizeMentions() ?? "";
+            
+            return channel.SendMessageAsync(plainText, embed: crEmbed.IsEmbedValid ? crEmbed.ToEmbed().Build() : null);
+        }
 
         public static List<ulong> GetGuildIds(this DiscordSocketClient client)
             => client.Guilds.Select(x => x.Id).ToList();
@@ -145,14 +156,24 @@ namespace NadekoBot.Extensions
                 throw new ArgumentNullException(nameof(name));
         }
 
-        public static ConcurrentDictionary<TKey, TValue> ToConcurrent<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> dict)
-            => new ConcurrentDictionary<TKey, TValue>(dict);
+        public static bool IsAuthor(this IMessage msg, IDiscordClient client)
+            => msg.Author?.Id == client.CurrentUser.Id;
 
-        public static bool IsAuthor(this IMessage msg, IDiscordClient client) =>
-            msg.Author?.Id == client.CurrentUser.Id;
+        public static string RealSummary(this CommandInfo cmd, IBotStrings strings, ulong? guildId, string prefix)
+            => string.Format(strings.GetCommandStrings(cmd.Name, guildId).Desc, prefix);
 
-        public static string RealSummary(this CommandInfo cmd, string prefix) => string.Format(cmd.Summary, prefix);
-        public static string RealRemarks(this CommandInfo cmd, string prefix) => string.Join(" or ", JsonConvert.DeserializeObject<string[]>(cmd.Remarks).Select(x => Format.Code(string.Format(x, prefix))));
+        public static string[] RealRemarksArr(this CommandInfo cmd, IBotStrings strings, ulong? guildId, string prefix)
+            => Array.ConvertAll(strings.GetCommandStrings(cmd.MethodName(), guildId).Args,
+                arg => GetFullUsage(cmd.Name, arg, prefix));
+
+        public static string MethodName(this CommandInfo cmd)
+            => ((NadekoCommandAttribute) cmd.Attributes.FirstOrDefault(x => x is NadekoCommandAttribute))?.MethodName
+               ?? cmd.Name;
+        // public static string RealRemarks(this CommandInfo cmd, IBotStrings strings, string prefix)
+        //     => string.Join('\n', cmd.RealRemarksArr(strings, prefix));
+
+        public static string GetFullUsage(string commandName, string args, string prefix)
+            => $"{prefix}{commandName} {string.Format(args, prefix)}";
 
         public static EmbedBuilder AddPaginatedFooter(this EmbedBuilder embed, int curPage, int? lastPage)
         {
@@ -165,6 +186,9 @@ namespace NadekoBot.Extensions
         public static EmbedBuilder WithOkColor(this EmbedBuilder eb) =>
             eb.WithColor(NadekoBot.OkColor);
 
+        public static EmbedBuilder WithPendingColor(this EmbedBuilder eb) =>
+            eb.WithColor(NadekoBot.PendingColor);
+        
         public static EmbedBuilder WithErrorColor(this EmbedBuilder eb) =>
             eb.WithColor(NadekoBot.ErrorColor);
 
@@ -194,6 +218,9 @@ namespace NadekoBot.Extensions
 
         public static IMessage DeleteAfter(this IUserMessage msg, int seconds, LogCommandService logService = null)
         {
+            if (msg is null)
+                return null;
+            
             Task.Run(async () =>
             {
                 await Task.Delay(seconds * 1000).ConfigureAwait(false);
@@ -232,7 +259,8 @@ namespace NadekoBot.Extensions
             }
         }
 
-        public static double UnixTimestamp(this DateTime dt) => dt.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+        public static double UnixTimestamp(this DateTime dt) 
+            => dt.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
 
         public static async Task<IEnumerable<IGuildUser>> GetMembersAsync(this IRole role) =>
             (await role.Guild.GetUsersAsync(CacheMode.CacheOnly).ConfigureAwait(false)).Where(u => u.RoleIds.Contains(role.Id)) ?? Enumerable.Empty<IGuildUser>();
@@ -286,46 +314,6 @@ namespace NadekoBot.Extensions
             return imageStream;
         }
 
-        /// <summary>
-        /// returns an IEnumerable with randomized element order
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)
-        {
-            using (var provider = RandomNumberGenerator.Create())
-            {
-                var list = items.ToList();
-                var n = list.Count;
-                while (n > 1)
-                {
-                    var box = new byte[(n / Byte.MaxValue) + 1];
-                    int boxSum;
-                    do
-                    {
-                        provider.GetBytes(box);
-                        boxSum = box.Sum(b => b);
-                    }
-                    while (!(boxSum < n * ((Byte.MaxValue * box.Length) / n)));
-                    var k = (boxSum % n);
-                    n--;
-                    var value = list[k];
-                    list[k] = list[n];
-                    list[n] = value;
-                }
-                return list;
-            }
-        }
-
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> elems, Action<T> exec)
-        {
-            foreach (var elem in elems)
-            {
-                exec(elem);
-            }
-            return elems;
-        }
-
         public static Stream ToStream(this IEnumerable<byte> bytes, bool canWrite = false)
         {
             var ms = new MemoryStream(bytes as byte[] ?? bytes.ToArray(), canWrite);
@@ -342,58 +330,6 @@ namespace NadekoBot.Extensions
                                 .ConfigureAwait(false);
 
             return await ownerPrivate.SendMessageAsync(message).ConfigureAwait(false);
-        }
-
-        public static Image<Rgba32> Merge(this IEnumerable<Image<Rgba32>> images)
-        {
-            return images.Merge(out _);
-        }
-        public static Image<Rgba32> Merge(this IEnumerable<Image<Rgba32>> images, out IImageFormat format)
-        {
-            format = PngFormat.Instance;
-            void DrawFrame(Image<Rgba32>[] imgArray, Image<Rgba32> imgFrame, int frameNumber)
-            {
-                var xOffset = 0;
-                for (int i = 0; i < imgArray.Length; i++)
-                {
-                    var frame = imgArray[i].Frames.CloneFrame(frameNumber % imgArray[i].Frames.Count);
-                    imgFrame.Mutate(x => x.DrawImage(frame, new Point(xOffset, 0), new GraphicsOptions()));
-                    xOffset += imgArray[i].Bounds().Width;
-                }
-            }
-
-            var imgs = images.ToArray();
-            int frames = images.Max(x => x.Frames.Count);
-
-            var width = imgs.Sum(img => img.Width);
-            var height = imgs.Max(img => img.Height);
-            var canvas = new Image<Rgba32>(width, height);
-            if (frames == 1)
-            {
-                DrawFrame(imgs, canvas, 0);
-                return canvas;
-            }
-
-            format = GifFormat.Instance;
-            for (int j = 0; j < frames; j++)
-            {
-                using (var imgFrame = new Image<Rgba32>(width, height))
-                {
-                    DrawFrame(imgs, imgFrame, j);
-
-                    var frameToAdd = imgFrame.Frames[0];
-                    frameToAdd.Metadata.GetGifMetadata().DisposalMethod = GifDisposalMethod.RestoreToBackground;
-                    canvas.Frames.AddFrame(frameToAdd);
-                }
-            }
-            canvas.Frames.RemoveFrame(0);
-            return canvas;
-        }
-
-        public static void LogAndReset(this Stopwatch sw, string name = "")
-        {
-            _log.Info(name + " | " + sw.Elapsed.TotalSeconds.ToString("F2"));
-            sw.Reset();
         }
 
         public static bool IsImage(this HttpResponseMessage msg) => IsImage(msg, out _);
@@ -435,7 +371,7 @@ namespace NadekoBot.Extensions
             }
             catch (ReflectionTypeLoadException ex)
             {
-                _log.Warn(ex);
+                Log.Error(ex, "Error loading assembly types");
                 return Enumerable.Empty<Type>();
             }
             // all types which have INService implementation are services

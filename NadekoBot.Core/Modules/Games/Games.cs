@@ -17,7 +17,7 @@ namespace NadekoBot.Modules.Games
     - Shiritori
     - Simple RPG adventure
     */
-    public partial class Games : NadekoTopLevelModule<GamesService>
+    public partial class Games : NadekoModule<GamesService>
     {
         private readonly IImageCache _images;
         private readonly IHttpClientFactory _httpFactory;
@@ -47,15 +47,16 @@ namespace NadekoBot.Modules.Games
             if (string.IsNullOrWhiteSpace(question))
                 return;
 
+            var res = _service.GetEightballResponse(ctx.User.Id, question);
             await ctx.Channel.EmbedAsync(new EmbedBuilder().WithColor(NadekoBot.OkColor)
                 .WithDescription(ctx.User.ToString())
                 .AddField(efb => efb.WithName("❓ " + GetText("question")).WithValue(question).WithIsInline(false))
-                .AddField(efb => efb.WithName("🎱 " + GetText("8ball")).WithValue(_service.EightBallResponses[new NadekoRandom().Next(0, _service.EightBallResponses.Length)]).WithIsInline(false))).ConfigureAwait(false);
+                .AddField("🎱 " + GetText("8ball"), res, false));
         }
 
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
-        public async Task RateGirl(IGuildUser usr)
+        public async Task RateGirl([Leftover] IGuildUser usr)
         {
             var gr = _service.GirlRatings.GetOrAdd(usr.Id, GetGirl);
             var originalStream = await gr.Stream;

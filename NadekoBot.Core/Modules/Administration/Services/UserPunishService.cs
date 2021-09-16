@@ -4,14 +4,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using NadekoBot.Common;
+using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Common.TypeReaders.Models;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
-using NLog;
-using NLog.Fluent;
+using NadekoBot.Modules.Permissions.Services;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
@@ -19,15 +23,15 @@ namespace NadekoBot.Modules.Administration.Services
     {
         private readonly MuteService _mute;
         private readonly DbService _db;
-        private readonly Logger _log;
+        private readonly BlacklistService _blacklistService;
         private readonly Timer _warnExpiryTimer;
 
-        public UserPunishService(MuteService mute, DbService db)
+        public UserPunishService(MuteService mute, DbService db, BlacklistService blacklistService)
         {
             _mute = mute;
             _db = db;
-            _log = LogManager.GetCurrentClassLogger();
-
+            _blacklistService = blacklistService;
+            
             _warnExpiryTimer = new Timer(async _ =>
             {
                 await CheckAllWarnExpiresAsync();
@@ -77,71 +81,86 @@ namespace NadekoBot.Modules.Administration.Services
                 if (user == null)
                     return null;
 
-                var muteReason = "Warning punishment - " + reason;
-                switch (p.Punishment)
-                {
-                    case PunishmentAction.Mute:
-                        if (p.Time == 0)
-                            await _mute.MuteUser(user, mod, reason: muteReason).ConfigureAwait(false);
-                        else
-                            await _mute.TimedMute(user, mod, TimeSpan.FromMinutes(p.Time), reason: muteReason).ConfigureAwait(false);
-                        break;
-                    case PunishmentAction.VoiceMute:
-                        if (p.Time == 0)
-                            await _mute.MuteUser(user, mod, MuteType.Voice, muteReason).ConfigureAwait(false);
-                        else
-                            await _mute.TimedMute(user, mod, TimeSpan.FromMinutes(p.Time), MuteType.Voice, muteReason).ConfigureAwait(false);
-                        break;
-                    case PunishmentAction.ChatMute:
-                        if (p.Time == 0)
-                            await _mute.MuteUser(user, mod, MuteType.Chat, muteReason).ConfigureAwait(false);
-                        else
-                            await _mute.TimedMute(user, mod, TimeSpan.FromMinutes(p.Time), MuteType.Chat, muteReason).ConfigureAwait(false);
-                        break;
-                    case PunishmentAction.Kick:
-                        await user.KickAsync("Warned too many times.").ConfigureAwait(false);
-                        break;
-                    case PunishmentAction.Ban:
-                        if (p.Time == 0)
-                            await guild.AddBanAsync(user, reason: "Warned too many times.").ConfigureAwait(false);
-                        else
-                            await _mute.TimedBan(user.Guild, user, TimeSpan.FromMinutes(p.Time), "Warned too many times.").ConfigureAwait(false);
-                        break;
-                    case PunishmentAction.Softban:
-                        await guild.AddBanAsync(user, 7, reason: "Softban | Warned too many times").ConfigureAwait(false);
-                        try
-                        {
-                            await guild.RemoveBanAsync(user).ConfigureAwait(false);
-                        }
-                        catch
-                        {
-                            await guild.RemoveBanAsync(user).ConfigureAwait(false);
-                        }
-                        break;
-                    case PunishmentAction.RemoveRoles:
-                        await user.RemoveRolesAsync(user.GetRoles().Where(x => x.Id != guild.EveryoneRole.Id)).ConfigureAwait(false);
-                        break;
-                    case PunishmentAction.AddRole:
-                        var role = guild.GetRole(p.RoleId.Value);
-                        if (!(role is null))
-                        {
-                            if(p.Time == 0)
-                                await user.AddRoleAsync(role).ConfigureAwait(false);
-                            else
-                                await _mute.TimedRole(user, TimeSpan.FromMinutes(p.Time), "Warned too many times.", role).ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            _log.Warn($"Warnpunish can't find role {p.RoleId.Value} on server {guild.Id}");
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                await ApplyPunishment(guild, user, mod, p.Punishment, p.Time, p.RoleId, "Warned too many times.");
                 return p;
             }
 
             return null;
+        }
+
+        public async Task ApplyPunishment(IGuild guild, IGuildUser user, IUser mod, PunishmentAction p, int minutes,
+            ulong? roleId, string reason)
+        {
+            switch (p)
+            {
+                case PunishmentAction.Mute:
+                    if (minutes == 0)
+                        await _mute.MuteUser(user, mod, reason: reason).ConfigureAwait(false);
+                    else
+                        await _mute.TimedMute(user, mod, TimeSpan.FromMinutes(minutes), reason: reason)
+                            .ConfigureAwait(false);
+                    break;
+                case PunishmentAction.VoiceMute:
+                    if (minutes == 0)
+                        await _mute.MuteUser(user, mod, MuteType.Voice, reason).ConfigureAwait(false);
+                    else
+                        await _mute.TimedMute(user, mod, TimeSpan.FromMinutes(minutes), MuteType.Voice, reason)
+                            .ConfigureAwait(false);
+                    break;
+                case PunishmentAction.ChatMute:
+                    if (minutes == 0)
+                        await _mute.MuteUser(user, mod, MuteType.Chat, reason).ConfigureAwait(false);
+                    else
+                        await _mute.TimedMute(user, mod, TimeSpan.FromMinutes(minutes), MuteType.Chat, reason)
+                            .ConfigureAwait(false);
+                    break;
+                case PunishmentAction.Kick:
+                    await user.KickAsync(reason).ConfigureAwait(false);
+                    break;
+                case PunishmentAction.Ban:
+                    if (minutes == 0)
+                        await guild.AddBanAsync(user, reason: reason).ConfigureAwait(false);
+                    else
+                        await _mute.TimedBan(user.Guild, user, TimeSpan.FromMinutes(minutes), reason)
+                            .ConfigureAwait(false);
+                    break;
+                case PunishmentAction.Softban:
+                    await guild.AddBanAsync(user, 7, reason: $"Softban | {reason}").ConfigureAwait(false);
+                    try
+                    {
+                        await guild.RemoveBanAsync(user).ConfigureAwait(false);
+                    }
+                    catch
+                    {
+                        await guild.RemoveBanAsync(user).ConfigureAwait(false);
+                    }
+
+                    break;
+                case PunishmentAction.RemoveRoles:
+                    await user.RemoveRolesAsync(user.GetRoles().Where(x => !x.IsManaged && x != x.Guild.EveryoneRole))
+                        .ConfigureAwait(false);
+                    break;
+                case PunishmentAction.AddRole:
+                    if (roleId is null)
+                        return;
+                    var role = guild.GetRole(roleId.Value);
+                    if (!(role is null))
+                    {
+                        if (minutes == 0)
+                            await user.AddRoleAsync(role).ConfigureAwait(false);
+                        else
+                            await _mute.TimedRole(user, TimeSpan.FromMinutes(minutes), reason, role)
+                                .ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        Log.Warning($"Can't find role {roleId.Value} on server {guild.Id} to apply punishment.");
+                    }
+
+                    break;
+                default:
+                    break;
+            }
         }
 
         public async Task CheckAllWarnExpiresAsync()
@@ -161,7 +180,7 @@ WHERE GuildId in (SELECT GuildId FROM GuildConfigs WHERE WarnExpireHours > 0 AND
 
                 if(cleared > 0 || deleted > 0)
                 {
-                    _log.Info($"Cleared {cleared} warnings and deleted {deleted} warnings due to expiry.");
+                    Log.Information($"Cleared {cleared} warnings and deleted {deleted} warnings due to expiry.");
                 }
             }
         }
@@ -196,6 +215,13 @@ WHERE GuildId={guildId}
             }
         }
 
+        public Task<int> GetWarnExpire(ulong guildId)
+        {
+            using var uow = _db.GetDbContext();
+            var config = uow.GuildConfigs.ForId(guildId);
+            return Task.FromResult(config.WarnExpireHours / 24);
+        }
+        
         public async Task WarnExpireAsync(ulong guildId, int days, bool delete)
         {
             using (var uow = _db.GetDbContext())
@@ -329,31 +355,134 @@ WHERE GuildId={guildId}
 
             //if user is null, means that person couldn't be found
             var missing = bans
-                .Where(x => !x.Id.HasValue)
-                .Count();
+                .Count(x => !x.Id.HasValue);
 
             //get only data for found users
             var found = bans
                 .Where(x => x.Id.HasValue)
                 .Select(x => x.Id.Value)
-                .ToArray();
+                .ToList();
 
-            using (var uow = _db.GetDbContext())
-            {
-                var bc = uow.BotConfig.GetOrCreate(set => set.Include(x => x.Blacklist));
-                //blacklist the users
-                bc.Blacklist.AddRange(found.Select(x =>
-                    new BlacklistItem
-                    {
-                        ItemId = x,
-                        Type = BlacklistType.User,
-                    }));
-                //clear their currencies
-                uow.DiscordUsers.RemoveFromMany(found.Select(x => x).ToList());
-                uow.SaveChanges();
-            }
+            _blacklistService.BlacklistUsers(found);
 
             return (bans, missing);
+        }
+
+        public string GetBanTemplate(ulong guildId)
+        {
+            using (var uow = _db.GetDbContext())
+            {
+                var template = uow._context.BanTemplates
+                    .AsQueryable()
+                    .FirstOrDefault(x => x.GuildId == guildId);
+                return template?.Text;
+            }
+        }
+
+        public void SetBanTemplate(ulong guildId, string text)
+        {
+            using (var uow = _db.GetDbContext())
+            {
+                var template = uow._context.BanTemplates
+                    .AsQueryable()
+                    .FirstOrDefault(x => x.GuildId == guildId);
+
+                if (text == null)
+                {
+                    if (template is null)
+                        return;
+                    
+                    uow._context.Remove(template);
+                }
+                else if (template == null)
+                {
+                    uow._context.BanTemplates.Add(new BanTemplate()
+                    {
+                        GuildId = guildId,
+                        Text = text,
+                    });
+                }
+                else
+                {
+                    template.Text = text;
+                }
+
+                uow.SaveChanges();
+            }
+        }
+
+        public CREmbed GetBanUserDmEmbed(ICommandContext context, IGuildUser target, string defaultMessage,
+            string banReason, TimeSpan? duration)
+        {
+            return GetBanUserDmEmbed(
+                (DiscordSocketClient) context.Client,
+                (SocketGuild) context.Guild,
+                (IGuildUser) context.User,
+                target,
+                defaultMessage,
+                banReason,
+                duration);
+        }
+
+        public CREmbed GetBanUserDmEmbed(DiscordSocketClient client, SocketGuild guild,
+            IGuildUser moderator, IGuildUser target, string defaultMessage, string banReason, TimeSpan? duration)
+        {
+            var template = GetBanTemplate(guild.Id);
+
+            banReason = string.IsNullOrWhiteSpace(banReason)
+                ? "-"
+                : banReason;
+
+            var replacer = new ReplacementBuilder()
+                .WithServer(client, guild)
+                .WithOverride("%ban.mod%", () => moderator.ToString())
+                .WithOverride("%ban.mod.fullname%", () => moderator.ToString())
+                .WithOverride("%ban.mod.name%", () => moderator.Username)
+                .WithOverride("%ban.mod.discrim%", () => moderator.Discriminator)
+                .WithOverride("%ban.user%", () => target.ToString())
+                .WithOverride("%ban.user.fullname%", () => target.ToString())
+                .WithOverride("%ban.user.name%", () => target.Username)
+                .WithOverride("%ban.user.discrim%", () => target.Discriminator)
+                .WithOverride("%reason%", () => banReason)
+                .WithOverride("%ban.reason%", () => banReason)
+                .WithOverride("%ban.duration%", () => duration?.ToString(@"d\.hh\:mm")?? "perma")
+                .Build();
+
+            CREmbed crEmbed = null; 
+            // if template isn't set, use the old message style
+            if (string.IsNullOrWhiteSpace(template))
+            {
+                template = JsonConvert.SerializeObject(new
+                {
+                    color = NadekoBot.ErrorColor.RawValue,
+                    description = defaultMessage 
+                });
+                
+                CREmbed.TryParse(template, out crEmbed);
+            }
+            // if template is set to "-" do not dm the user
+            else if (template == "-")
+            {
+                return default;
+            }
+            // if template is an embed, send that embed with replacements
+            else if (CREmbed.TryParse(template, out crEmbed))
+            {
+                replacer.Replace(crEmbed);
+            }
+            // otherwise, treat template as a regular string with replacements
+            else
+            {
+                template = JsonConvert.SerializeObject(new
+                {
+                    color = NadekoBot.ErrorColor.RawValue,
+                    description = replacer.Replace(template) 
+                });
+
+                CREmbed.TryParse(template, out crEmbed);
+            }
+            
+            return crEmbed;
         }
     }
 }

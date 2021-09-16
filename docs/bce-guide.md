@@ -1,5 +1,8 @@
 # BotConfigEdit Guide
 
+!!! missing "Obsolete"
+    `.bce` command is removed in newer versions.  If you're on version 2.39.0 or later, use [config guide][CONFIG GUIDE]  
+
 `.bce` allows you to conveniently set many of the bot-wide settings that Nadeko has, such as what the currency looks like, what people get when they use `.help`, and so on.
 Below is a list of all the settings that can be set, with a quick instruction on how to use them, and their default value.
 
@@ -23,6 +26,12 @@ The reward multiplier for rolling 67 or higher on `.br`.
 The reward multiplier for rolling 91 or higher on `.br`.  
 **Default is 4.0**
 
+## GroupGreets
+
+Toggles whether your bot will group greet/bye messages into a single message every 5 seconds.
+1st user who joins will get greeted immediately
+If more users join within the next 5 seconds, they will be greeted in groups of 5. This will cause %user.mention% and other placeholders to be replaced with multiple users. Keep in mind this might break some of your embeds - for example if you have %user.avatar% in the thumbnail, it will become invalid, as it will resolve to a list of avatars of grouped users.
+
 ## CurrencyGenerationPassword
 
 Either `true` or `false` value on whether the currency spawned with `.gc` command will have a random password associated with it in the top left corner. This helps prevent people who lurk in the chat and just spam `.pick` to gain flowers.  
@@ -42,11 +51,6 @@ A number of seconds that the bot is guaranteed not to spawn any flowers again af
 
 Name of your currency. Mostly people aren't creative with this and just call them "Credit" or "Dollar". You can do better :^)  
 **Default is NadekoFlower**
-
-## CurrencyPluralName
-
-Plural name of your currency (if you have currency name called "dollar" then put this to "dollars". I'm not sure if this is even used anywhere in the bot anymore.  
-**Default is NadekoFlowers**
 
 ## CurrencySign
 
@@ -140,7 +144,6 @@ Whether the bot will see if there are updates available. The patch notes will be
 - None: The bot will not check for updates
 - Commit: This is useful for linux self-hosters - the bot will check for any new commit on the NadekoBot repository.
 - Release: This is useful for windows self-hosters - the bot will check for any new releases published on the NadekoBot repository. This setting is also useful for linux self-hosters who only want to update when it's pretty safe to do so :)
-
 **Default is Release**
 
 ## PatreonCurrencyPerCent
@@ -149,9 +152,13 @@ You need this only if you have a patreon page, and you've specified the PatreonC
 **Default is 1**
 
 ## VoiceXpPerMinute
+
 The average amount of xp added every minute to a user connected to a voice channel.  
 **Default is 3**
 
 ## MaxXpMinutes
+
 The maximum amount of time, in minutes, a user can earn xp in a voice channel. This exists mainly to clear entries out of Redis.  
 **Default is 720**
+
+[CONFIG GUIDE]: config-guide.md

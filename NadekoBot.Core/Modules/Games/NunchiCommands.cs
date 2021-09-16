@@ -4,7 +4,6 @@ using Discord.WebSocket;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Modules.Games.Common.Nunchi;
 using NadekoBot.Modules.Games.Services;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 

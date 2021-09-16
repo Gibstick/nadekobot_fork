@@ -6,6 +6,7 @@ using NadekoBot.Modules.Searches.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Modules.Searches
 {
@@ -30,7 +31,7 @@ namespace NadekoBot.Modules.Searches
                     }
                     catch (Exception ex)
                     {
-                        _log.Warn(ex);
+                        Log.Information(ex, "Unable to get feeds from that url");
                         success = false;
                     }
                 }

@@ -1,6 +1,5 @@
 ﻿using NadekoBot.Extensions;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +7,17 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Serilog;
 
 namespace NadekoBot.Modules.Searches.Common
 {
+    // note: this is not the code that public nadeko is using
     public class SearchImageCacher
     {
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         private readonly IHttpClientFactory _httpFactory;
         private readonly Random _rng;
         private readonly SortedSet<ImageCacherObject> _cache;
-        private readonly Logger _log;
         private static readonly List<string> defaultTagBlacklist = new List<string>() {
             "loli",
             "lolicon",
@@ -29,7 +29,6 @@ namespace NadekoBot.Modules.Searches.Common
             _httpFactory = http;
             _rng = new Random();
             _cache = new SortedSet<ImageCacherObject>();
-            _log = LogManager.GetCurrentClassLogger();
         }
 
         public async Task<ImageCacherObject> GetImage(string[] tags, bool forceExplicit, DapiSearchType type,
@@ -139,6 +138,9 @@ namespace NadekoBot.Modules.Searches.Common
                     tag = string.IsNullOrWhiteSpace(tag) ? "safe" : tag;
                     website = $"https://www.derpibooru.org/api/v1/json/search/images?q={tag?.Replace('+', ',')}&per_page=49";
                     break;
+                case DapiSearchType.Sankaku:
+                    website = $"https://capi-v2.sankakucomplex.com/posts?tags={tag}&limit=50";
+                    break;
             }
 
             try
@@ -152,6 +154,19 @@ namespace NadekoBot.Modules.Searches.Common
                         return JsonConvert.DeserializeObject<DapiImageObject[]>(data)
                             .Where(x => x.FileUrl != null)
                             .Select(x => new ImageCacherObject(x, type))
+                            .ToArray();
+                    }
+
+                    if (type == DapiSearchType.Sankaku)
+                    {
+                        var data = await _http.GetStringAsync(website).ConfigureAwait(false);
+                        return JsonConvert.DeserializeObject<SankakuImageObject[]>(data)
+                            .Where(x => !string.IsNullOrWhiteSpace(x.FileUrl) && x.FileType.StartsWith("image"))
+                            .Select(x => new ImageCacherObject(
+                                x.FileUrl,
+                                DapiSearchType.Sankaku,
+                                x.Tags.Select(x => x.Name).JoinWith(','),
+                                x.Score))
                             .ToArray();
                     }
 
@@ -190,8 +205,7 @@ namespace NadekoBot.Modules.Searches.Common
             }
             catch (Exception ex)
             {
-                _log.Warn("Error downloading an image: {Message}", ex.Message);
-                _log.Warn(ex);
+                Log.Warning(ex, "Error downloading an image: {Message}", ex.Message);
                 return Array.Empty<ImageCacherObject>();
             }
         }
@@ -254,6 +268,25 @@ namespace NadekoBot.Modules.Searches.Common
         public string Score { get; set; }
     }
 
+    public class SankakuImageObject
+    {
+        public class Tag
+        {
+            public string Name { get; set; }
+        }
+        
+        [JsonProperty("file_url")]
+        public string FileUrl { get; set; }
+        
+        [JsonProperty("file_type")]
+        public string FileType { get; set; }
+        
+        public Tag[] Tags { get; set; }
+        
+        [JsonProperty("total_score")]
+        public string Score { get; set; }
+    }
+
     public enum DapiSearchType
     {
         Safebooru,
@@ -264,6 +297,7 @@ namespace NadekoBot.Modules.Searches.Common
         Rule34,
         Yandere,
         Danbooru,
+        Sankaku,
     }
     public class SafebooruElement
     {

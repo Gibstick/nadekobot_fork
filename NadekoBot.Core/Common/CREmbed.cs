@@ -19,6 +19,8 @@ namespace NadekoBot.Common
         public uint Color { get; set; } = 7458112;
 
         public bool IsValid =>
+            IsEmbedValid || !string.IsNullOrWhiteSpace(PlainText);
+        public bool IsEmbedValid =>
             !string.IsNullOrWhiteSpace(Title) ||
             !string.IsNullOrWhiteSpace(Description) ||
             !string.IsNullOrWhiteSpace(Url) ||

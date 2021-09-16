@@ -1,14 +1,22 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using NadekoBot.Core.Services;
 using NadekoBot.Modules;
 using System.Threading.Tasks;
+using NadekoBot.Core.Modules.Gambling.Services;
 
 namespace NadekoBot.Core.Modules.Gambling.Common
 {
-    public abstract class GamblingTopLevelModule<TService> : NadekoTopLevelModule<TService> where TService : INService
+    public abstract class GamblingModule<TService> : NadekoModule<TService>
     {
-        protected GamblingTopLevelModule(bool isTopLevel = true) : base(isTopLevel)
+        private readonly Lazy<GamblingConfig> _lazyConfig;
+        protected GamblingConfig _config => _lazyConfig.Value;
+        protected string CurrencySign => _config.Currency.Sign;
+        protected string CurrencyName => _config.Currency.Name;
+        
+        protected GamblingModule(GamblingConfigService gambService)
         {
+            _lazyConfig = new Lazy<GamblingConfig>(() => gambService.Data);
         }
 
         private async Task<bool> InternalCheckBet(long amount)
@@ -17,14 +25,16 @@ namespace NadekoBot.Core.Modules.Gambling.Common
             {
                 return false;
             }
-            if (amount < Bc.BotConfig.MinBet)
+            if (amount < _config.MinBet)
             {
-                await ReplyErrorLocalizedAsync("min_bet_limit", Format.Bold(Bc.BotConfig.MinBet.ToString()) + Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                await ReplyErrorLocalizedAsync("min_bet_limit", 
+                    Format.Bold(_config.MinBet.ToString()) + CurrencySign).ConfigureAwait(false);
                 return false;
             }
-            if (Bc.BotConfig.MaxBet > 0 && amount > Bc.BotConfig.MaxBet)
+            if (_config.MaxBet > 0 && amount > _config.MaxBet)
             {
-                await ReplyErrorLocalizedAsync("max_bet_limit", Format.Bold(Bc.BotConfig.MaxBet.ToString()) + Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                await ReplyErrorLocalizedAsync("max_bet_limit", 
+                    Format.Bold(_config.MaxBet.ToString()) + CurrencySign).ConfigureAwait(false);
                 return false;
             }
             return true;
@@ -49,9 +59,9 @@ namespace NadekoBot.Core.Modules.Gambling.Common
         }
     }
 
-    public abstract class GamblingSubmodule<TService> : GamblingTopLevelModule<TService> where TService : INService
+    public abstract class GamblingSubmodule<TService> : GamblingModule<TService>
     {
-        protected GamblingSubmodule() : base(false)
+        protected GamblingSubmodule(GamblingConfigService gamblingConfService) : base(gamblingConfService)
         {
         }
     }

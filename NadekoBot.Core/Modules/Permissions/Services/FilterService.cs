@@ -8,15 +8,15 @@ using NadekoBot.Common.Collections;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
-using NLog;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using NadekoBot.Core.Services.Database.Models;
+using Serilog;
 
 namespace NadekoBot.Modules.Permissions.Services
 {
     public class FilterService : IEarlyBehavior, INService
     {
-        private readonly Logger _log;
         private readonly DbService _db;
 
         public ConcurrentHashSet<ulong> InviteFilteringChannels { get; }
@@ -74,9 +74,8 @@ namespace NadekoBot.Modules.Permissions.Services
             return words;
         }
 
-        public FilterService(DiscordSocketClient client, NadekoBot bot, DbService db)
+        public FilterService(DiscordSocketClient client, DbService db)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _db = db;
 
             using(var uow = db.GetDbContext())
@@ -123,12 +122,17 @@ namespace NadekoBot.Modules.Permissions.Services
         }
 
         public async Task<bool> RunBehavior(DiscordSocketClient _, IGuild guild, IUserMessage msg)
-            => !(msg.Author is IGuildUser gu) //it's never filtered outside of guilds, and never block administrators
-                ? false
-                : !gu.GuildPermissions.Administrator &&
-                    (await FilterInvites(guild, msg).ConfigureAwait(false)
-                    || await FilterWords(guild, msg).ConfigureAwait(false)
-                    || await FilterLinks(guild, msg).ConfigureAwait(false));
+        {
+            if (!(msg.Author is IGuildUser gu) || gu.GuildPermissions.Administrator)
+                return false;
+
+            var results = await Task.WhenAll(
+                FilterInvites(guild, msg),
+                FilterWords(guild, msg),
+                FilterLinks(guild, msg));
+            
+            return results.Any(x => x);
+        }
 
         public async Task<bool> FilterWords(IGuild guild, IUserMessage usrMsg)
         {
@@ -153,7 +157,7 @@ namespace NadekoBot.Modules.Permissions.Services
                         }
                         catch (HttpException ex)
                         {
-                            _log.Warn("I do not have permission to filter words in channel with id " + usrMsg.Channel.Id, ex);
+                            Log.Warning("I do not have permission to filter words in channel with id " + usrMsg.Channel.Id, ex);
                         }
                         return true;
                     }
@@ -180,7 +184,7 @@ namespace NadekoBot.Modules.Permissions.Services
                 }
                 catch (HttpException ex)
                 {
-                    _log.Warn("I do not have permission to filter invites in channel with id " + usrMsg.Channel.Id, ex);
+                    Log.Warning("I do not have permission to filter invites in channel with id " + usrMsg.Channel.Id, ex);
                     return true;
                 }
             }
@@ -205,7 +209,7 @@ namespace NadekoBot.Modules.Permissions.Services
                 }
                 catch (HttpException ex)
                 {
-                    _log.Warn("I do not have permission to filter links in channel with id " + usrMsg.Channel.Id, ex);
+                    Log.Warning("I do not have permission to filter links in channel with id " + usrMsg.Channel.Id, ex);
                     return true;
                 }
             }

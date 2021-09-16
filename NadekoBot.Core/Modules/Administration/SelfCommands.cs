@@ -11,6 +11,8 @@ using NadekoBot.Modules.Administration.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NadekoBot.Core.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -21,20 +23,13 @@ namespace NadekoBot.Modules.Administration
         {
             private readonly DiscordSocketClient _client;
             private readonly NadekoBot _bot;
+            private readonly IBotStrings _strings;
 
-            public SelfCommands(DiscordSocketClient client, NadekoBot bot)
+            public SelfCommands(DiscordSocketClient client, NadekoBot bot, IBotStrings strings)
             {
                 _client = client;
                 _bot = bot;
-            }
-
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.DM)]
-            [OwnerOnly]
-            public async Task UpdatesCheck(UpdateCheckType type)
-            {
-                _service.SetUpdateCheck(type);
-                await ReplyConfirmLocalizedAsync("updates_check_set", type.ToString()).ConfigureAwait(false);
+                _strings = strings;
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -46,8 +41,8 @@ namespace NadekoBot.Modules.Administration
                 if (cmdText.StartsWith(Prefix + "die", StringComparison.InvariantCulture))
                     return;
 
-                var guser = ((IGuildUser)ctx.User);
-                var cmd = new StartupCommand()
+                var guser = (IGuildUser)ctx.User;
+                var cmd = new AutoCommand()
                 {
                     CommandText = cmdText,
                     ChannelId = ctx.Channel.Id,
@@ -82,8 +77,8 @@ namespace NadekoBot.Modules.Administration
                 if (interval < 5)
                     return;
 
-                var guser = ((IGuildUser)ctx.User);
-                var cmd = new StartupCommand()
+                var guser = (IGuildUser)ctx.User;
+                var cmd = new AutoCommand()
                 {
                     CommandText = cmdText,
                     ChannelId = ctx.Channel.Id,
@@ -102,25 +97,27 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [OwnerOnly]
-            public async Task StartupCommands(int page = 1)
+            public async Task StartupCommandsList(int page = 1)
             {
                 if (page-- < 1)
                     return;
 
                 var scmds = _service.GetStartupCommands()
-                    .Where(x => x.Interval <= 0)
                     .Skip(page * 5)
-                    .Take(5);
-                if (!scmds.Any())
+                    .Take(5)
+                    .ToList();
+                
+                if (scmds.Count == 0)
                 {
                     await ReplyErrorLocalizedAsync("startcmdlist_none").ConfigureAwait(false);
                 }
                 else
                 {
+                    var i = 0;
                     await ctx.Channel.SendConfirmAsync(
                         text: string.Join("\n", scmds
                         .Select(x => $@"```css
-#{x.Index}
+#{++i + page * 5}
 [{GetText("server")}]: {(x.GuildId.HasValue ? $"{x.GuildName} #{x.GuildId}" : "-")}
 [{GetText("channel")}]: {x.ChannelName} #{x.ChannelId}
 [{GetText("command_text")}]: {x.CommandText}```")),
@@ -133,25 +130,26 @@ namespace NadekoBot.Modules.Administration
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [OwnerOnly]
-            public async Task AutoCommands(int page = 1)
+            public async Task AutoCommandsList(int page = 1)
             {
                 if (page-- < 1)
                     return;
 
-                var scmds = _service.GetStartupCommands()
-                    .Where(x => x.Interval >= 5)
+                var scmds = _service.GetAutoCommands()
                     .Skip(page * 5)
-                    .Take(5);
+                    .Take(5)
+                    .ToList();
                 if (!scmds.Any())
                 {
                     await ReplyErrorLocalizedAsync("autocmdlist_none").ConfigureAwait(false);
                 }
                 else
                 {
+                    var i = 0;
                     await ctx.Channel.SendConfirmAsync(
                         text: string.Join("\n", scmds
                         .Select(x => $@"```css
-#{x.Index}
+#{++i + page * 5}
 [{GetText("server")}]: {(x.GuildId.HasValue ? $"{x.GuildName} #{x.GuildId}" : "-")}
 [{GetText("channel")}]: {x.ChannelName} #{x.ChannelId}
 {GetIntervalText(x.Interval)}
@@ -184,14 +182,28 @@ namespace NadekoBot.Modules.Administration
 
                 await Task.Delay(miliseconds).ConfigureAwait(false);
             }
-
+            
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.Administrator)]
             [OwnerOnly]
+            public async Task AutoCommandRemove([Leftover] int index)
+            {
+                if (!_service.RemoveAutoCommand(--index, out _))
+                {
+                    await ReplyErrorLocalizedAsync("acrm_fail").ConfigureAwait(false);
+                    return;
+                }
+                
+                await ctx.OkAsync();
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [OwnerOnly]
             public async Task StartupCommandRemove([Leftover] int index)
             {
-                if (!_service.RemoveStartupCommand(index, out _))
+                if (!_service.RemoveStartupCommand(--index, out _))
                     await ReplyErrorLocalizedAsync("scrm_fail").ConfigureAwait(false);
                 else
                     await ReplyConfirmLocalizedAsync("scrm").ConfigureAwait(false);
@@ -212,9 +224,9 @@ namespace NadekoBot.Modules.Administration
             [OwnerOnly]
             public async Task ForwardMessages()
             {
-                _service.ForwardMessages();
+                var enabled = _service.ForwardMessages();
 
-                if (_service.ForwardDMs)
+                if (enabled)
                     await ReplyConfirmLocalizedAsync("fwdm_start").ConfigureAwait(false);
                 else
                     await ReplyConfirmLocalizedAsync("fwdm_stop").ConfigureAwait(false);
@@ -224,9 +236,9 @@ namespace NadekoBot.Modules.Administration
             [OwnerOnly]
             public async Task ForwardToAll()
             {
-                _service.ForwardToAll();
+                var enabled = _service.ForwardToAll();
 
-                if (_service.ForwardDMsToAllOwners)
+                if (enabled)
                     await ReplyConfirmLocalizedAsync("fwall_start").ConfigureAwait(false);
                 else
                     await ReplyConfirmLocalizedAsync("fwall_stop").ConfigureAwait(false);
@@ -339,7 +351,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (RateLimitedException)
                 {
-                    _log.Warn("You've been ratelimited. Wait 2 hours to change your name.");
+                    Log.Warning("You've been ratelimited. Wait 2 hours to change your name");
                 }
 
                 await ReplyConfirmLocalizedAsync("bot_name", Format.Bold(newName)).ConfigureAwait(false);
@@ -347,6 +359,7 @@ namespace NadekoBot.Modules.Administration
 
             [NadekoCommand, Usage, Description, Aliases]
             [UserPerm(GuildPerm.ManageNicknames)]
+            [BotPerm(GuildPerm.ChangeNickname)]
             [Priority(0)]
             public async Task SetNick([Leftover] string newNick = null)
             {
@@ -364,6 +377,14 @@ namespace NadekoBot.Modules.Administration
             [Priority(1)]
             public async Task SetNick(IGuildUser gu, [Leftover] string newNick = null)
             {
+                var sg = (SocketGuild) Context.Guild;
+                if (sg.OwnerId == gu.Id ||
+                    gu.GetRoles().Max(r => r.Position) >= sg.CurrentUser.GetRoles().Max(r => r.Position))
+                {
+                    await ReplyErrorLocalizedAsync("insuf_perms_i");
+                    return;
+                }
+                
                 await gu.ModifyAsync(u => u.Nickname = newNick).ConfigureAwait(false);
 
                 await ReplyConfirmLocalizedAsync("user_nick", Format.Bold(gu.ToString()), Format.Bold(newNick) ?? "-").ConfigureAwait(false);
@@ -446,8 +467,7 @@ namespace NadekoBot.Modules.Administration
                     if (CREmbed.TryParse(msg, out var crembed))
                     {
                         rep.Replace(crembed);
-                        await ch.EmbedAsync(crembed.ToEmbed(), crembed.PlainText?.SanitizeMentions() ?? "")
-                            .ConfigureAwait(false);
+                        await ch.EmbedAsync(crembed).ConfigureAwait(false);
                         await ReplyConfirmLocalizedAsync("message_sent").ConfigureAwait(false);
                         return;
                     }
@@ -465,7 +485,7 @@ namespace NadekoBot.Modules.Administration
                     if (CREmbed.TryParse(msg, out var crembed))
                     {
                         rep.Replace(crembed);
-                        await (await user.GetOrCreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(crembed.ToEmbed(), crembed.PlainText?.SanitizeMentions() ?? "")
+                        await (await user.GetOrCreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(crembed)
                             .ConfigureAwait(false);
                         await ReplyConfirmLocalizedAsync("message_sent").ConfigureAwait(false);
                         return;
@@ -488,13 +508,13 @@ namespace NadekoBot.Modules.Administration
                 _service.ReloadImages();
                 await ReplyConfirmLocalizedAsync("images_loading", 0).ConfigureAwait(false);
             }
-
+            
             [NadekoCommand, Usage, Description, Aliases]
             [OwnerOnly]
-            public async Task BotConfigReload()
+            public async Task StringsReload()
             {
-                _service.ReloadBotConfig();
-                await ReplyConfirmLocalizedAsync("bot_config_reloaded").ConfigureAwait(false);
+                _strings.Reload();
+                await ReplyConfirmLocalizedAsync("bot_strings_reloaded").ConfigureAwait(false);
             }
 
             private static UserStatus SettableUserStatusToUserStatus(SettableUserStatus sus)

@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using NadekoBot.Common.Attributes;
-using NadekoBot.Core.Services;
 using NadekoBot.Modules.Xp.Services;
 using System.Threading.Tasks;
 

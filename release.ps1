@@ -29,7 +29,7 @@ function Build-Installer($versionNumber)
 	dotnet clean
     # rm -r -fo "src\NadekoBot\bin"
     dotnet publish -c Release --runtime win7-x64 /p:Version=$versionNumber
-    .\rcedit-x64.exe "src\NadekoBot\bin\Release\netcoreapp2.1\win7-x64\nadekobot.exe" --set-icon "src\NadekoBot\bin\Release\netcoreapp2.1\win7-x64\nadeko_icon.ico"
+    # .\rcedit-x64.exe "src\NadekoBot\bin\Release\netcoreapp2.1\win7-x64\nadekobot.exe" --set-icon "src\NadekoBot\bin\Release\netcoreapp2.1\win7-x64\nadeko_icon.ico"
 
     & "iscc.exe" "/O+" ".\exe_builder.iss"
 

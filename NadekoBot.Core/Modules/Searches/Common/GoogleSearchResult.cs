@@ -1,6 +1,6 @@
 ﻿namespace NadekoBot.Modules.Searches.Common
 {
-    public struct GoogleSearchResult
+    public sealed class GoogleSearchResult
     {
         public string Title { get; }
         public string Link { get; }

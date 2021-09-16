@@ -1,19 +1,9 @@
-﻿using Discord;
-using Discord.WebSocket;
-using Microsoft.EntityFrameworkCore;
-using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Database.Models;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using NadekoBot.Core.Services;
 
 namespace NadekoBot.Core.Modules.Searches.Services
 {
-    public class YtTrackService : INService
-    {
+    // public class YtTrackService : INService
+    // {
         // private readonly IGoogleApiService _google;
         // private readonly IHttpClientFactory httpClientFactory;
         // private readonly DiscordSocketClient _client;
@@ -143,5 +133,5 @@ namespace NadekoBot.Core.Modules.Searches.Services
         //
         //     return true;
         // }
-    }
+    // }
 }

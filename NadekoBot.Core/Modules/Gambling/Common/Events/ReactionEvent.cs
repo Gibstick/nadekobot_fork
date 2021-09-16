@@ -5,19 +5,19 @@ using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Gambling.Common;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NadekoBot.Core.Modules.Gambling.Services;
+using Serilog;
 
 namespace NadekoBot.Core.Modules.Gambling.Common.Events
 {
     public class ReactionEvent : ICurrencyEvent
     {
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly IGuild _guild;
         private IUserMessage _msg;
@@ -37,17 +37,15 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
         private readonly Timer _t;
         private readonly Timer _timeout = null;
         private readonly bool _noRecentlyJoinedServer;
-        private readonly IBotConfigProvider _bc;
         private readonly EventOptions _opts;
+        private readonly GamblingConfig _config;
 
         public event Func<ulong, Task> OnEnded;
 
         public ReactionEvent(DiscordSocketClient client, ICurrencyService cs,
-            IBotConfigProvider bc, SocketGuild g, ITextChannel ch,
-            EventOptions opt,
+            SocketGuild g, ITextChannel ch, EventOptions opt, GamblingConfig config,
             Func<CurrencyEvent.Type, EventOptions, long, EmbedBuilder> embedFunc)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _client = client;
             _guild = g;
             _cs = cs;
@@ -57,8 +55,8 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
             _isPotLimited = PotSize > 0;
             _channel = ch;
             _noRecentlyJoinedServer = false;
-            _bc = bc;
             _opts = opt;
+            _config = config;
 
             _t = new Timer(OnTimerTick, null, Timeout.InfiniteTimeSpan, TimeSpan.FromSeconds(2));
             if (_opts.Hours > 0)
@@ -99,7 +97,7 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
                     }, new RequestOptions() { RetryMode = RetryMode.AlwaysRetry }).ConfigureAwait(false);
                 }
 
-                _log.Info("Awarded {0} users {1} currency.{2}",
+                Log.Information("Awarded {0} users {1} currency.{2}",
                     toAward.Count,
                     _amount,
                     _isPotLimited ? $" {PotSize} left." : "");
@@ -108,23 +106,22 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
                 {
                     var _ = StopEvent();
                 }
-
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error adding bulk currency to users");
             }
         }
 
         public async Task StartEvent()
         {
-            if (Emote.TryParse(_bc.BotConfig.CurrencySign, out var emote))
+            if (Emote.TryParse(_config.Currency.Sign, out var emote))
             {
                 _emote = emote;
             }
             else
             {
-                _emote = new Emoji(_bc.BotConfig.CurrencySign);
+                _emote = new Emoji(_config.Currency.Sign);
             }
             _msg = await _channel.EmbedAsync(GetEmbed(_opts.PotSize)).ConfigureAwait(false);
             await _msg.AddReactionAsync(_emote).ConfigureAwait(false);

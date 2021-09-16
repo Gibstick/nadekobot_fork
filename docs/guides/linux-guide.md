@@ -1,5 +1,7 @@
 ## Setting up NadekoBot on Linux
 
+### This applies to NadekoBot version 2.  For NadekoBot version 3 with all the latest improvements and features, click [here][v3].
+
 | Table of Contents                                   |
 | :-------------------------------------------------- |
 | [Getting Started]                                   |
@@ -16,10 +18,10 @@ It is recommended that you use **Ubuntu 16.04**, as there have been nearly no pr
 
 ##### Compatible operating systems:
 
-- Ubuntu: 14.04, 16.04, 16.10, 17.04, 17.10, 18.04
+- Ubuntu: 16.04, 18.04, 20.04
 - Mint: 17, 18
-- Debian: 8, 9
-- CentOS: 7
+- Debian: 9, 10
+- CentOS: 7, 8
 
 #### Getting Started
 
@@ -273,3 +275,4 @@ After that, your droplet should be ready for use. [Follow the guide from the beg
 [Running Nadeko on tmux]: #running-nadeko-on-tmux-if-you-dont-want-to-use-pm2
 [Making Nadeko persist upon system restarts (tmux)]: #making-nadeko-persist-upon-system-restarts-tmux-for-advanced-users
 [Setting up Nadeko on a VPS (Digital Ocean)]: #setting-up-nadeko-on-a-linux-vps-digital-ocean-droplet
+[v3]: https://nadekobot.readthedocs.io/en/v3/guides/linux-guide

@@ -8,14 +8,17 @@ using NadekoBot.Common.Attributes;
 using NadekoBot.Core.Common;
 using NadekoBot.Core.Modules.Gambling.Common;
 using NadekoBot.Core.Modules.Gambling.Common.AnimalRacing;
+using NadekoBot.Core.Modules.Gambling.Services;
 using NadekoBot.Core.Services;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Gambling.Common.AnimalRacing;
 using NadekoBot.Modules.Gambling.Common.AnimalRacing.Exceptions;
 using NadekoBot.Modules.Gambling.Services;
+using NadekoBot.Modules.Games.Services;
 
 namespace NadekoBot.Modules.Gambling
 {
+    // wth is this, needs full rewrite
     public partial class Gambling
     {
         [Group]
@@ -23,11 +26,14 @@ namespace NadekoBot.Modules.Gambling
         {
             private readonly ICurrencyService _cs;
             private readonly DiscordSocketClient _client;
+            private readonly GamesConfigService _gamesConf;
 
-            public AnimalRacingCommands(ICurrencyService cs, DiscordSocketClient client)
+            public AnimalRacingCommands(ICurrencyService cs, DiscordSocketClient client,
+                GamblingConfigService gamblingConf, GamesConfigService gamesConf) : base(gamblingConf) 
             {
                 _cs = cs;
                 _client = client;
+                _gamesConf = gamesConf;
             }
 
             private IUserMessage raceMessage = null;
@@ -39,7 +45,7 @@ namespace NadekoBot.Modules.Gambling
             {
                 var (options, success) = OptionsParser.ParseFrom(new RaceOptions(), args);
 
-                var ar = new AnimalRace(options, _cs, Bc.BotConfig.RaceAnimals.Shuffle().ToArray());
+                var ar = new AnimalRace(options, _cs, _gamesConf.Data.RaceAnimals.Shuffle());
                 if (!_service.AnimalRaces.TryAdd(ctx.Guild.Id, ar))
                     return ctx.Channel.SendErrorAsync(GetText("animal_race"), GetText("animal_race_already_started"));
 
@@ -74,7 +80,7 @@ namespace NadekoBot.Modules.Gambling
                     {
                         return ctx.Channel.SendConfirmAsync(GetText("animal_race"),
                                             GetText("animal_race_won_money", Format.Bold(winner.Username),
-                                                winner.Animal.Icon, (race.FinishedUsers[0].Bet * (race.Users.Length - 1)) + Bc.BotConfig.CurrencySign));
+                                                winner.Animal.Icon, (race.FinishedUsers[0].Bet * (race.Users.Count - 1)) + CurrencySign));
                     }
                     else
                     {
@@ -95,10 +101,10 @@ namespace NadekoBot.Modules.Gambling
 
             private Task Ar_OnStarted(AnimalRace race)
             {
-                if (race.Users.Length == race.MaxUsers)
+                if (race.Users.Count == race.MaxUsers)
                     return ctx.Channel.SendConfirmAsync(GetText("animal_race"), GetText("animal_race_full"));
                 else
-                    return ctx.Channel.SendConfirmAsync(GetText("animal_race"), GetText("animal_race_starting_with_x", race.Users.Length));
+                    return ctx.Channel.SendConfirmAsync(GetText("animal_race"), GetText("animal_race_starting_with_x", race.Users.Count));
             }
 
             private async Task Ar_OnStateUpdate(AnimalRace race)
@@ -149,7 +155,7 @@ namespace NadekoBot.Modules.Gambling
                     var user = await ar.JoinRace(ctx.User.Id, ctx.User.ToString(), amount)
                         .ConfigureAwait(false);
                     if (amount > 0)
-                        await ctx.Channel.SendConfirmAsync(GetText("animal_race_join_bet", ctx.User.Mention, user.Animal.Icon, amount + Bc.BotConfig.CurrencySign)).ConfigureAwait(false);
+                        await ctx.Channel.SendConfirmAsync(GetText("animal_race_join_bet", ctx.User.Mention, user.Animal.Icon, amount + CurrencySign)).ConfigureAwait(false);
                     else
                         await ctx.Channel.SendConfirmAsync(GetText("animal_race_join", ctx.User.Mention, user.Animal.Icon)).ConfigureAwait(false);
                 }
@@ -172,7 +178,7 @@ namespace NadekoBot.Modules.Gambling
                 }
                 catch (NotEnoughFundsException)
                 {
-                    await ctx.Channel.SendErrorAsync(GetText("not_enough", Bc.BotConfig.CurrencySign)).ConfigureAwait(false);
+                    await ctx.Channel.SendErrorAsync(GetText("not_enough", CurrencySign)).ConfigureAwait(false);
                 }
             }
         }

@@ -10,6 +10,7 @@ using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Gambling.Common.AnimalRacing.Exceptions;
+using NadekoBot.Modules.Games.Common;
 
 namespace NadekoBot.Modules.Gambling.Common.AnimalRacing
 {
@@ -29,7 +30,7 @@ namespace NadekoBot.Modules.Gambling.Common.AnimalRacing
         public event Func<AnimalRace, Task> OnStateUpdate = delegate { return Task.CompletedTask; };
         public event Func<AnimalRace, Task> OnEnded = delegate { return Task.CompletedTask; };
 
-        public ImmutableArray<AnimalRacingUser> Users => _users.ToImmutableArray();
+        public IReadOnlyCollection<AnimalRacingUser> Users => _users.ToList();
         public List<AnimalRacingUser> FinishedUsers { get; } = new List<AnimalRacingUser>();
 
         private readonly SemaphoreSlim _locker = new SemaphoreSlim(1, 1);
@@ -39,12 +40,12 @@ namespace NadekoBot.Modules.Gambling.Common.AnimalRacing
         private readonly Queue<RaceAnimal> _animalsQueue;
         public int MaxUsers { get; }
 
-        public AnimalRace(RaceOptions options, ICurrencyService currency, RaceAnimal[] availableAnimals)
+        public AnimalRace(RaceOptions options, ICurrencyService currency, IEnumerable<RaceAnimal> availableAnimals)
         {
             this._currency = currency;
             this._options = options;
             this._animalsQueue = new Queue<RaceAnimal>(availableAnimals);
-            this.MaxUsers = availableAnimals.Length;
+            this.MaxUsers = _animalsQueue.Count;
 
             if (this._animalsQueue.Count == 0)
                 CurrentPhase = Phase.Ended;

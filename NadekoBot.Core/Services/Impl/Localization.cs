@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Discord;
-using NLog;
 using NadekoBot.Common;
 using Newtonsoft.Json;
 using System.IO;
@@ -12,39 +11,23 @@ namespace NadekoBot.Core.Services.Impl
 {
     public class Localization : ILocalization
     {
-        private readonly Logger _log;
+        private readonly BotConfigService _bss;
         private readonly DbService _db;
 
         public ConcurrentDictionary<ulong, CultureInfo> GuildCultureInfos { get; }
-        public CultureInfo DefaultCultureInfo { get; private set; } = CultureInfo.CurrentCulture;
+        public CultureInfo DefaultCultureInfo => _bss.Data.DefaultLocale;
 
         private static readonly Dictionary<string, CommandData> _commandData = JsonConvert.DeserializeObject<Dictionary<string, CommandData>>(
-                File.ReadAllText("./_strings/cmd/command_strings.json"));
+                File.ReadAllText("./data/strings/commands/commands.en-US.json"));
 
-        private Localization() { }
-        public Localization(IBotConfigProvider bcp, NadekoBot bot, DbService db)
+        public Localization(BotConfigService bss, NadekoBot bot, DbService db)
         {
-            _log = LogManager.GetCurrentClassLogger();
-
-            var cultureInfoNames = bot.AllGuildConfigs.ToDictionary(x => x.GuildId, x => x.Locale);
-            var defaultCulture = bcp.BotConfig.Locale;
-
+            _bss = bss;
             _db = db;
 
-            if (string.IsNullOrWhiteSpace(defaultCulture))
-                DefaultCultureInfo = new CultureInfo("en-US");
-            else
-            {
-                try
-                {
-                    DefaultCultureInfo = new CultureInfo(defaultCulture);
-                }
-                catch
-                {
-                    _log.Warn("Unable to load default bot's locale/language. Using en-US.");
-                    DefaultCultureInfo = new CultureInfo("en-US");
-                }
-            }
+            var cultureInfoNames = bot.AllGuildConfigs
+                .ToDictionary(x => x.GuildId, x => x.Locale);
+            
             GuildCultureInfos = new ConcurrentDictionary<ulong, CultureInfo>(cultureInfoNames.ToDictionary(x => x.Key, x =>
               {
                   CultureInfo cultureInfo = null;
@@ -64,7 +47,7 @@ namespace NadekoBot.Core.Services.Impl
 
         public void SetGuildCulture(ulong guildId, CultureInfo ci)
         {
-            if (ci == DefaultCultureInfo)
+            if (ci.Name == _bss.Data.DefaultLocale.Name)
             {
                 RemoveGuildCulture(guildId);
                 return;
@@ -99,13 +82,10 @@ namespace NadekoBot.Core.Services.Impl
 
         public void SetDefaultCulture(CultureInfo ci)
         {
-            using (var uow = _db.GetDbContext())
+            _bss.ModifyConfig(bs =>
             {
-                var bc = uow.BotConfig.GetOrCreate(set => set);
-                bc.Locale = ci.Name;
-                uow.SaveChanges();
-            }
-            DefaultCultureInfo = ci;
+                bs.DefaultLocale = ci;
+            });
         }
 
         public void ResetDefaultCulture() =>
@@ -116,10 +96,10 @@ namespace NadekoBot.Core.Services.Impl
 
         public CultureInfo GetCultureInfo(ulong? guildId)
         {
-            if (guildId == null)
-                return DefaultCultureInfo;
-            GuildCultureInfos.TryGetValue(guildId.Value, out CultureInfo info);
-            return info ?? DefaultCultureInfo;
+            if (guildId is null || !GuildCultureInfos.TryGetValue(guildId.Value, out var info) || info is null)
+                return _bss.Data.DefaultLocale;
+            
+            return info;
         }
 
         public static CommandData LoadCommand(string key)

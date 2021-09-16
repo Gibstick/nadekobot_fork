@@ -176,7 +176,7 @@ For Windows (Source), Linux or OSX, add this to your `credentials.json`
 Nadeko saves all settings and data in the database file `NadekoBot.db`, located in:
 
 - Windows (Updater): `system/data` (can be easily accessed through the `Data` button on the updater)
-- Windows (Source), Linux and OSX: `NadekoBot/src/NadekoBot/bin/Release/netcoreapp3.1/data/NadekoBot.db`
+- Windows (Source), Linux and OSX: `NadekoBot/src/NadekoBot/bin/Release/netcoreapp2.1/data/NadekoBot.db`
 
 In order to open it you will need [SQLite Browser](http://sqlitebrowser.org/).
 

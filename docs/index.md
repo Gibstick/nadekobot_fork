@@ -1,18 +1,43 @@
 # NadekoBot Documentation
 
-To invite public NadekoBot to your server, click on the image bellow:
+<!-- ![img][header] -->
 
-[![img][img]](https://invite.nadeko.bot/)
+## Inviting Nadeko
 
-In case you need any help, hop on the [NadekoBot Server][NadekoBot Server], where we can provide support.
+There are two versions of Nadeko, a public bot and a self-hostable bot.
 
-NadekoBot is an open source project, and it can be found on our [GitLab][GitLab] page.
+To invite public Nadeko to your server or to view its commands, click on the buttons below:
 
-Here you can read current [Issues][Issues].
+[:material-plus: Add Nadeko to your server][invite]{ .md-button .md-button--primary }
+[:material-format-list-text: View commands][commands]{ .md-button }
 
-[img]: https://cdn.discordapp.com/attachments/202743183774318593/210580315381563392/discord.png
-[NadekoBot Server]: https://discord.nadeko.bot/
-[GitLab]: https://gitlab.com/Kwoth/nadekobot
-[Issues]: https://gitlab.com/Kwoth/nadekobot/issues
-[repo]: https://gitlab.com/Kwoth/nadekobot/tree/1.9
-[cmd_list]: https://nadeko.bot/commands
+To self-host your own Nadeko, use the guides below:
+
+- [:material-microsoft-windows: Windows guide][windows-guide]
+- [:material-linux: Linux guide][linux-guide]
+- [:material-apple: Mac OS guide][macos-guide]
+
+Alternatively, you may also setup the bot [from source][from-source-guide] if you want to modify the code.
+
+In case you need any help, join our [Discord server][discord-server] where we may provide support.
+
+---
+
+## About Nadeko
+
+NadekoBot is an [open source project][gitlab]. Any issues with the bot may be filed [here][issues].
+
+If you're unsure whether something is an issue, ask in our support server first.
+
+[Donations are welcome][donate], and we rely on your contributions to help keep the project alive.
+
+[invite]: https://invite.nadeko.bot/
+[commands]: https://nadeko.bot/commands/
+[windows-guide]: ./guides/windows-guide.md
+[linux-guide]: ./guides/linux-guide.md
+[macos-guide]: ./guides/osx-guide.md
+[from-source-guide]: ./guides/from-source.md
+[discord-server]: https://discord.nadeko.bot/
+[gitlab]: https://gitlab.com/Kwoth/nadekobot
+[issues]: https://gitlab.com/Kwoth/nadekobot/issues
+[donate]: ./donate.md

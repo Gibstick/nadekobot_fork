@@ -2,16 +2,15 @@
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoBot.Core.Services;
-using NLog;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NadekoBot.Core.Modules.Gambling.Services;
 
 namespace NadekoBot.Core.Common.TypeReaders
 {
     public class ShmartNumberTypeReader : NadekoTypeReader<ShmartNumber>
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
         public ShmartNumberTypeReader(DiscordSocketClient client, CommandService cmds) : base(client, cmds)
         {
         }
@@ -38,10 +37,9 @@ namespace NadekoBot.Core.Common.TypeReaders
                 var lon = (long)(decimal.Parse(expr.Evaluate().ToString()));
                 return TypeReaderResult.FromSuccess(new ShmartNumber(lon, input));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _log.Info(ex);
-                return TypeReaderResult.FromError(CommandError.ParseFailed, "Invalid input");
+                return TypeReaderResult.FromError(CommandError.ParseFailed, $"Invalid input: {input}");
             }
         }
 
@@ -86,8 +84,8 @@ namespace NadekoBot.Core.Common.TypeReaders
 
         private static long Max(IServiceProvider services, ICommandContext ctx)
         {
-            var _bc = services.GetService<IBotConfigProvider>();
-            var max = _bc.BotConfig.MaxBet;
+            var settings = services.GetService<GamblingConfigService>().Data;
+            var max = settings.MaxBet;
             return max == 0
                 ? Cur(services, ctx)
                 : max;

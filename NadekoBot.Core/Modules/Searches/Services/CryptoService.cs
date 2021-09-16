@@ -1,15 +1,14 @@
-﻿using Discord;
-using NadekoBot.Core.Modules.Searches.Common;
+﻿using NadekoBot.Core.Modules.Searches.Common;
 using NadekoBot.Core.Services;
 using NadekoBot.Extensions;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Core.Modules.Searches.Services
 {
@@ -18,14 +17,12 @@ namespace NadekoBot.Core.Modules.Searches.Services
         private readonly IDataCache _cache;
         private readonly IHttpClientFactory _httpFactory;
         private readonly IBotCredentials _creds;
-        private readonly Logger _log;
-
+        
         public CryptoService(IDataCache cache, IHttpClientFactory httpFactory, IBotCredentials creds)
         {
             _cache = cache;
             _httpFactory = httpFactory;
             _creds = creds;
-            _log = NLog.LogManager.GetCurrentClassLogger();
         }
 
         public async Task<(CryptoResponseData Data, CryptoResponseData Nearest)> GetCryptoData(string name)
@@ -86,7 +83,7 @@ namespace NadekoBot.Core.Modules.Searches.Services
                     }
                     catch (Exception ex)
                     {
-                        _log.Error(ex, "Error getting crypto data: {Message}", ex.Message);
+                        Log.Error(ex, "Error getting crypto data: {Message}", ex.Message);
                         return default;
                     }
 
@@ -96,7 +93,7 @@ namespace NadekoBot.Core.Modules.Searches.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, "Error retreiving crypto data: {Message}", ex.Message);
+                Log.Error(ex, "Error retreiving crypto data: {Message}", ex.Message);
                 return default;
             }
             finally

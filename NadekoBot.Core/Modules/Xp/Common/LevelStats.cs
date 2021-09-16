@@ -1,6 +1,6 @@
 ﻿using NadekoBot.Modules.Xp.Services;
 
-namespace NadekoBot.Modules.Xp.Common
+namespace NadekoBot.Modules.Xp
 {
     public class LevelStats
     {

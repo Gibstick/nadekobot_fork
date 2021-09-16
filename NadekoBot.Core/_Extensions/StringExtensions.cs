@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NadekoBot.Common.Yml;
 
 namespace NadekoBot.Extensions
 {
@@ -121,26 +122,28 @@ namespace NadekoBot.Extensions
             return d[n, m];
         }
 
-        public static async Task<Stream> ToStream(this string str)
-        {
-            var ms = new MemoryStream();
-            var sw = new StreamWriter(ms);
-            await sw.WriteAsync(str).ConfigureAwait(false);
-            await sw.FlushAsync().ConfigureAwait(false);
-            ms.Position = 0;
-            return ms;
-        }
+        public static Stream ToStream(this string str)
+            => new MemoryStream(Encoding.UTF8.GetBytes(str))
+            {
+                Position = 0
+            };
 
-        private static readonly Regex filterRegex = new Regex(@"(?:discord(?:\.gg|.me|app\.com\/invite)\/(?<id>([\w]{16}|(?:[\w]+-?){3})))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex filterRegex = new Regex(@"discord(?:\.gg|\.io|\.me|\.li|(?:app)?\.com\/invite)\/(\w+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public static bool IsDiscordInvite(this string str)
             => filterRegex.IsMatch(str);
 
         public static string Unmention(this string str) => str.Replace("@", "ම", StringComparison.InvariantCulture);
 
-        public static string SanitizeMentions(this string str) =>
-            str.Replace("@everyone", "@everyοne", StringComparison.InvariantCultureIgnoreCase)
-               .Replace("@here", "@һere", StringComparison.InvariantCultureIgnoreCase);
-        
+        public static string SanitizeMentions(this string str, bool sanitizeRoleMentions = false)
+        {
+            str = str.Replace("@everyone", "@everyοne", StringComparison.InvariantCultureIgnoreCase)
+                     .Replace("@here", "@һere", StringComparison.InvariantCultureIgnoreCase);
+            if (sanitizeRoleMentions)
+                str = str.SanitizeRoleMentions();
+
+            return str;
+        }
+
         public static string SanitizeRoleMentions(this string str) =>
             str.Replace("<@&", "<ම&", StringComparison.InvariantCultureIgnoreCase);
 
@@ -158,5 +161,19 @@ namespace NadekoBot.Extensions
 
         public static bool IsAlphaNumeric(this string txt) =>
             txt.All(c => lettersAndDigits.Contains(c));
+
+        private static readonly Regex CodePointRegex
+            = new Regex(@"(\\U(?<code>[a-zA-Z0-9]{8})|\\u(?<code>[a-zA-Z0-9]{4})|\\x(?<code>[a-zA-Z0-9]{2}))",
+                RegexOptions.Compiled);
+        
+        public static string UnescapeUnicodeCodePoints(this string input)
+        { 
+            return CodePointRegex.Replace(input, me =>
+            {
+                var str = me.Groups["code"].Value;
+                var newString = YamlHelper.UnescapeUnicodeCodePoint(str);
+                return newString;
+            });
+        }
     }
 }

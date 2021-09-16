@@ -3,5 +3,11 @@
 data
 credentials.json
 _libs
-*.dll
-*.so
+**/*.dll
+**/*.so
+**/*.md
+**/*.exe
+docs/
+docs/
+docker/
+!docker/docker-entrypoint.sh

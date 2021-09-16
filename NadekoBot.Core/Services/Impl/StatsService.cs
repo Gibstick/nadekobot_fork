@@ -1,29 +1,24 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using NadekoBot.Extensions;
-using NLog;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Core.Services.Impl
 {
     public class StatsService : IStatsService
     {
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly IBotCredentials _creds;
         private readonly DateTime _started;
 
-        public const string BotVersion = "2.35.7";
+        public const string BotVersion = "2.46.5";
         public string Author => "Kwoth#2452";
         public string Library => "Discord.Net";
 
@@ -40,18 +35,14 @@ namespace NadekoBot.Core.Services.Impl
         private long _commandsRan;
         public long CommandsRan => Interlocked.Read(ref _commandsRan);
 
-        private readonly Timer _carbonitexTimer;
         private readonly Timer _botlistTimer;
-        private readonly ConnectionMultiplexer _redis;
         private readonly IHttpClientFactory _httpFactory;
 
         public StatsService(DiscordSocketClient client, CommandHandler cmdHandler,
-            IBotCredentials creds, NadekoBot nadeko, IDataCache cache, IHttpClientFactory factory)
+            IBotCredentials creds, IHttpClientFactory factory)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _client = client;
             _creds = creds;
-            _redis = cache.Redis;
             _httpFactory = factory;
 
             _started = DateTime.UtcNow;
@@ -134,35 +125,6 @@ namespace NadekoBot.Core.Services.Impl
                 return Task.CompletedTask;
             };
 
-            if (_client.ShardId == 0)
-            {
-                _carbonitexTimer = new Timer(async (state) =>
-                {
-                    if (string.IsNullOrWhiteSpace(_creds.CarbonKey))
-                        return;
-                    try
-                    {
-                        using (var http = _httpFactory.CreateClient())
-                        {
-                            using (var content = new FormUrlEncodedContent(
-                                new Dictionary<string, string> {
-                                { "servercount", nadeko.GuildCount.ToString() },
-                                { "key", _creds.CarbonKey }}))
-                            {
-                                content.Headers.Clear();
-                                content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-
-                                using (await http.PostAsync(new Uri("https://www.carbonitex.net/discord/data/botdata.php"), content).ConfigureAwait(false)) { }
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }, null, TimeSpan.FromHours(1), TimeSpan.FromHours(1));
-            }
-
             _botlistTimer = new Timer(async (state) =>
             {
                 if (string.IsNullOrWhiteSpace(_creds.BotListToken))
@@ -188,7 +150,7 @@ namespace NadekoBot.Core.Services.Impl
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex);
+                    Log.Error(ex, "Error ");
                     // ignored
                 }
             }, null, TimeSpan.FromMinutes(5), TimeSpan.FromHours(1));

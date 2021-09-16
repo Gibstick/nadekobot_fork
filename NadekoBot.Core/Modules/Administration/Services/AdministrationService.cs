@@ -8,7 +8,6 @@ using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
-using NLog;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,15 +20,12 @@ namespace NadekoBot.Modules.Administration.Services
         public ConcurrentHashSet<ulong> DeleteMessagesOnCommand { get; }
         public ConcurrentDictionary<ulong, bool> DeleteMessagesOnCommandChannels { get; }
 
-        private readonly Logger _log;
-        private readonly NadekoBot _bot;
         private readonly DbService _db;
         private readonly LogCommandService _logService;
 
-        public AdministrationService(NadekoBot bot, CommandHandler cmdHandler, DbService db, LogCommandService logService)
+        public AdministrationService(NadekoBot bot, CommandHandler cmdHandler, DbService db,
+            LogCommandService logService)
         {
-            _log = LogManager.GetCurrentClassLogger();
-            _bot = bot;
             _db = db;
             _logService = logService;
 

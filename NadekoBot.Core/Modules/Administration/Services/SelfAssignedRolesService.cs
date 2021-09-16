@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NadekoBot.Modules.Xp.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NadekoBot.Modules.Xp;
 
 namespace NadekoBot.Core.Modules.Administration.Services
 {

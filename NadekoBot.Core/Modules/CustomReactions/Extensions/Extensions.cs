@@ -6,10 +6,10 @@ using NadekoBot.Common;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
-using NadekoBot.Modules.CustomReactions.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -46,23 +46,14 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
         };
 
         private static string ResolveTriggerString(this string str, IUserMessage ctx, DiscordSocketClient client)
-        {
-            var rep = new ReplacementBuilder()
-                .WithUser(ctx.Author)
-                .WithMention(client)
-                .Build();
-
-            str = rep.Replace(str.ToLowerInvariant());
-
-            return str;
-        }
+            => str.Replace("%bot.mention%", client.CurrentUser.Mention, StringComparison.Ordinal);
 
         private static async Task<string> ResolveResponseStringAsync(this string str, IUserMessage ctx, DiscordSocketClient client, string resolvedTrigger, bool containsAnywhere)
         {
             var substringIndex = resolvedTrigger.Length;
             if (containsAnywhere)
             {
-                var pos = ctx.Content.GetWordPosition(resolvedTrigger);
+                var pos = ctx.Content.AsSpan().GetWordPosition(resolvedTrigger);
                 if (pos == WordPosition.Start)
                     substringIndex += 1;
                 else if (pos == WordPosition.End)
@@ -70,10 +61,15 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
                 else if (pos == WordPosition.Middle)
                     substringIndex += ctx.Content.IndexOf(resolvedTrigger, StringComparison.InvariantCulture);
             }
+            
+            var canMentionEveryone = (ctx.Author as IGuildUser)?.GuildPermissions.MentionEveryone ?? true;
 
             var rep = new ReplacementBuilder()
                 .WithDefault(ctx.Author, ctx.Channel, (ctx.Channel as ITextChannel)?.Guild as SocketGuild, client)
-                .WithOverride("%target%", () => ctx.Content.Substring(substringIndex).Trim())
+                .WithOverride("%target%", () =>
+                    canMentionEveryone
+                        ? ctx.Content.Substring(substringIndex).Trim()
+                        : ctx.Content.Substring(substringIndex).Trim().SanitizeMentions(true))
                 .Build();
 
             str = rep.Replace(str);
@@ -86,13 +82,10 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
             return str;
         }
 
-        public static string TriggerWithContext(this CustomReaction cr, IUserMessage ctx, DiscordSocketClient client)
-            => cr.Trigger.ResolveTriggerString(ctx, client);
-
         public static Task<string> ResponseWithContextAsync(this CustomReaction cr, IUserMessage ctx, DiscordSocketClient client, bool containsAnywhere)
             => cr.Response.ResolveResponseStringAsync(ctx, client, cr.Trigger.ResolveTriggerString(ctx, client), containsAnywhere);
 
-        public static async Task<IUserMessage> Send(this CustomReaction cr, IUserMessage ctx, DiscordSocketClient client, CustomReactionsService crs)
+        public static async Task<IUserMessage> Send(this CustomReaction cr, IUserMessage ctx, DiscordSocketClient client, bool sanitize)
         {
             var channel = cr.DmResponse ? await ctx.Author.GetOrCreateDMChannelAsync().ConfigureAwait(false) : ctx.Channel;
 
@@ -102,7 +95,7 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
                 var substringIndex = trigger.Length;
                 if (cr.ContainsAnywhere)
                 {
-                    var pos = ctx.Content.GetWordPosition(trigger);
+                    var pos = ctx.Content.AsSpan().GetWordPosition(trigger);
                     if (pos == WordPosition.Start)
                         substringIndex += 1;
                     else if (pos == WordPosition.End)
@@ -111,21 +104,26 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
                         substringIndex += ctx.Content.IndexOf(trigger, StringComparison.InvariantCulture);
                 }
 
+                var canMentionEveryone = (ctx.Author as IGuildUser)?.GuildPermissions.MentionEveryone ?? true;
+                
                 var rep = new ReplacementBuilder()
                     .WithDefault(ctx.Author, ctx.Channel, (ctx.Channel as ITextChannel)?.Guild as SocketGuild, client)
-                    .WithOverride("%target%", () => ctx.Content.Substring(substringIndex).Trim())
+                    .WithOverride("%target%", () => canMentionEveryone
+                        ? ctx.Content.Substring(substringIndex).Trim()
+                        : ctx.Content.Substring(substringIndex).Trim().SanitizeMentions(true))
                     .Build();
 
                 rep.Replace(crembed);
 
-                return await channel.EmbedAsync(crembed.ToEmbed(), crembed.PlainText?.SanitizeMentions() ?? "").ConfigureAwait(false);
+                return await channel.EmbedAsync(crembed, sanitize).ConfigureAwait(false);
             }
-            return await channel.SendMessageAsync((await cr.ResponseWithContextAsync(ctx, client, cr.ContainsAnywhere).ConfigureAwait(false)).SanitizeMentions()).ConfigureAwait(false);
+            return await channel.SendMessageAsync((await cr.ResponseWithContextAsync(ctx, client, cr.ContainsAnywhere).ConfigureAwait(false)).SanitizeMentions(sanitize)).ConfigureAwait(false);
         }
 
-        public static WordPosition GetWordPosition(this string str, string word)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static WordPosition GetWordPosition(this ReadOnlySpan<char> str, in ReadOnlySpan<char> word)
         {
-            var wordIndex = str.IndexOf(word, StringComparison.InvariantCulture);
+            var wordIndex = str.IndexOf(word, StringComparison.OrdinalIgnoreCase);
             if (wordIndex == -1)
                 return WordPosition.None;
 
@@ -145,12 +143,14 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
             return WordPosition.None;
         }
 
-        private static bool isValidWordDivider(this string str, int index)
+        private static bool isValidWordDivider(this in ReadOnlySpan<char> str, int index)
         {
             var ch = str[index];
             if (ch >= 'a' && ch <= 'z')
                 return false;
             if (ch >= 'A' && ch <= 'Z')
+                return false;
+            if (ch >= '1' && ch <= '9')
                 return false;
 
             return true;

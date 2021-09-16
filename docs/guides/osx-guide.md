@@ -1,5 +1,7 @@
 ## Setting Up NadekoBot on OSX (macOS)
 
+### This applies to NadekoBot version 2.  For NadekoBot version 3 with all the latest improvements and features, click [here][v3].
+
 | Table of Contents                                       |
 | :------------------------------------------------------ |
 | [Prerequisites]                                         |
@@ -35,17 +37,23 @@ brew services start redis
 npm install pm2@3.1.3 -g 
 ```
 
-**Installing dotNET Core SDK**
+**Installing .net SDK**
 
-- Download [dotNET Core SDK 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+- Download [.net5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
 - Open the `.pkg` file you've downloaded and install it.
+- Run this command in Terminal. There might be output. If there is, disregard it. (copy-paste the entire block)
+```bash
+sudo mkdir /usr/local/bin
+
+sudo mkdir /usr/local/lib
+```
 - Run this command in Terminal. There won't be any output. (copy-paste the entire block):
-``` bash
-ln -s /usr/local/share/dotnet/dotnet /usr/local/bin
+```bash
+sudo ln -s /usr/local/share/dotnet/dotnet /usr/local/bin
 
-ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
+sudo ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
 
-ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
+sudo ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
 ```
 
 
@@ -167,3 +175,4 @@ If music still isn't working, try reinstalling ffmpeg:
 [Using Nadeko with pm2 (easiest method)]: #using-nadeko-with-pm2-easiest-method
 [Using Nadeko with tmux (if you don't want to use pm2)]: #using-nadeko-with-tmux-if-you-dont-want-to-use-pm2
 [Doing a clean reinstall]: #doing-a-clean-reinstall
+[v3]: https://nadekobot.readthedocs.io/en/v3/guides/osx-guide/

@@ -9,6 +9,7 @@ using NadekoBot.Core.Services;
 using NadekoBot.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Modules.Gambling
 {
@@ -27,7 +28,8 @@ namespace NadekoBot.Modules.Gambling
                 Double,
             }
 
-            public BlackJackCommands(ICurrencyService cs, DbService db)
+            public BlackJackCommands(ICurrencyService cs, DbService db,
+                GamblingConfigService gamblingConf) : base(gamblingConf) 
             {
                 _cs = cs;
                 _db = db;
@@ -47,7 +49,7 @@ namespace NadekoBot.Modules.Gambling
                     if (!await bj.Join(ctx.User, amount).ConfigureAwait(false))
                     {
                         _service.Games.TryRemove(ctx.Channel.Id, out _);
-                        await ReplyErrorLocalizedAsync("not_enough", Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                        await ReplyErrorLocalizedAsync("not_enough", CurrencySign).ConfigureAwait(false);
                         return;
                     }
                     bj.StateUpdated += Bj_StateUpdated;
@@ -62,7 +64,7 @@ namespace NadekoBot.Modules.Gambling
                         await ReplyConfirmLocalizedAsync("bj_joined").ConfigureAwait(false);
                     else
                     {
-                        _log.Info($"{ctx.User} can't join a blackjack game as it's in " + bj.State.ToString() + " state already.");
+                        Log.Information($"{ctx.User} can't join a blackjack game as it's in " + bj.State.ToString() + " state already.");
                     }
                 }
 
@@ -180,7 +182,7 @@ namespace NadekoBot.Modules.Gambling
                 {
                     if (!await bj.Double(ctx.User).ConfigureAwait(false))
                     {
-                        await ReplyErrorLocalizedAsync("not_enough", Bc.BotConfig.CurrencySign).ConfigureAwait(false);
+                        await ReplyErrorLocalizedAsync("not_enough", CurrencySign).ConfigureAwait(false);
                     }
                 }
 

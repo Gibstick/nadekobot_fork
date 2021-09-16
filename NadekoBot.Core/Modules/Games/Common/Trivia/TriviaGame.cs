@@ -10,20 +10,19 @@ using Discord.Net;
 using Discord.WebSocket;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Impl;
-using NLog;
 using NadekoBot.Core.Modules.Games.Common.Trivia;
+using NadekoBot.Modules.Games.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Games.Common.Trivia
 {
     public class TriviaGame
     {
         private readonly SemaphoreSlim _guessLock = new SemaphoreSlim(1, 1);
-        private readonly Logger _log;
         private readonly IDataCache _cache;
-        private readonly NadekoStrings _strings;
+        private readonly IBotStrings _strings;
         private readonly DiscordSocketClient _client;
-        private readonly IBotConfigProvider _bc;
+        private readonly GamesConfig _config;
         private readonly ICurrencyService _cs;
         private readonly TriviaOptions _options;
 
@@ -42,36 +41,36 @@ namespace NadekoBot.Modules.Games.Common.Trivia
 
         private readonly TriviaQuestionPool _questionPool;
         private int _timeoutCount = 0;
+        private readonly string _quitCommand;
 
-        public TriviaGame(NadekoStrings strings, DiscordSocketClient client, IBotConfigProvider bc,
+        public TriviaGame(IBotStrings strings, DiscordSocketClient client, GamesConfig config,
             IDataCache cache, ICurrencyService cs, IGuild guild, ITextChannel channel,
-            TriviaOptions options)
+            TriviaOptions options, string quitCommand)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _cache = cache;
             _questionPool = new TriviaQuestionPool(_cache);
             _strings = strings;
             _client = client;
-            _bc = bc;
+            _config = config;
             _cs = cs;
             _options = options;
+            _quitCommand = quitCommand;
 
             Guild = guild;
             Channel = channel;
         }
 
-        private string GetText(string key, params object[] replacements) =>
-            _strings.GetText(key,
-                Channel.GuildId,
-                typeof(Games).Name.ToLowerInvariant(),
-                replacements);
+        private string GetText(string key, params object[] replacements)
+            => _strings.GetText(key, Channel.GuildId, replacements);
 
         public async Task StartGame()
         {
+            var showHowToQuit = false;
             while (!ShouldStopGame)
             {
                 // reset the cancellation source    
                 _triviaCancelSource = new CancellationTokenSource();
+                showHowToQuit = !showHowToQuit;
 
                 // load question
                 CurrentQuestion = _questionPool.GetRandomQuestion(OldQuestions, _options.IsPokemon);
@@ -90,6 +89,10 @@ namespace NadekoBot.Modules.Games.Common.Trivia
                         .WithTitle(GetText("trivia_game"))
                         .AddField(eab => eab.WithName(GetText("category")).WithValue(CurrentQuestion.Category))
                         .AddField(eab => eab.WithName(GetText("question")).WithValue(CurrentQuestion.Question));
+
+                    if (showHowToQuit)
+                        questionEmbed.WithFooter(GetText("trivia_quit", _quitCommand));
+                    
                     if (Uri.IsWellFormedUriString(CurrentQuestion.ImageUrl, UriKind.Absolute))
                         questionEmbed.WithImageUrl(CurrentQuestion.ImageUrl);
 
@@ -103,7 +106,7 @@ namespace NadekoBot.Modules.Games.Common.Trivia
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex);
+                    Log.Warning(ex, "Error sending trivia embed");
                     await Task.Delay(2000).ConfigureAwait(false);
                     continue;
                 }
@@ -129,7 +132,7 @@ namespace NadekoBot.Modules.Games.Common.Trivia
                             {
                                 break;
                             }
-                            catch (Exception ex) { _log.Warn(ex); }
+                            catch (Exception ex) { Log.Warning(ex, "Error editing triva message"); }
 
                         //timeout
                         await Task.Delay(_options.QuestionTimer * 1000 / 2, _triviaCancelSource.Token).ConfigureAwait(false);
@@ -159,7 +162,7 @@ namespace NadekoBot.Modules.Games.Common.Trivia
                     }
                     catch (Exception ex)
                     {
-                        _log.Warn(ex);
+                        Log.Warning(ex, "Error sending trivia time's up message");
                     }
                 }
                 await Task.Delay(5000).ConfigureAwait(false);
@@ -181,7 +184,18 @@ namespace NadekoBot.Modules.Games.Common.Trivia
             var old = ShouldStopGame;
             ShouldStopGame = true;
             if (!old)
-                try { await Channel.SendConfirmAsync(GetText("trivia_game"), GetText("trivia_stopping")).ConfigureAwait(false); } catch (Exception ex) { _log.Warn(ex); }
+            {
+                try
+                {
+                    await Channel.SendConfirmAsync(GetText("trivia_game"), GetText("trivia_stopping"))
+                        .ConfigureAwait(false);
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Error sending trivia stopping message");
+                }
+            }
         }
 
         private Task PotentialGuess(SocketMessage imsg)
@@ -234,7 +248,7 @@ namespace NadekoBot.Modules.Games.Common.Trivia
                         {
                             // ignored
                         }
-                        var reward = _bc.BotConfig.TriviaCurrencyReward;
+                        var reward = _config.Trivia.CurrencyReward;
                         if (reward > 0)
                             await _cs.AddAsync(guildUser, "Won trivia", reward, true).ConfigureAwait(false);
                         return;
@@ -246,7 +260,7 @@ namespace NadekoBot.Modules.Games.Common.Trivia
                         embed.WithImageUrl(CurrentQuestion.AnswerImageUrl);
                     await Channel.EmbedAsync(embed).ConfigureAwait(false);
                 }
-                catch (Exception ex) { _log.Warn(ex); }
+                catch (Exception ex) { Log.Warning(ex.ToString()); }
             });
             return Task.CompletedTask;
         }

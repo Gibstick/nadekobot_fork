@@ -1,4 +1,6 @@
-#### Creating the Discord Bot application
+# Creating and inviting your bot
+
+## Creating a Discord application
 
 This document aims to guide you through the process of creating a Discord account for your bot (the Discord Bot application), and inviting that account into your Discord server.
 
@@ -11,12 +13,12 @@ This document aims to guide you through the process of creating a Discord accoun
 - Upload an image if you want and add an app description. **(Optional)**
 - Go to the **Bot** tab on the left sidebar.
 - Click on the `Add a Bot` button and confirm that you do want to add a bot to this app.
-- Scroll down to the `Privileged Gateway Intents` section and enable both intents. 
+- Scroll down to the `Privileged Gateway Intents` section and enable both intents.
 These are required for a number of features to function properly, and should both be on.
 
 ![img3](https://i.imgur.com/iuq2901.gif)
 
-#### Inviting your bot to your server
+## Inviting your bot to your server
 
 ![img4](https://i.imgur.com/6beUSa5.gif)
 

@@ -15,7 +15,7 @@ using NadekoBot.Modules.Permissions.Services;
 
 namespace NadekoBot.Modules.Permissions
 {
-    public partial class Permissions : NadekoTopLevelModule<PermissionService>
+    public partial class Permissions : NadekoModule<PermissionService>
     {
         private readonly DbService _db;
 

@@ -11,12 +11,33 @@ using System.Threading.Tasks;
 
 namespace NadekoBot.Modules.Administration
 {
-    public partial class Administration : NadekoTopLevelModule<AdministrationService>
+    public partial class Administration : NadekoModule<AdministrationService>
     {
         public enum List
         {
             List = 0,
             Ls = 0
+        }
+
+
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [UserPerm(ChannelPerm.ManageChannel)]
+        [BotPerm(ChannelPerm.ManageChannel)]
+        public async Task Slowmode(StoopidTime time = null)
+        {
+            var seconds = (int?)time?.Time.TotalSeconds ?? 0;
+            if (!(time is null) && (time.Time < TimeSpan.FromSeconds(0) || time.Time > TimeSpan.FromHours(6)))
+                return;
+            
+
+            await ((ITextChannel) Context.Channel).ModifyAsync(tcp =>
+            {
+                tcp.SlowModeInterval = seconds;
+            });
+
+            await Context.OkAsync();
         }
 
         [NadekoCommand, Usage, Description, Aliases]
@@ -308,8 +329,7 @@ namespace NadekoBot.Modules.Administration
                 return;
             }
 
-            var conf = await ReplyAsync("👌").ConfigureAwait(false);
-            conf.DeleteAfter(3);
+            await ctx.OkAsync();
         }
     }
 }

@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NadekoBot.Common.Collections;
 using NadekoBot.Common.ModuleBehaviors;
 using NadekoBot.Extensions;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,6 +15,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NadekoBot.Core.Common.Configs;
+using NadekoBot.Core.Services.Impl;
+using Serilog;
 
 namespace NadekoBot.Core.Services
 {
@@ -32,16 +34,14 @@ namespace NadekoBot.Core.Services
 
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
-        private readonly Logger _log;
-        private readonly IBotCredentials _creds;
+        private readonly BotConfigService _bss;
         private readonly NadekoBot _bot;
         private IServiceProvider _services;
         private IEnumerable<IEarlyBehavior> _earlyBehaviors;
         private IEnumerable<IInputTransformer> _inputTransformers;
         private IEnumerable<ILateBlocker> _lateBlockers;
         private IEnumerable<ILateExecutor> _lateExecutors;
-
-        public string DefaultPrefix { get; private set; }
+        
         private ConcurrentDictionary<ulong, string> _prefixes { get; } = new ConcurrentDictionary<ulong, string>();
 
         public event Func<IUserMessage, CommandInfo, Task> CommandExecuted = delegate { return Task.CompletedTask; };
@@ -54,26 +54,22 @@ namespace NadekoBot.Core.Services
         public ConcurrentHashSet<ulong> UsersOnShortCooldown { get; } = new ConcurrentHashSet<ulong>();
         private readonly Timer _clearUsersOnShortCooldown;
 
-        public CommandHandler(DiscordSocketClient client, DbService db,
-            IBotConfigProvider bcp, CommandService commandService,
-            IBotCredentials credentials, NadekoBot bot, IServiceProvider services)
+        public CommandHandler(DiscordSocketClient client, DbService db, CommandService commandService,
+            BotConfigService bss, NadekoBot bot, IServiceProvider services)
         {
             _client = client;
             _commandService = commandService;
-            _creds = credentials;
+            _bss = bss;
             _bot = bot;
             _db = db;
-            _bcp = bcp;
             _services = services;
 
-            _log = LogManager.GetCurrentClassLogger();
-
+            
             _clearUsersOnShortCooldown = new Timer(_ =>
             {
                 UsersOnShortCooldown.Clear();
             }, null, GlobalCommandsCooldown, GlobalCommandsCooldown);
-
-            DefaultPrefix = bcp.BotConfig.DefaultPrefix;
+            
             _prefixes = bot.AllGuildConfigs
                 .Where(x => x.Prefix != null)
                 .ToDictionary(x => x.GuildId, x => x.Prefix)
@@ -82,10 +78,10 @@ namespace NadekoBot.Core.Services
 
         public string GetPrefix(IGuild guild) => GetPrefix(guild?.Id);
 
-        public string GetPrefix(ulong? id)
+        public string GetPrefix(ulong? id = null)
         {
-            if (id == null || !_prefixes.TryGetValue(id.Value, out var prefix))
-                return DefaultPrefix;
+            if (id is null || !_prefixes.TryGetValue(id.Value, out var prefix))
+                return _bss.Data.Prefix;
 
             return prefix;
         }
@@ -95,13 +91,12 @@ namespace NadekoBot.Core.Services
             if (string.IsNullOrWhiteSpace(prefix))
                 throw new ArgumentNullException(nameof(prefix));
 
-            using (var uow = _db.GetDbContext())
+            _bss.ModifyConfig(bs =>
             {
-                uow.BotConfig.GetOrCreate(set => set).DefaultPrefix = prefix;
-                uow.SaveChanges();
-            }
+                bs.Prefix = prefix;
+            });
 
-            return DefaultPrefix = prefix;
+            return prefix;
         }
         public string SetPrefix(IGuild guild, string prefix)
         {
@@ -126,6 +121,7 @@ namespace NadekoBot.Core.Services
         {
             _lateBlockers = services.Where(x => x.ImplementationType?.GetInterfaces().Contains(typeof(ILateBlocker)) ?? false)
                 .Select(x => _services.GetService(x.ImplementationType) as ILateBlocker)
+                .OrderByDescending(x => x.Priority)
                 .ToArray();
 
             _lateExecutors = services.Where(x => x.ImplementationType?.GetInterfaces().Contains(typeof(ILateExecutor)) ?? false)
@@ -148,7 +144,7 @@ namespace NadekoBot.Core.Services
                 var guild = _client.GetGuild(guildId.Value);
                 if (!(guild?.GetChannel(channelId) is SocketTextChannel channel))
                 {
-                    _log.Warn("Channel for external execution not found.");
+                    Log.Warning("Channel for external execution not found.");
                     return;
                 }
 
@@ -171,13 +167,13 @@ namespace NadekoBot.Core.Services
 
         private const float _oneThousandth = 1.0f / 1000;
         private readonly DbService _db;
-        private readonly IBotConfigProvider _bcp;
 
         private Task LogSuccessfulExecution(IUserMessage usrMsg, ITextChannel channel, params int[] execPoints)
         {
-            if (_bcp.BotConfig.ConsoleOutputType == Database.Models.ConsoleOutputType.Normal)
+            var bss = _services.GetService<BotConfigService>();
+            if (bss.Data.ConsoleOutputType == ConsoleOutputType.Normal)
             {
-                _log.Info($"Command Executed after " + string.Join("/", execPoints.Select(x => (x * _oneThousandth).ToString("F3"))) + "s\n\t" +
+                Log.Information($"Command Executed after " + string.Join("/", execPoints.Select(x => (x * _oneThousandth).ToString("F3"))) + "s\n\t" +
                         "User: {0}\n\t" +
                         "Server: {1}\n\t" +
                         "Channel: {2}\n\t" +
@@ -190,7 +186,7 @@ namespace NadekoBot.Core.Services
             }
             else
             {
-                _log.Info("Succ | g:{0} | c: {1} | u: {2} | msg: {3}",
+                Log.Information("Succ | g:{0} | c: {1} | u: {2} | msg: {3}",
                     channel?.Guild.Id.ToString() ?? "-",
                     channel?.Id.ToString() ?? "-",
                     usrMsg.Author.Id,
@@ -201,9 +197,10 @@ namespace NadekoBot.Core.Services
 
         private void LogErroredExecution(string errorMessage, IUserMessage usrMsg, ITextChannel channel, params int[] execPoints)
         {
-            if (_bcp.BotConfig.ConsoleOutputType == Database.Models.ConsoleOutputType.Normal)
+            var bss = _services.GetService<BotConfigService>();
+            if (bss.Data.ConsoleOutputType == ConsoleOutputType.Normal)
             {
-                _log.Warn($"Command Errored after " + string.Join("/", execPoints.Select(x => (x * _oneThousandth).ToString("F3"))) + "s\n\t" +
+                Log.Warning($"Command Errored after " + string.Join("/", execPoints.Select(x => (x * _oneThousandth).ToString("F3"))) + "s\n\t" +
                             "User: {0}\n\t" +
                             "Server: {1}\n\t" +
                             "Channel: {2}\n\t" +
@@ -219,7 +216,7 @@ namespace NadekoBot.Core.Services
             }
             else
             {
-                _log.Warn("Err | g:{0} | c: {1} | u: {2} | msg: {3}\n\tErr: {4}",
+                Log.Warning("Err | g:{0} | c: {1} | u: {2} | msg: {3}\n\tErr: {4}",
                     channel?.Guild.Id.ToString() ?? "-",
                     channel?.Id.ToString() ?? "-",
                     usrMsg.Author.Id,
@@ -249,12 +246,10 @@ namespace NadekoBot.Core.Services
             }
             catch (Exception ex)
             {
-                _log.Warn("Error in CommandHandler");
-                _log.Warn(ex);
+                Log.Warning(ex, "Error in CommandHandler");
                 if (ex.InnerException != null)
                 {
-                    _log.Warn("Inner Exception of the error in CommandHandler");
-                    _log.Warn(ex.InnerException);
+                    Log.Warning(ex.InnerException, "Inner Exception of the error in CommandHandler");
                 }
             }
         }
@@ -272,24 +267,29 @@ namespace NadekoBot.Core.Services
                 {
                     if (beh.BehaviorType == ModuleBehaviorType.Blocker)
                     {
-                        _log.Info("Blocked User: [{0}] Message: [{1}] Service: [{2}]", usrMsg.Author, usrMsg.Content, beh.GetType().Name);
+                        Log.Information("Blocked User: [{0}] Message: [{1}] Service: [{2}]", usrMsg.Author,
+                            usrMsg.Content, beh.GetType().Name);
                     }
                     else if (beh.BehaviorType == ModuleBehaviorType.Executor)
                     {
-                        _log.Info("User [{0}] executed [{1}] in [{2}]", usrMsg.Author, usrMsg.Content, beh.GetType().Name);
+                        Log.Information("User [{0}] executed [{1}] in [{2}]", usrMsg.Author, usrMsg.Content,
+                            beh.GetType().Name);
 
                     }
+
                     return;
                 }
             }
 
             var exec2 = Environment.TickCount - execTime;
 
+            
             string messageContent = usrMsg.Content;
             foreach (var exec in _inputTransformers)
             {
                 string newContent;
-                if ((newContent = await exec.TransformInput(guild, usrMsg.Channel, usrMsg.Author, messageContent).ConfigureAwait(false)) != messageContent.ToLowerInvariant())
+                if ((newContent = await exec.TransformInput(guild, usrMsg.Channel, usrMsg.Author, messageContent)
+                    .ConfigureAwait(false)) != messageContent.ToLowerInvariant())
                 {
                     messageContent = newContent;
                     break;
@@ -424,9 +424,11 @@ namespace NadekoBot.Core.Services
             var commandName = cmd.Aliases.First();
             foreach (var exec in _lateBlockers)
             {
-                if (await exec.TryBlockLate(_client, context.Message, context.Guild, context.Channel, context.User, cmd.Module.GetTopLevelModule().Name, commandName).ConfigureAwait(false))
+                if (await exec.TryBlockLate(_client, context, cmd.Module.GetTopLevelModule().Name, cmd)
+                    .ConfigureAwait(false))
                 {
-                    _log.Info("Late blocking User [{0}] Command: [{1}] in [{2}]", context.User, commandName, exec.GetType().Name);
+                    Log.Information("Late blocking User [{0}] Command: [{1}] in [{2}]", context.User, commandName,
+                        exec.GetType().Name);
                     return (false, null, cmd);
                 }
             }
@@ -437,20 +439,10 @@ namespace NadekoBot.Core.Services
 
             if (execResult.Exception != null && (!(execResult.Exception is HttpException he) || he.DiscordCode != 50013))
             {
-                lock (errorLogLock)
-                {
-                    var now = DateTime.Now;
-                    File.AppendAllText($"./command_errors_{now:yyyy-MM-dd}.txt",
-                        $"[{now:HH:mm-yyyy-MM-dd}]" + Environment.NewLine
-                        + execResult.Exception.ToString() + Environment.NewLine
-                        + "------" + Environment.NewLine);
-                    _log.Warn(execResult.Exception);
-                }
+                Log.Warning(execResult.Exception, "Command Error");
             }
 
             return (true, null, cmd);
         }
-
-        private readonly object errorLogLock = new object();
     }
 }

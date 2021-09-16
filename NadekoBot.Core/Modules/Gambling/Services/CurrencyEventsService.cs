@@ -6,11 +6,12 @@ using Discord;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using System;
-using NLog;
 using NadekoBot.Core.Services.Database.Models;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Linq;
+using NadekoBot.Core.Modules.Gambling.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Gambling.Services
 {
@@ -21,28 +22,24 @@ namespace NadekoBot.Modules.Gambling.Services
             public ulong User { get; set; }
             public long Date { get; set; }
         }
-        private readonly DbService _db;
         private readonly DiscordSocketClient _client;
         private readonly ICurrencyService _cs;
-        private readonly IBotConfigProvider _bc;
         private readonly IBotCredentials _creds;
         private readonly IHttpClientFactory _http;
-        private readonly Logger _log;
+        private readonly GamblingConfigService _configService;
         private readonly ConcurrentDictionary<ulong, ICurrencyEvent> _events =
             new ConcurrentDictionary<ulong, ICurrencyEvent>();
 
-        public CurrencyEventsService(DbService db, DiscordSocketClient client,
-            IBotCredentials creds, ICurrencyService cs, IBotConfigProvider bc,
-            IHttpClientFactory http)
+        public CurrencyEventsService(DiscordSocketClient client,
+            IBotCredentials creds, ICurrencyService cs,
+            IHttpClientFactory http, GamblingConfigService configService)
         {
-            _db = db;
             _client = client;
             _cs = cs;
-            _bc = bc;
             _creds = creds;
             _http = http;
-            _log = LogManager.GetCurrentClassLogger();
-
+            _configService = configService;
+            
             if (_client.ShardId == 0)
             {
                 Task t = BotlistUpvoteLoop();
@@ -73,7 +70,7 @@ namespace NadekoBot.Modules.Gambling.Services
                     {
                         if (!res.IsSuccessStatusCode)
                         {
-                            _log.Warn("Botlist API not reached.");
+                            Log.Warning("Botlist API not reached.");
                             return;
                         }
                         var resStr = await res.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -86,7 +83,7 @@ namespace NadekoBot.Modules.Gambling.Services
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error in TriggerVoteCheck");
             }
         }
 
@@ -102,11 +99,11 @@ namespace NadekoBot.Modules.Gambling.Services
 
             if (type == CurrencyEvent.Type.Reaction)
             {
-                ce = new ReactionEvent(_client, _cs, _bc, g, ch, opts, embed);
+                ce = new ReactionEvent(_client, _cs, g, ch, opts, _configService.Data, embed);
             }
             else if (type == CurrencyEvent.Type.GameStatus)
             {
-                ce = new GameStatusEvent(_client, _cs, _bc, g, ch, opts, embed);
+                ce = new GameStatusEvent(_client, _cs, g, ch, opts, embed);
             }
             else
             {
@@ -123,7 +120,7 @@ namespace NadekoBot.Modules.Gambling.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex);
+                    Log.Warning(ex, "Error starting event");
                     _events.TryRemove(guildId, out ce);
                     return false;
                 }

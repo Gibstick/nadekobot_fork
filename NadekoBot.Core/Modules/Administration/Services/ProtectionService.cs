@@ -1,39 +1,53 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using NadekoBot.Modules.Administration.Common;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
-using NLog;
 using NadekoBot.Extensions;
 using Microsoft.EntityFrameworkCore;
+using NadekoBot.Core.Common.TypeReaders.Models;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
     public class ProtectionService : INService
     {
-        private readonly ConcurrentDictionary<ulong, AntiRaidStats> _antiRaidGuilds =
-                new ConcurrentDictionary<ulong, AntiRaidStats>();
+        private readonly ConcurrentDictionary<ulong, AntiRaidStats> _antiRaidGuilds
+            = new ConcurrentDictionary<ulong, AntiRaidStats>();
 
-        private readonly ConcurrentDictionary<ulong, AntiSpamStats> _antiSpamGuilds =
-                new ConcurrentDictionary<ulong, AntiSpamStats>();
+        private readonly ConcurrentDictionary<ulong, AntiSpamStats> _antiSpamGuilds
+            = new ConcurrentDictionary<ulong, AntiSpamStats>();
 
-        public event Func<PunishmentAction, ProtectionType, IGuildUser[], Task> OnAntiProtectionTriggered = delegate { return Task.CompletedTask; };
+        private readonly ConcurrentDictionary<ulong, AntiAltStats> _antiAltGuilds
+            = new ConcurrentDictionary<ulong, AntiAltStats>();
+        
+        public event Func<PunishmentAction, ProtectionType, IGuildUser[], Task> OnAntiProtectionTriggered
+            = delegate { return Task.CompletedTask; };
 
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly MuteService _mute;
         private readonly DbService _db;
+        private readonly UserPunishService _punishService;
+        
+        private readonly Channel<PunishQueueItem> PunishUserQueue =
+            System.Threading.Channels.Channel.CreateUnbounded<PunishQueueItem>(new UnboundedChannelOptions()
+            {
+                SingleReader = true,
+                SingleWriter = false
+            });
 
-        public ProtectionService(DiscordSocketClient client, NadekoBot bot, MuteService mute, DbService db)
-        {
-            _log = LogManager.GetCurrentClassLogger();
+        public ProtectionService(DiscordSocketClient client, NadekoBot bot,
+            MuteService mute, DbService db, UserPunishService punishService)
+        { 
             _client = client;
             _mute = mute;
             _db = db;
+            _punishService = punishService;
 
             var ids = client.GetGuildIds();
             using (var uow = db.GetDbContext())
@@ -43,6 +57,7 @@ namespace NadekoBot.Modules.Administration.Services
                     .Include(x => x.AntiRaidSetting)
                     .Include(x => x.AntiSpamSetting)
                     .ThenInclude(x => x.IgnoredChannels)
+                    .Include(x => x.AntiAltSetting)
                     .Where(x => ids.Contains(x.GuildId))
                     .ToList();
 
@@ -53,34 +68,60 @@ namespace NadekoBot.Modules.Administration.Services
             }
 
             _client.MessageReceived += HandleAntiSpam;
-            _client.UserJoined += HandleAntiRaid;
+            _client.UserJoined += HandleUserJoined;
 
             bot.JoinedGuild += _bot_JoinedGuild;
             _client.LeftGuild += _client_LeftGuild;
+            
+            _ = Task.Run(RunQueue);
         }
 
-        private Task _client_LeftGuild(SocketGuild arg)
+        private async Task RunQueue()
         {
-            var _ = Task.Run(() =>
+            while (true)
             {
-                TryStopAntiRaid(arg.Id);
-                TryStopAntiSpam(arg.Id);
+                var item = await PunishUserQueue.Reader.ReadAsync();
+
+                var muteTime = item.MuteTime;
+                var gu = item.User;
+                try
+                {
+                    await _punishService.ApplyPunishment(gu.Guild, gu, _client.CurrentUser,
+                        item.Action, muteTime, item.RoleId, $"{item.Type} Protection");
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Error in punish queue: {Message}", ex.Message);
+                }
+                finally
+                {
+                    await Task.Delay(1000);
+                }
+            }
+        }
+
+        private Task _client_LeftGuild(SocketGuild guild)
+        {
+            var _ = Task.Run(async () =>
+            {
+                TryStopAntiRaid(guild.Id);
+                TryStopAntiSpam(guild.Id);
+                await TryStopAntiAlt(guild.Id);
             });
             return Task.CompletedTask;
         }
 
         private Task _bot_JoinedGuild(GuildConfig gc)
         {
-            using (var uow = _db.GetDbContext())
-            {
-                var gcWithData = uow.GuildConfigs.ForId(gc.GuildId,
-                    x => x
-                        .Include(x => x.AntiRaidSetting)
-                        .Include(x => x.AntiSpamSetting)
-                        .ThenInclude(x => x.IgnoredChannels));
+            using var uow = _db.GetDbContext();
+            var gcWithData = uow.GuildConfigs.ForId(gc.GuildId,
+                set => set
+                    .Include(x => x.AntiRaidSetting)
+                    .Include(x => x.AntiAltSetting)
+                    .Include(x => x.AntiSpamSetting)
+                    .ThenInclude(x => x.IgnoredChannels));
 
-                Initialize(gcWithData);
-            }
+            Initialize(gcWithData);
             return Task.CompletedTask;
         }
 
@@ -92,39 +133,71 @@ namespace NadekoBot.Modules.Administration.Services
             if (raid != null)
             {
                 var raidStats = new AntiRaidStats() { AntiRaidSettings = raid };
-                _antiRaidGuilds.TryAdd(gc.GuildId, raidStats);
+                _antiRaidGuilds[gc.GuildId] = raidStats;
             }
 
             if (spam != null)
-                _antiSpamGuilds.TryAdd(gc.GuildId, new AntiSpamStats() { AntiSpamSettings = spam });
+                _antiSpamGuilds[gc.GuildId] = new AntiSpamStats() { AntiSpamSettings = spam };
+
+            var alt = gc.AntiAltSetting;
+            if (!(alt is null))
+                _antiAltGuilds[gc.GuildId] = new AntiAltStats(alt);
         }
 
-        private Task HandleAntiRaid(SocketGuildUser usr)
+        private Task HandleUserJoined(SocketGuildUser user)
         {
-            if (usr.IsBot)
+            if (user.IsBot)
                 return Task.CompletedTask;
-            if (!_antiRaidGuilds.TryGetValue(usr.Guild.Id, out var settings))
-                return Task.CompletedTask;
-            if (!settings.RaidUsers.Add(usr))
+            
+            _antiRaidGuilds.TryGetValue(user.Guild.Id, out var maybeStats);
+            _antiAltGuilds.TryGetValue(user.Guild.Id, out var maybeAlts);
+            
+            if (maybeStats is null && maybeAlts is null)
                 return Task.CompletedTask;
 
-            var _ = Task.Run(async () =>
+            _ = Task.Run(async () =>
             {
+                if (maybeAlts is AntiAltStats alts)
+                {
+                    if (user.CreatedAt != default)
+                    {
+                        var diff = DateTime.UtcNow - user.CreatedAt.UtcDateTime;
+                        if (diff < alts.MinAge)
+                        {
+                            alts.Increment();
+                            
+                            await PunishUsers(
+                                alts.Action,
+                                ProtectionType.Alting,
+                                alts.ActionDurationMinutes, 
+                                alts.RoleId,
+                                user);
+                            
+                            return;
+                        }
+                    }
+                }
+                
                 try
                 {
-                    ++settings.UsersCount;
+                    if (!(maybeStats is AntiRaidStats stats) || !stats.RaidUsers.Add(user))
+                        return;
+                    
+                    ++stats.UsersCount;
 
-                    if (settings.UsersCount >= settings.AntiRaidSettings.UserThreshold)
+                    if (stats.UsersCount >= stats.AntiRaidSettings.UserThreshold)
                     {
-                        var users = settings.RaidUsers.ToArray();
-                        settings.RaidUsers.Clear();
+                        var users = stats.RaidUsers.ToArray();
+                        stats.RaidUsers.Clear();
+                        var settings = stats.AntiRaidSettings;
 
-                        await PunishUsers(settings.AntiRaidSettings.Action, ProtectionType.Raiding, 0, users).ConfigureAwait(false);
+                        await PunishUsers(settings.Action, ProtectionType.Raiding,
+                            settings.PunishDuration, null,  users).ConfigureAwait(false);
                     }
-                    await Task.Delay(1000 * settings.AntiRaidSettings.Seconds).ConfigureAwait(false);
+                    await Task.Delay(1000 * stats.AntiRaidSettings.Seconds).ConfigureAwait(false);
 
-                    settings.RaidUsers.TryRemove(usr);
-                    --settings.UsersCount;
+                    stats.RaidUsers.TryRemove(user);
+                    --stats.UsersCount;
 
                 }
                 catch
@@ -164,7 +237,9 @@ namespace NadekoBot.Modules.Administration.Services
                         if (spamSettings.UserStats.TryRemove(msg.Author.Id, out stats))
                         {
                             stats.Dispose();
-                            await PunishUsers(spamSettings.AntiSpamSettings.Action, ProtectionType.Spamming, spamSettings.AntiSpamSettings.MuteTime, (IGuildUser)msg.Author)
+                            var settings = spamSettings.AntiSpamSettings;
+                            await PunishUsers(settings.Action, ProtectionType.Spamming, settings.MuteTime,
+                                    settings.RoleId, (IGuildUser)msg.Author)
                                 .ConfigureAwait(false);
                         }
                     }
@@ -177,68 +252,42 @@ namespace NadekoBot.Modules.Administration.Services
             return Task.CompletedTask;
         }
 
-        private async Task PunishUsers(PunishmentAction action, ProtectionType pt, int muteTime, params IGuildUser[] gus)
+        private async Task PunishUsers(PunishmentAction action, ProtectionType pt, int muteTime, ulong? roleId,
+            params IGuildUser[] gus)
         {
-            _log.Info($"[{pt}] - Punishing [{gus.Length}] users with [{action}] in {gus[0].Guild.Name} guild");
+            Log.Information(
+                "[{PunishType}] - Punishing [{Count}] users with [{PunishAction}] in {GuildName} guild",
+                pt,
+                gus.Length,
+                action,
+                gus[0].Guild.Name);
+            
             foreach (var gu in gus)
             {
-                switch (action)
+                await PunishUserQueue.Writer.WriteAsync(new PunishQueueItem()
                 {
-                    case PunishmentAction.Mute:
-                        try
-                        {
-                            var muteReason = $"{pt} Protection";
-                            if (muteTime <= 0)
-                                await _mute.MuteUser(gu, _client.CurrentUser, reason: muteReason).ConfigureAwait(false);
-                            else
-                                await _mute.TimedMute(gu, _client.CurrentUser, TimeSpan.FromSeconds(muteTime), reason: muteReason).ConfigureAwait(false);
-                        }
-                        catch (Exception ex) { _log.Warn(ex, "I can't apply punishement"); }
-                        break;
-                    case PunishmentAction.Kick:
-                        try
-                        {
-                            await gu.KickAsync().ConfigureAwait(false);
-                        }
-                        catch (Exception ex) { _log.Warn(ex, "I can't apply punishement"); }
-                        break;
-                    case PunishmentAction.Softban:
-                        try
-                        {
-                            await gu.Guild.AddBanAsync(gu, 7).ConfigureAwait(false);
-                            try
-                            {
-                                await gu.Guild.RemoveBanAsync(gu).ConfigureAwait(false);
-                            }
-                            catch
-                            {
-                                await gu.Guild.RemoveBanAsync(gu).ConfigureAwait(false);
-                                // try it twice, really don't want to ban user if
-                                // only kick has been specified as the punishement
-                            }
-                        }
-                        catch (Exception ex) { _log.Warn(ex, "I can't apply punishment"); }
-                        break;
-                    case PunishmentAction.Ban:
-                        try
-                        {
-                            await gu.Guild.AddBanAsync(gu, 7).ConfigureAwait(false);
-                        }
-                        catch (Exception ex) { _log.Warn(ex, "I can't apply punishment"); }
-                        break;
-                    case PunishmentAction.RemoveRoles:
-                        await gu.RemoveRolesAsync(gu.GetRoles().Where(x => x.Id != gu.Guild.EveryoneRole.Id)).ConfigureAwait(false);
-                        break;
-                }
+                    Action = action,
+                    Type = pt,
+                    User = gu,
+                    MuteTime = muteTime,
+                    RoleId = roleId
+                });
             }
-            await OnAntiProtectionTriggered(action, pt, gus).ConfigureAwait(false);
+
+            _ = OnAntiProtectionTriggered(action, pt, gus);
         }
 
-        public async Task<AntiRaidStats> StartAntiRaidAsync(ulong guildId, int userThreshold, int seconds, PunishmentAction action)
+        public async Task<AntiRaidStats> StartAntiRaidAsync(ulong guildId, int userThreshold, int seconds,
+            PunishmentAction action, int minutesDuration)
         {
-
             var g = _client.GetGuild(guildId);
             await _mute.GetMuteRole(g).ConfigureAwait(false);
+
+            if (action == PunishmentAction.AddRole)
+                return null;
+            
+            if (!IsDurationAllowed(action))
+                minutesDuration = 0;
 
             var stats = new AntiRaidStats()
             {
@@ -247,6 +296,7 @@ namespace NadekoBot.Modules.Administration.Services
                     Action = action,
                     Seconds = seconds,
                     UserThreshold = userThreshold,
+                    PunishDuration = minutesDuration
                 }
             };
 
@@ -297,10 +347,14 @@ namespace NadekoBot.Modules.Administration.Services
             return false;
         }
 
-        public async Task<AntiSpamStats> StartAntiSpamAsync(ulong guildId, int messageCount, int time, PunishmentAction action)
+        public async Task<AntiSpamStats> StartAntiSpamAsync(ulong guildId, int messageCount, PunishmentAction action,
+            int punishDurationMinutes, ulong? roleId)
         {
             var g = _client.GetGuild(guildId);
             await _mute.GetMuteRole(g).ConfigureAwait(false);
+
+            if (!IsDurationAllowed(action))
+                punishDurationMinutes = 0;
 
             var stats = new AntiSpamStats
             {
@@ -308,7 +362,8 @@ namespace NadekoBot.Modules.Administration.Services
                 {
                     Action = action,
                     MessageThreshold = messageCount,
-                    MuteTime = time,
+                    MuteTime = punishDurationMinutes,
+                    RoleId = roleId,
                 }
             };
 
@@ -327,6 +382,7 @@ namespace NadekoBot.Modules.Administration.Services
                     gc.AntiSpamSetting.Action = stats.AntiSpamSettings.Action;
                     gc.AntiSpamSetting.MessageThreshold = stats.AntiSpamSettings.MessageThreshold;
                     gc.AntiSpamSetting.MuteTime = stats.AntiSpamSettings.MuteTime;
+                    gc.AntiSpamSetting.RoleId = stats.AntiSpamSettings.RoleId;
                 }
                 else
                 {
@@ -375,12 +431,57 @@ namespace NadekoBot.Modules.Administration.Services
             return added;
         }
 
-        public (AntiSpamStats, AntiRaidStats) GetAntiStats(ulong guildId)
+        public (AntiSpamStats, AntiRaidStats, AntiAltStats) GetAntiStats(ulong guildId)
         {
             _antiRaidGuilds.TryGetValue(guildId, out var antiRaidStats);
             _antiSpamGuilds.TryGetValue(guildId, out var antiSpamStats);
+            _antiAltGuilds.TryGetValue(guildId, out var antiAltStats);
 
-            return (antiSpamStats, antiRaidStats);
+            return (antiSpamStats, antiRaidStats, antiAltStats);
+        }
+
+        public bool IsDurationAllowed(PunishmentAction action)
+        {
+            switch (action)
+            {
+                case PunishmentAction.Ban:
+                case PunishmentAction.Mute:
+                case PunishmentAction.ChatMute:
+                case PunishmentAction.VoiceMute:
+                case PunishmentAction.AddRole:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public async Task StartAntiAltAsync(ulong guildId, int minAgeMinutes, PunishmentAction action,
+            int actionDurationMinutes = 0, ulong? roleId = null)
+        {
+            using var uow = _db.GetDbContext();
+            var gc = uow.GuildConfigs.ForId(guildId, set => set.Include(x => x.AntiAltSetting));
+            gc.AntiAltSetting = new AntiAltSetting()
+            {
+                Action = action,
+                ActionDurationMinutes = actionDurationMinutes,
+                MinAge = TimeSpan.FromMinutes(minAgeMinutes),
+                RoleId = roleId,
+            };
+
+            await uow.SaveChangesAsync();
+            _antiAltGuilds[guildId] = new AntiAltStats(gc.AntiAltSetting);
+        }
+
+        public async Task<bool> TryStopAntiAlt(ulong guildId)
+        {
+            if (!_antiAltGuilds.TryRemove(guildId, out _))
+                return false;
+            
+            using var uow = _db.GetDbContext();
+            var gc = uow.GuildConfigs.ForId(guildId, set => set.Include(x => x.AntiAltSetting));
+            gc.AntiAltSetting = null;
+            await uow.SaveChangesAsync();
+            return true;
         }
     }
 }

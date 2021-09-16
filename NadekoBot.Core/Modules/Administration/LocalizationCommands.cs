@@ -3,7 +3,6 @@ using Discord.Commands;
 using NadekoBot.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,9 +51,8 @@ namespace NadekoBot.Modules.Administration
             [Priority(0)]
             public async Task LanguageSet()
             {
-                var cul = Localization.GetCultureInfo(ctx.Guild);
-                await ReplyConfirmLocalizedAsync("lang_set_show", Format.Bold(cul.ToString()),
-                        Format.Bold(cul.NativeName))
+                await ReplyConfirmLocalizedAsync("lang_set_show", Format.Bold(_cultureInfo.ToString()),
+                        Format.Bold(_cultureInfo.NativeName))
                     .ConfigureAwait(false);
             }
 

@@ -8,12 +8,13 @@ namespace NadekoBot
     {
         public static async Task Main(string[] args)
         {
-            System.Console.WriteLine($"Pid: {Process.GetCurrentProcess().Id}");
+            var pid = Process.GetCurrentProcess().Id;
+            System.Console.WriteLine($"Pid: {pid}");
             if (args.Length == 2
                 && int.TryParse(args[0], out int shardId)
                 && int.TryParse(args[1], out int parentProcessId))
             {
-                await new NadekoBot(shardId, parentProcessId)
+                await new NadekoBot(shardId, parentProcessId == 0 ? pid : parentProcessId)
                     .RunAndBlockAsync();
             }
             else
@@ -22,7 +23,7 @@ namespace NadekoBot
                     .RunAsync()
                     .ConfigureAwait(false);
 #if DEBUG
-                await new NadekoBot(0, Process.GetCurrentProcess().Id)
+                await new NadekoBot(0, pid)
                     .RunAndBlockAsync();
 #else
                 await Task.Delay(-1);

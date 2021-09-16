@@ -11,6 +11,8 @@ using NadekoBot.Modules.Administration.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NadekoBot.Modules.Permissions.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration
 {
@@ -20,10 +22,31 @@ namespace NadekoBot.Modules.Administration
         public class UserPunishCommands : NadekoSubmodule<UserPunishService>
         {
             private readonly MuteService _mute;
+            private readonly BlacklistService _blacklistService;
 
-            public UserPunishCommands(MuteService mute)
+            public UserPunishCommands(MuteService mute, BlacklistService blacklistService)
             {
                 _mute = mute;
+                _blacklistService = blacklistService;
+            }
+
+            private async Task<bool> CheckRoleHierarchy(IGuildUser target)
+            {
+                var curUser = ((SocketGuild) ctx.Guild).CurrentUser;
+                var ownerId = Context.Guild.OwnerId;
+                var modMaxRole = ((IGuildUser) ctx.User).GetRoles().Max(r => r.Position);
+                var targetMaxRole = target.GetRoles().Max(r => r.Position);
+                var botMaxRole = curUser.GetRoles().Max(r => r.Position);
+                // bot can't punish a user who is higher in the hierarchy. Discord will return 403
+                // moderator can be owner, in which case role hierarchy doesn't matter
+                // otherwise, moderator has to have a higher role
+                if ((botMaxRole <= targetMaxRole || (Context.User.Id != ownerId && targetMaxRole >= modMaxRole)) || target.Id == ownerId)
+                {
+                    await ReplyErrorLocalizedAsync("hierarchy");
+                    return false;
+                }
+                
+                return true;
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -31,12 +54,10 @@ namespace NadekoBot.Modules.Administration
             [UserPerm(GuildPerm.BanMembers)]
             public async Task Warn(IGuildUser user, [Leftover] string reason = null)
             {
-                if (ctx.User.Id != user.Guild.OwnerId
-                    && (user.GetRoles().Select(r => r.Position).Max() >= ((IGuildUser)ctx.User).GetRoles().Select(r => r.Position).Max()))
-                {
-                    await ReplyErrorLocalizedAsync("hierarchy").ConfigureAwait(false);
+                if (!await CheckRoleHierarchy(user))
                     return;
-                }
+
+                var dmFailed = false;
                 try
                 {
                     await (await user.GetOrCreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(new EmbedBuilder().WithErrorColor()
@@ -47,7 +68,7 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch
                 {
-
+                    dmFailed = true;
                 }
 
                 WarningPunishment punishment;
@@ -57,19 +78,39 @@ namespace NadekoBot.Modules.Administration
                 }
                 catch (Exception ex)
                 {
-                    _log.Warn(ex.Message);
-                    await ReplyErrorLocalizedAsync("cant_apply_punishment").ConfigureAwait(false);
+                    Log.Warning(ex.Message);
+                    var errorEmbed = new EmbedBuilder()
+                        .WithErrorColor()
+                        .WithDescription(GetText("cant_apply_punishment"));
+                    
+                    if (dmFailed)
+                    {
+                        errorEmbed.WithFooter("⚠️ " + GetText("unable_to_dm_user"));
+                    }
+                    
+                    await ctx.Channel.EmbedAsync(errorEmbed);
                     return;
                 }
 
+                var embed = new EmbedBuilder()
+                    .WithOkColor();
                 if (punishment == null)
                 {
-                    await ReplyConfirmLocalizedAsync("user_warned", Format.Bold(user.ToString())).ConfigureAwait(false);
+                    embed.WithDescription(GetText("user_warned",
+                        Format.Bold(user.ToString())));
                 }
                 else
                 {
-                    await ReplyConfirmLocalizedAsync("user_warned_and_punished", Format.Bold(user.ToString()), Format.Bold(punishment.Punishment.ToString())).ConfigureAwait(false);
+                    embed.WithDescription(GetText("user_warned_and_punished", Format.Bold(user.ToString()),
+                        Format.Bold(punishment.Punishment.ToString())));
                 }
+
+                if (dmFailed)
+                {
+                    embed.WithFooter("⚠️ " + GetText("unable_to_dm_user"));
+                }
+
+                await ctx.Channel.EmbedAsync(embed);
             }
 
             public class WarnExpireOptions : INadekoCommandOptions
@@ -80,6 +121,21 @@ namespace NadekoBot.Modules.Administration
                 {
 
                 }
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.Administrator)]
+            [NadekoOptions(typeof(WarnExpireOptions))]
+            [Priority(1)]
+            public async Task WarnExpire()
+            {
+                var expireDays = await _service.GetWarnExpire(ctx.Guild.Id);
+
+                if (expireDays == 0)
+                    await ReplyConfirmLocalizedAsync("warns_dont_expire");
+                else
+                    await ReplyConfirmLocalizedAsync("warns_expire_in", expireDays);
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -117,16 +173,20 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [Priority(2)]
-            public Task Warnlog(int page, IGuildUser user)
-                => Warnlog(page, user.Id);
+            public Task Warnlog(int page, [Leftover] IGuildUser user = null)
+            {
+                user ??= (IGuildUser) ctx.User;
+
+                return Warnlog(page, user.Id);
+            }
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [Priority(3)]
             public Task Warnlog(IGuildUser user = null)
             {
-                if (user == null)
-                    user = (IGuildUser)ctx.User;
+                user ??= (IGuildUser) ctx.User;
+
                 return ctx.User.Id == user.Id || ((IGuildUser)ctx.User).GuildPermissions.BanMembers ? Warnlog(user.Id) : Task.CompletedTask;
             }
 
@@ -144,41 +204,49 @@ namespace NadekoBot.Modules.Administration
             public Task Warnlog(ulong userId)
                 => InternalWarnlog(userId, 0);
 
-            private async Task InternalWarnlog(ulong userId, int page)
+            private async Task InternalWarnlog(ulong userId, int inputPage)
             {
-                if (page < 0)
+                if (inputPage < 0)
                     return;
-                var warnings = _service.UserWarnings(ctx.Guild.Id, userId);
+                
+                var allWarnings = _service.UserWarnings(ctx.Guild.Id, userId);
 
-                warnings = warnings.Skip(page * 9)
-                    .Take(9)
-                    .ToArray();
-
-                var embed = new EmbedBuilder().WithOkColor()
-                    .WithTitle(GetText("warnlog_for", (ctx.Guild as SocketGuild)?.GetUser(userId)?.ToString() ?? userId.ToString()))
-                    .WithFooter(efb => efb.WithText(GetText("page", page + 1)));
-
-                if (!warnings.Any())
+                await ctx.SendPaginatedConfirmAsync(inputPage, page =>
                 {
-                    embed.WithDescription(GetText("warnings_none"));
-                }
-                else
-                {
-                    var i = page * 9;
-                    foreach (var w in warnings)
+                    var warnings = allWarnings
+                        .Skip(page * 9)
+                        .Take(9)
+                        .ToArray();
+
+                    var user = (ctx.Guild as SocketGuild)?.GetUser(userId)?.ToString() ?? userId.ToString();
+                    var embed = new EmbedBuilder()
+                        .WithOkColor()
+                        .WithTitle(GetText("warnlog_for", user));
+
+                    if (!warnings.Any())
                     {
-                        i++;
-                        var name = GetText("warned_on_by", w.DateAdded.Value.ToString("dd.MM.yyy"), w.DateAdded.Value.ToString("HH:mm"), w.Moderator);
-                        if (w.Forgiven)
-                            name = Format.Strikethrough(name) + " " + GetText("warn_cleared_by", w.ForgivenBy);
-
-                        embed.AddField(x => x
-                            .WithName($"#`{i}` " + name)
-                            .WithValue(w.Reason.TrimTo(1020)));
+                        embed.WithDescription(GetText("warnings_none"));
                     }
-                }
+                    else
+                    {
+                        var i = page * 9;
+                        foreach (var w in warnings)
+                        {
+                            i++;
+                            var name = GetText("warned_on_by",
+                                w.DateAdded.Value.ToString("dd.MM.yyy"),
+                                w.DateAdded.Value.ToString("HH:mm"),
+                                w.Moderator);
+                            
+                            if (w.Forgiven)
+                                name = $"{Format.Strikethrough(name)} {GetText("warn_cleared_by", w.ForgivenBy)}";
 
-                await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
+                            embed.AddField($"#`{i}` " + name, w.Reason.TrimTo(1020));
+                        }
+                    }
+
+                    return embed;
+                }, allWarnings.Length, 9);
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -256,6 +324,13 @@ namespace NadekoBot.Modules.Administration
             {
                 var punish = PunishmentAction.AddRole;
                 var success = _service.WarnPunish(ctx.Guild.Id, number, punish, time, role);
+                
+                if (ctx.Guild.OwnerId != ctx.User.Id &&
+                    role.Position >= ((IGuildUser)ctx.User).GetRoles().Max(x => x.Position))
+                {
+                    await ReplyErrorLocalizedAsync("role_too_high");
+                    return;
+                }
 
                 if (!success)
                     return;
@@ -343,32 +418,36 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [BotPerm(GuildPerm.BanMembers)]
-            [Priority(0)]
+            [Priority(1)]
             public async Task Ban(StoopidTime time, IUser user, [Leftover] string msg = null)
             {
                 if (time.Time > TimeSpan.FromDays(49))
                     return;
 
-                // if guild user is null, then that means that user is not in the guild
-                var guildUser = await Context.Guild.GetUserAsync(user.Id).ConfigureAwait(false); 
-                
-                if (ctx.User.Id != Context.Guild.OwnerId && (guildUser != null && guildUser.GetRoles().Select(r => r.Position).Max() >= ((IGuildUser)ctx.User).GetRoles().Select(r => r.Position).Max()))
-                {
-                    await ReplyErrorLocalizedAsync("hierarchy").ConfigureAwait(false);
+                var guildUser = await ((DiscordSocketClient)Context.Client).Rest.GetGuildUserAsync(Context.Guild.Id, user.Id);
+
+                if (guildUser != null && !await CheckRoleHierarchy(guildUser))
                     return;
-                }
 
                 var dmFailed = false;
 
-                try
+                if (guildUser != null)
                 {
-                    await user.SendErrorAsync(GetText("bandm", Format.Bold(ctx.Guild.Name), msg)).ConfigureAwait(false);
+                    try
+                    {
+                        var defaultMessage = GetText("bandm", Format.Bold(ctx.Guild.Name), msg);
+                        var embed = _service.GetBanUserDmEmbed(Context, guildUser, defaultMessage, msg, time.Time);
+                        if (!(embed is null))
+                        {
+                            var userChannel = await guildUser.GetOrCreateDMChannelAsync();
+                            await userChannel.EmbedAsync(embed);
+                        }
+                    }
+                    catch
+                    {
+                        dmFailed = true;
+                    }
                 }
-                catch
-                {
-                    dmFailed = true;
-                }
-
 
                 await _mute.TimedBan(Context.Guild, user, time.Time, ctx.User.ToString() + " | " + msg).ConfigureAwait(false);
                 var toSend = new EmbedBuilder().WithOkColor()
@@ -390,14 +469,14 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [BotPerm(GuildPerm.BanMembers)]
-            [Priority(2)]
+            [Priority(0)]
             public async Task Ban(ulong userId, [Leftover] string msg = null)
             {
-                var user = await ctx.Guild.GetUserAsync(userId);
+                var user = await ((DiscordSocketClient)Context.Client).Rest.GetGuildUserAsync(Context.Guild.Id, userId);
                 if (user is null)
                 {
                     await ctx.Guild.AddBanAsync(userId, 7, ctx.User.ToString() + " | " + msg);
-
+                    
                     await ctx.Channel.EmbedAsync(new EmbedBuilder().WithOkColor()
                             .WithTitle("⛔️ " + GetText("banned_user"))
                             .AddField(efb => efb.WithName("ID").WithValue(userId.ToString()).WithIsInline(true)))
@@ -413,20 +492,23 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.BanMembers)]
             [BotPerm(GuildPerm.BanMembers)]
-            [Priority(1)]
+            [Priority(2)]
             public async Task Ban(IGuildUser user, [Leftover] string msg = null)
             {
-                if (ctx.User.Id != user.Guild.OwnerId && (user.GetRoles().Select(r => r.Position).Max() >= ((IGuildUser)ctx.User).GetRoles().Select(r => r.Position).Max()))
-                {
-                    await ReplyErrorLocalizedAsync("hierarchy").ConfigureAwait(false);
+                if (!await CheckRoleHierarchy(user))
                     return;
-                }
 
                 var dmFailed = false;
 
                 try
                 {
-                    await user.SendErrorAsync(GetText("bandm", Format.Bold(ctx.Guild.Name), msg)).ConfigureAwait(false);
+                    var defaultMessage = GetText("bandm", Format.Bold(ctx.Guild.Name), msg);
+                    var embed = _service.GetBanUserDmEmbed(Context, user, defaultMessage, msg, null);
+                    if (!(embed is null))
+                    {
+                        var userChannel = await user.GetOrCreateDMChannelAsync();
+                        await userChannel.EmbedAsync(embed);
+                    }
                 }
                 catch
                 {
@@ -447,6 +529,85 @@ namespace NadekoBot.Modules.Administration
                 
                 await ctx.Channel.EmbedAsync(toSend)
                     .ConfigureAwait(false);
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.BanMembers)]
+            [BotPerm(GuildPerm.BanMembers)]
+            public async Task BanMessage([Leftover] string message = null)
+            {
+                if (message is null)
+                {
+                    var template = _service.GetBanTemplate(Context.Guild.Id);
+                    if (template is null)
+                    {
+                        await ReplyConfirmLocalizedAsync("banmsg_default");
+                        return;
+                    }
+
+                    await Context.Channel.SendConfirmAsync(template);
+                    return;
+                }
+                
+                _service.SetBanTemplate(Context.Guild.Id, message);
+                await ctx.OkAsync();
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.BanMembers)]
+            [BotPerm(GuildPerm.BanMembers)]
+            public async Task BanMsgReset()
+            {
+                _service.SetBanTemplate(Context.Guild.Id, null);
+                await ctx.OkAsync();
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.BanMembers)]
+            [BotPerm(GuildPerm.BanMembers)]
+            [Priority(0)]
+            public Task BanMessageTest([Leftover] string reason = null)
+                => InternalBanMessageTest(reason, null);
+            
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.BanMembers)]
+            [BotPerm(GuildPerm.BanMembers)]
+            [Priority(1)]
+            public Task BanMessageTest(StoopidTime duration, [Leftover] string reason = null)
+                => InternalBanMessageTest(reason, duration.Time);
+            
+            private async Task InternalBanMessageTest(string reason, TimeSpan? duration)
+            {
+                var dmChannel = await ctx.User.GetOrCreateDMChannelAsync();
+                var defaultMessage = GetText("bandm", Format.Bold(ctx.Guild.Name), reason);
+                var crEmbed = _service.GetBanUserDmEmbed(Context,
+                    (IGuildUser)Context.User,
+                    defaultMessage,
+                    reason,
+                    duration);
+
+                if (crEmbed is null)
+                {
+                    await ConfirmLocalizedAsync("bandm_disabled");
+                }
+                else
+                {
+                    try
+                    {
+                        await dmChannel.EmbedAsync(crEmbed);
+                    }
+                    catch (Exception)
+                    {
+                        await ReplyErrorLocalizedAsync("unable_to_dm_user");
+                        return;
+                    }
+
+                    await Context.OkAsync();
+                }
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -496,16 +657,28 @@ namespace NadekoBot.Modules.Administration
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.KickMembers)]
-            [UserPerm(GuildPerm.ManageMessages)]
+            [UserPerm(GuildPerm.KickMembers | GuildPerm.ManageMessages)]
             [BotPerm(GuildPerm.BanMembers)]
-            public async Task Softban(IGuildUser user, [Leftover] string msg = null)
+            public Task Softban(IGuildUser user, [Leftover] string msg = null)
+                => SoftbanInternal(user, msg);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.KickMembers | GuildPerm.ManageMessages)]
+            [BotPerm(GuildPerm.BanMembers)]
+            public async Task Softban(ulong userId, [Leftover] string msg = null)
             {
-                if (ctx.User.Id != user.Guild.OwnerId && user.GetRoles().Select(r => r.Position).Max() >= ((IGuildUser)ctx.User).GetRoles().Select(r => r.Position).Max())
-                {
-                    await ReplyErrorLocalizedAsync("hierarchy").ConfigureAwait(false);
+                var user = await ((DiscordSocketClient)Context.Client).Rest.GetGuildUserAsync(Context.Guild.Id, userId);
+                if (user is null)
                     return;
-                }
+
+                await SoftbanInternal(user, msg);
+            }
+            
+            private async Task SoftbanInternal(IGuildUser user, [Leftover] string msg = null)
+            {
+                if (!await CheckRoleHierarchy(user))
+                    return;
 
                 var dmFailed = false;
 
@@ -540,13 +713,28 @@ namespace NadekoBot.Modules.Administration
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.KickMembers)]
             [BotPerm(GuildPerm.KickMembers)]
-            public async Task Kick(IGuildUser user, [Leftover] string msg = null)
+            [Priority(1)]
+            public Task Kick(IGuildUser user, [Leftover] string msg = null)
+                => KickInternal(user, msg);
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.KickMembers)]
+            [BotPerm(GuildPerm.KickMembers)]
+            [Priority(0)]
+            public async Task Kick(ulong userId, [Leftover] string msg = null)
             {
-                if (ctx.Message.Author.Id != user.Guild.OwnerId && user.GetRoles().Select(r => r.Position).Max() >= ((IGuildUser)ctx.User).GetRoles().Select(r => r.Position).Max())
-                {
-                    await ReplyErrorLocalizedAsync("hierarchy").ConfigureAwait(false);
+                var user = await ((DiscordSocketClient)Context.Client).Rest.GetGuildUserAsync(Context.Guild.Id, userId);
+                if (user is null)
                     return;
-                }
+                
+                await KickInternal(user, msg);
+            }
+
+            public async Task KickInternal(IGuildUser user, string msg = null)
+            {
+                if (!await CheckRoleHierarchy(user))
+                    return;
 
                 var dmFailed = false;
 
@@ -597,8 +785,6 @@ namespace NadekoBot.Modules.Administration
                     .WithDescription(GetText("mass_kill_in_progress", bans.Count()))
                     .AddField(GetText("invalid", missing), missStr)
                     .WithOkColor());
-
-                Bc.Reload();
 
                 //do the banning
                 await Task.WhenAll(bans

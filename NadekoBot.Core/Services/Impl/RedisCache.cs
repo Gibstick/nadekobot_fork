@@ -1,10 +1,7 @@
 ﻿using NadekoBot.Extensions;
-using NadekoBot.Modules.Searches.Common;
 using Newtonsoft.Json;
-using NLog;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -13,8 +10,6 @@ namespace NadekoBot.Core.Services.Impl
 {
     public class RedisCache : IDataCache
     {
-        private readonly Logger _log;
-
         public ConnectionMultiplexer Redis { get; }
 
         public IImageCache LocalImages { get; }
@@ -25,8 +20,6 @@ namespace NadekoBot.Core.Services.Impl
 
         public RedisCache(IBotCredentials creds, int shardId)
         {
-            _log = LogManager.GetCurrentClassLogger();
-
             var conf = ConfigurationOptions.Parse(creds.RedisOptions);
 
             Redis = ConnectionMultiplexer.Connect(conf);
@@ -199,6 +192,24 @@ namespace NadekoBot.Core.Services.Impl
                 return obj;
             }
             return (TOut)JsonConvert.DeserializeObject(data, typeof(TOut));
+        }
+
+        public DateTime GetLastCurrencyDecay()
+        {
+            var db = Redis.GetDatabase();
+
+            var str = (string)db.StringGet($"{_redisKey}_last_currency_decay");
+            if(string.IsNullOrEmpty(str))
+                return DateTime.MinValue;
+
+            return JsonConvert.DeserializeObject<DateTime>(str);
+        }
+
+        public void SetLastCurrencyDecay()
+        {
+            var db = Redis.GetDatabase();
+
+            db.StringSet($"{_redisKey}_last_currency_decay", JsonConvert.SerializeObject(DateTime.UtcNow));
         }
     }
 }

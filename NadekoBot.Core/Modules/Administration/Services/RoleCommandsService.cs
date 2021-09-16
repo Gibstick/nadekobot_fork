@@ -5,16 +5,15 @@ using NadekoBot.Common.Collections;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
-using NLog;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Modules.Administration.Services
 {
     public class RoleCommandsService : INService
     {
-        private readonly Logger _log;
         private readonly DbService _db;
         private readonly DiscordSocketClient _client;
         private readonly ConcurrentDictionary<ulong, IndexedCollection<ReactionRoleMessage>> _models;
@@ -22,7 +21,6 @@ namespace NadekoBot.Modules.Administration.Services
         public RoleCommandsService(DiscordSocketClient client, DbService db,
             NadekoBot bot)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _db = db;
             _client = client;
 #if !GLOBAL_NADEKO
@@ -102,7 +100,7 @@ namespace NadekoBot.Modules.Administration.Services
                             {
                                 RetryMode = RetryMode.RetryRatelimit | RetryMode.Retry502
                             }).ConfigureAwait(false);
-                        _log.Warn("User {0} is adding unrelated reactions to the reaction roles message.", dl.Author);
+                        Log.Warning("User {0} is adding unrelated reactions to the reaction roles message.", dl.Author);
                     }
                 }
                 catch { }
@@ -161,7 +159,7 @@ namespace NadekoBot.Modules.Administration.Services
                 var gc = uow.GuildConfigs.ForId(id, set => set
                     .Include(x => x.ReactionRoleMessages)
                     .ThenInclude(x => x.ReactionRoles));
-                if (gc.ReactionRoleMessages.Count >= 5)
+                if (gc.ReactionRoleMessages.Count >= 10)
                     return false;
                 gc.ReactionRoleMessages.Add(rrm);
                 _models.AddOrUpdate(id,

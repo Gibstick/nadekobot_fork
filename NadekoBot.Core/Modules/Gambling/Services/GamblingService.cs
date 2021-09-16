@@ -4,11 +4,13 @@ using NadekoBot.Core.Services;
 using NadekoBot.Modules.Gambling.Common.Connect4;
 using NadekoBot.Modules.Gambling.Common.WheelOfFortune;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using NadekoBot.Core.Modules.Gambling.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Gambling.Services
 {
@@ -16,50 +18,65 @@ namespace NadekoBot.Modules.Gambling.Services
     {
         private readonly DbService _db;
         private readonly ICurrencyService _cs;
-        private readonly IBotConfigProvider _bc;
         private readonly NadekoBot _bot;
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly IDataCache _cache;
+        private readonly GamblingConfigService _gss;
 
         public ConcurrentDictionary<(ulong, ulong), RollDuelGame> Duels { get; } = new ConcurrentDictionary<(ulong, ulong), RollDuelGame>();
         public ConcurrentDictionary<ulong, Connect4Game> Connect4Games { get; } = new ConcurrentDictionary<ulong, Connect4Game>();
 
         private readonly Timer _decayTimer;
 
-        public GamblingService(DbService db, NadekoBot bot, ICurrencyService cs, IBotConfigProvider bc,
-            DiscordSocketClient client, IDataCache cache)
+        public GamblingService(DbService db, NadekoBot bot, ICurrencyService cs,
+            DiscordSocketClient client, IDataCache cache, GamblingConfigService gss)
         {
             _db = db;
             _cs = cs;
-            _bc = bc;
             _bot = bot;
-            _log = LogManager.GetCurrentClassLogger();
             _client = client;
             _cache = cache;
-
+            _gss = gss;
+            
             if (_bot.Client.ShardId == 0)
             {
                 _decayTimer = new Timer(_ =>
                 {
-                    var decay = _bc.BotConfig.DailyCurrencyDecay;
-                    if (decay <= 0)
+                    var config = _gss.Data;
+                    var maxDecay = config.Decay.MaxDecay;
+                    if (config.Decay.Percent <= 0 || config.Decay.Percent > 1 || maxDecay < 0)
                         return;
 
                     using (var uow = _db.GetDbContext())
                     {
-                        var botc = uow.BotConfig.GetOrCreate();
-                        //once every 24 hours
-                        if (DateTime.UtcNow - _bc.BotConfig.LastCurrencyDecay < TimeSpan.FromHours(24))
-                            return;
-                        uow.DiscordUsers.CurrencyDecay(decay, _bot.Client.CurrentUser.Id);
-                        _cs.AddAsync(_bot.Client.CurrentUser.Id,
-                            "Currency Decay",
-                            uow.DiscordUsers.GetCurrencyDecayAmount(decay));
-                        _bc.BotConfig.LastCurrencyDecay = botc.LastCurrencyDecay = DateTime.UtcNow;
+                        var lastCurrencyDecay = _cache.GetLastCurrencyDecay();
+                        
+                        if (DateTime.UtcNow - lastCurrencyDecay < TimeSpan.FromHours(config.Decay.HourInterval))
+                           return;
+                        
+                         Log.Information($"Decaying users' currency - decay: {config.Decay.Percent * 100}% " +
+                                   $"| max: {maxDecay} " +
+                                   $"| threshold: {config.Decay.MinThreshold}");
+                         
+                         if (maxDecay == 0)
+                             maxDecay = int.MaxValue;
+                         
+                        uow._context.Database.ExecuteSqlInterpolated($@"
+UPDATE DiscordUser
+SET CurrencyAmount=
+    CASE WHEN
+    {maxDecay} > ROUND(CurrencyAmount * {config.Decay.Percent} - 0.5)
+    THEN
+    CurrencyAmount - ROUND(CurrencyAmount * {config.Decay.Percent} - 0.5)
+    ELSE
+    CurrencyAmount - {maxDecay}
+    END
+WHERE CurrencyAmount > {config.Decay.MinThreshold} AND UserId!={_client.CurrentUser.Id};");
+
+                        _cache.SetLastCurrencyDecay();
                         uow.SaveChanges();
                     }
-                }, null, TimeSpan.FromHours(1), TimeSpan.FromHours(1));
+                }, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
             }
 
             //using (var uow = _db.UnitOfWork)
@@ -85,7 +102,7 @@ namespace NadekoBot.Modules.Gambling.Services
 
             //    uow._context.Set<Stake>().RemoveRange(stakes);
             //    uow.Complete();
-            //    _log.Info("Refunded {0} users' stakes.", stakes.Length);
+            //    Log.Information("Refunded {0} users' stakes.", stakes.Length);
             //}
         }
 
@@ -139,7 +156,7 @@ namespace NadekoBot.Modules.Gambling.Services
 
         public Task<WheelOfFortuneGame.Result> WheelOfFortuneSpinAsync(ulong userId, long bet)
         {
-            return new WheelOfFortuneGame(userId, bet, _cs).SpinAsync();
+            return new WheelOfFortuneGame(userId, bet, _gss.Data, _cs).SpinAsync();
         }
     }
 }

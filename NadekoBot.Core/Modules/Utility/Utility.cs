@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
-using NadekoBot.Core.Common.Attributes;
 using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
@@ -12,53 +11,68 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Common;
+using Serilog;
 
 namespace NadekoBot.Modules.Utility
 {
-    public partial class Utility : NadekoTopLevelModule
+    public partial class Utility : NadekoModule
     {
         private readonly DiscordSocketClient _client;
         private readonly IStatsService _stats;
         private readonly IBotCredentials _creds;
         private readonly NadekoBot _bot;
-        private readonly DbService _db;
-        private readonly IHttpClientFactory _httpFactory;
         private readonly DownloadTracker _tracker;
 
         public Utility(NadekoBot nadeko, DiscordSocketClient client,
-            IStatsService stats, IBotCredentials creds,
-            DbService db, IHttpClientFactory factory, DownloadTracker tracker)
+            IStatsService stats, IBotCredentials creds, DownloadTracker tracker)
         {
             _client = client;
             _stats = stats;
             _creds = creds;
             _bot = nadeko;
-            _db = db;
-            _httpFactory = factory;
             _tracker = tracker;
+        }
+        
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [UserPerm(GuildPerm.ManageMessages)]
+        [Priority(1)]
+        public async Task Say(ITextChannel channel, [Leftover] string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            var rep = new ReplacementBuilder()
+                .WithDefault(ctx.User, channel, (SocketGuild)ctx.Guild, (DiscordSocketClient)ctx.Client)
+                .Build();
+
+            if (CREmbed.TryParse(message, out var embedData))
+            {
+                rep.Replace(embedData);
+                await channel.EmbedAsync(embedData, sanitizeAll: !((IGuildUser)Context.User).GuildPermissions.MentionEveryone).ConfigureAwait(false);
+            }
+            else
+            {
+                var msg = rep.Replace(message);
+                if (!string.IsNullOrWhiteSpace(msg))
+                {
+                    await channel.SendConfirmAsync(msg).ConfigureAwait(false);
+                }
+            }
         }
 
         [NadekoCommand, Usage, Description, Aliases]
-        public async Task TogetherTube()
-        {
-            Uri target;
-            using (var http = _httpFactory.CreateClient())
-            using (var res = await http.GetAsync("https://togethertube.com/room/create").ConfigureAwait(false))
-            {
-                target = res.RequestMessage.RequestUri;
-            }
-
-            await ctx.Channel.EmbedAsync(new EmbedBuilder().WithOkColor()
-                .WithAuthor(eab => eab.WithIconUrl("https://togethertube.com/assets/img/favicons/favicon-32x32.png")
-                .WithName("Together Tube")
-                .WithUrl("https://togethertube.com/"))
-                .WithDescription(ctx.User.Mention + " " + GetText("togtub_room_link") + "\n" + target)).ConfigureAwait(false);
-        }
+        [RequireContext(ContextType.Guild)]
+        [UserPerm(GuildPerm.ManageMessages)]
+        [Priority(0)]
+        public Task Say([Leftover] string message) =>
+            Say((ITextChannel)ctx.Channel, message);
 
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
@@ -70,7 +84,7 @@ namespace NadekoBot.Modules.Utility
 
             if (!(ctx.Guild is SocketGuild socketGuild))
             {
-                _log.Warn("Can't cast guild to socket guild.");
+                Log.Warning("Can't cast guild to socket guild.");
                 return;
             }
             var rng = new NadekoRandom();
@@ -91,27 +105,44 @@ namespace NadekoBot.Modules.Utility
                                                                                  .ConfigureAwait(false);
             }
         }
-
+        
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
-        public async Task InRole([Leftover] IRole role)
+        [Priority(0)]
+        public async Task InRole(int page, [Leftover] IRole role = null)
         {
+            if (--page < 0)
+                return;
+            
             await Context.Channel.TriggerTypingAsync().ConfigureAwait(false);
             await _tracker.EnsureUsersDownloadedAsync(ctx.Guild).ConfigureAwait(false);
 
             var users = await ctx.Guild.GetUsersAsync();
             var roleUsers = users
-                .Where(u => u.RoleIds.Contains(role.Id))
-                .Select(u => u.ToString())
+                .Where(u => role is null ? u.RoleIds.Count == 1 : u.RoleIds.Contains(role.Id))
+                .Select(u => $"`{u.Id, 18}` {u}")
                 .ToArray();
 
-            await ctx.SendPaginatedConfirmAsync(0, (cur) =>
+            await ctx.SendPaginatedConfirmAsync(page, (cur) =>
             {
+                var pageUsers = roleUsers.Skip(cur * 20)
+                    .Take(20)
+                    .ToList();
+
+                if (pageUsers.Count == 0)
+                    return new EmbedBuilder().WithOkColor().WithDescription(GetText("no_user_on_this_page"));
+                    
                 return new EmbedBuilder().WithOkColor()
-                    .WithTitle(Format.Bold(GetText("inrole_list", Format.Bold(role.Name))) + $" - {roleUsers.Length}")
-                    .WithDescription(string.Join("\n", roleUsers.Skip(cur * 20).Take(20)));
+                    .WithTitle(GetText("inrole_list", Format.Bold(role?.Name ?? "No Role")) + $" - {roleUsers.Length}")
+                    .WithDescription(string.Join("\n", pageUsers));
             }, roleUsers.Length, 20).ConfigureAwait(false);
         }
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [Priority(1)]
+        public Task InRole([Leftover] IRole role = null)
+            => InRole(1, role);
 
         public enum MeOrBot { Me, Bot }
 
@@ -186,7 +217,7 @@ namespace NadekoBot.Modules.Utility
                 {
 
                     await channel.SendConfirmAsync(GetText("roles_page", page, Format.Bold(target.ToString())),
-                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions()).ConfigureAwait(false);
+                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions(true)).ConfigureAwait(false);
                 }
             }
             else
@@ -199,7 +230,7 @@ namespace NadekoBot.Modules.Utility
                 else
                 {
                     await channel.SendConfirmAsync(GetText("roles_all_page", page),
-                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions()).ConfigureAwait(false);
+                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions(true)).ConfigureAwait(false);
                 }
             }
         }
@@ -322,10 +353,8 @@ namespace NadekoBot.Modules.Utility
                         return msg;
                     })
                 });
-            using (var stream = await JsonConvert.SerializeObject(grouping, Formatting.Indented).ToStream().ConfigureAwait(false))
-            {
-                await ctx.User.SendFileAsync(stream, title, title, false).ConfigureAwait(false);
-            }
+            using var stream = JsonConvert.SerializeObject(grouping, Formatting.Indented).ToStream();
+            await ctx.User.SendFileAsync(stream, title, title, false).ConfigureAwait(false);
         }
         private static SemaphoreSlim sem = new SemaphoreSlim(1, 1);
 
@@ -350,5 +379,50 @@ namespace NadekoBot.Modules.Utility
                 sem.Release();
             }
         }
+
+        public enum CreateInviteType
+        {
+            Any,
+            New
+        }
+        
+        // [NadekoCommand, Usage, Description, Aliases]
+        // [RequireContext(ContextType.Guild)]
+        // public async Task CreateMyInvite(CreateInviteType type = CreateInviteType.Any)
+        // {
+        //     if (type == CreateInviteType.Any)
+        //     {
+        //         if (_inviteService.TryGetInvite(type, out var code))
+        //         {
+        //             await ReplyConfirmLocalizedAsync("your_invite", $"https://discord.gg/{code}");
+        //             return;
+        //         }
+        //     }
+        //     
+        //     var invite = await ((ITextChannel) ctx.Channel).CreateInviteAsync(isUnique: true);
+        // }
+        //
+        // [NadekoCommand, Usage, Description, Aliases]
+        // [RequireContext(ContextType.Guild)]
+        // public async Task InviteLb(int page = 1)
+        // {
+        //     if (--page < 0)
+        //         return;
+        //
+        //     var inviteUsers = await _inviteService.GetInviteUsersAsync(ctx.Guild.Id);
+        //     
+        //     var embed = new EmbedBuilder()
+        //         .WithOkColor();
+        //
+        //     await ctx.SendPaginatedConfirmAsync(page, (curPage) =>
+        //     {
+        //         var items = inviteUsers.Skip(curPage * 9).Take(9);
+        //         var i = 0;
+        //         foreach (var item in items)
+        //             embed.AddField($"#{curPage * 9 + ++i} {item.UserName} [{item.User.Id}]", item.InvitedUsers);
+        //
+        //         return embed;
+        //     }, inviteUsers.Count, 9);
+        // }
     }
 }

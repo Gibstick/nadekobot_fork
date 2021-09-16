@@ -1,5 +1,7 @@
 ## Setting up NadekoBot From Source
 
+### This applies to NadekoBot version 2.  For NadekoBot version 3 with all the latest improvements and features, click [here][v3].
+
 | Table of Contents                                                                                                                       |
 | :-------------------------------------------------------------------------------------------------------------------------------------- |
 | [Installing with the CLI Installer](#installing-with-the-cli-installer) |
@@ -18,7 +20,7 @@ This is the recommended way of installing Nadeko from source. If you don't want 
 
 - Windows 7 or later
     - If you are on Windows 7, you must update [PowerShell].
-- [dotNET core 3.1 SDK][dotNET] (restart Windows after installation)
+- [.net5 SDK][.net] (restart Windows after installation)
 - [Git] (select [this option](https://i.imgur.com/zlWVTsi.png) during the installation process)
 - Redis
     - Windows 64 bit: Download and install the [latest msi][Redis]. Don't forget to [add it to the path environment variable](https://i.imgur.com/uUby6Xw.png) during the installation process.
@@ -84,7 +86,7 @@ This is the *"hard"* way of installing Nadeko. If you're here, we are assuming y
 #### Prerequisites
 
 - Windows 7 or later
-- [dotNET core 3.1 SDK][dotNET] (restart Windows after installation)
+- [.net5 SDK][.net] (restart Windows after installation)
 - [Git] (select [this option](https://i.imgur.com/zlWVTsi.png) during the installation process)
 - Redis
     - Windows 64 bit: Download and install the [latest msi][Redis]. Don't forget to [add it to the path environment variable](https://i.imgur.com/uUby6Xw.png) during the installation process.
@@ -97,7 +99,7 @@ If you want Nadeko to play music, do the following:
 - [Notepad++] (makes it easier to edit your credentials)
 - Install [Visual C++ 2010 (x86)] and [Visual C++ 2017] (both are required - restart Windows after installation)
 - [youtube-dl] - Click on `Windows.exe` (on the top left corner) and download the file. Store it somewhere accessible.
-- [ffmpeg] - Download the Static, Release build for your system and architecture. Extract it, then find and copy the `ffmpeg.exe` file to somewhere accessible.
+- [ffmpeg-32bit] / [ffmpeg-64bit] - Download the version for your architecture. Extract it, then find and copy the `ffmpeg.exe` file to somewhere accessible.
 - **For 32-bit Windows**, download [libsodium](https://github.com/MaybeGoogle/NadekoFiles/blob/master/x86%20Prereqs/NadekoBot_Music/libsodium.dll?raw=true) and (lib)[opus](https://github.com/MaybeGoogle/NadekoFiles/blob/master/x86%20Prereqs/NadekoBot_Music/opus.dll?raw=true) and store them somewhere accessible.
 
 #### Setup
@@ -158,10 +160,12 @@ Other useful commands:
 
 [Notepad++]: https://notepad-plus-plus.org/
 [PowerShell]: https://www.microsoft.com/en-us/download/details.aspx?id=54616
-[dotNET]: https://www.microsoft.com/net/download/dotnet-core/3.1
+[.net]: https://dotnet.microsoft.com/download/dotnet/5.0
 [Redis]: https://github.com/MicrosoftArchive/redis/releases/tag/win-3.0.504
 [Git]: https://git-scm.com/downloads
 [Visual C++ 2010 (x86)]: https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe
 [Visual C++ 2017]: https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
-[ffmpeg]: https://ffmpeg.zeranoe.com/builds/
+[ffmpeg-32bit]: https://cdn.nadeko.bot/dl/ffmpeg-32.zip
+[ffmpeg-64bit]: https://cdn.nadeko.bot/dl/ffmpeg-64.zip
 [youtube-dl]: https://rg3.github.io/youtube-dl/download.html
+[v3]: https://nadekobot.readthedocs.io/en/v3/guides/windows-guide/#windows-from-source

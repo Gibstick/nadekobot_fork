@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NadekoBot.Core.Services.Database.Models;
 using Newtonsoft.Json;
-using NLog;
+using Serilog;
 
 #nullable enable
 namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications.Providers
@@ -15,7 +15,6 @@ namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications.Providers
     public class PicartoProvider : Provider
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly Logger _log;
 
         private static Regex Regex { get; } = new Regex(@"picarto.tv/(?<name>.+[^/])/?",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -25,7 +24,6 @@ namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications.Providers
         public PicartoProvider(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _log = LogManager.GetCurrentClassLogger();
         }
 
         public override Task<bool> IsValidUrl(string url)
@@ -79,12 +77,12 @@ namespace NadekoBot.Core.Modules.Searches.Common.StreamNotifications.Providers
                         var userData = JsonConvert.DeserializeObject<PicartoChannelResponse>(await res.Content.ReadAsStringAsync());
 
                         toReturn.Add(ToStreamData(userData));
+                        _failingStreams.TryRemove(login, out _);
                     }
                     catch (Exception ex)
                     {
-                        _log.Warn($"Something went wrong retreiving {Platform} streams.");
-                        _log.Warn(ex.ToString());
-                        return new List<StreamData>();
+                        Log.Warning(ex, $"Something went wrong retreiving {Platform} stream data for {login}: {ex.Message}");
+                        _failingStreams.TryAdd(login, DateTime.UtcNow);
                     }
                 }
 

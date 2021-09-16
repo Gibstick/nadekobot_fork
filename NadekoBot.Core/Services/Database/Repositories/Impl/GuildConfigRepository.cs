@@ -3,9 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading.Tasks;
 
 namespace NadekoBot.Core.Services.Database.Repositories.Impl
 {
+    public static class MusicPlayerSettingsExtensions
+    {
+        public static async Task<MusicPlayerSettings> ForGuildAsync(this DbSet<MusicPlayerSettings> settings, ulong guildId)
+        {
+            var toReturn = await settings
+                .AsQueryable()
+                .FirstOrDefaultAsync(x => x.GuildId == guildId);
+
+            if (toReturn is null)
+            {
+                var newSettings = new MusicPlayerSettings()
+                {
+                    GuildId = guildId,
+                    PlayerRepeat = PlayerRepeatType.Queue
+                };
+
+                await settings.AddAsync(newSettings);
+                return newSettings;
+            }
+
+            return toReturn;
+        }
+    }
+    
     public class GuildConfigRepository : Repository<GuildConfig>, IGuildConfigRepository
     {
         public GuildConfigRepository(DbContext context) : base(context)
@@ -26,7 +51,8 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
 
         public IEnumerable<GuildConfig> GetAllGuildConfigs(List<ulong> availableGuilds) =>
             IncludeEverything()
-                .Where(gc => availableGuilds.Contains(gc.GuildId))
+                .AsNoTracking()
+                .Where(x => availableGuilds.Contains(x.GuildId))
                 .ToList();
 
         private IQueryable<GuildConfig> IncludeEverything()
@@ -34,15 +60,11 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             return _set
                 .AsQueryable()
                 .Include(gc => gc.CommandCooldowns)
-                .Include(gc => gc.GuildRepeaters)
-                .Include(gc => gc.FeedSubs)
-                    .ThenInclude(x => x.GuildConfig)
                 .Include(gc => gc.FollowedStreams)
                 .Include(gc => gc.StreamRole)
                 .Include(gc => gc.NsfwBlacklistedTags)
                 .Include(gc => gc.XpSettings)
                     .ThenInclude(x => x.ExclusionList)
-                .Include(gc => gc.MusicSettings)
                 .Include(gc => gc.DelMsgOnCmdChannels)
                 .Include(gc => gc.ReactionRoleMessages)
                     .ThenInclude(x => x.ReactionRoles)
@@ -55,7 +77,7 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
         /// <param name="guildId">For which guild</param>
         /// <param name="includes">Use to manipulate the set however you want</param>
         /// <returns>Config for the guild</returns>
-        public GuildConfig ForId(ulong guildId, Func<DbSet<GuildConfig>, IQueryable<GuildConfig>> includes = null)
+        public GuildConfig ForId(ulong guildId, Func<DbSet<GuildConfig>, IQueryable<GuildConfig>> includes)
         {
             GuildConfig config;
 

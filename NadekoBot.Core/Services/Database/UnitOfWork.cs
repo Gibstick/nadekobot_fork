@@ -21,12 +21,6 @@ namespace NadekoBot.Core.Services.Database
         private ISelfAssignedRolesRepository _selfAssignedRoles;
         public ISelfAssignedRolesRepository SelfAssignedRoles => _selfAssignedRoles ?? (_selfAssignedRoles = new SelfAssignedRolesRepository(_context));
 
-        private IBotConfigRepository _botConfig;
-        public IBotConfigRepository BotConfig => _botConfig ?? (_botConfig = new BotConfigRepository(_context));
-
-        private ICurrencyTransactionsRepository _currencyTransactions;
-        public ICurrencyTransactionsRepository CurrencyTransactions => _currencyTransactions ?? (_currencyTransactions = new CurrencyTransactionsRepository(_context));
-
         private IMusicPlaylistRepository _musicPlaylists;
         public IMusicPlaylistRepository MusicPlaylists => _musicPlaylists ?? (_musicPlaylists = new MusicPlaylistRepository(_context));
 

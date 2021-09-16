@@ -5,19 +5,18 @@ using NadekoBot.Core.Services;
 using NadekoBot.Core.Services.Database.Models;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Gambling.Common;
-using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace NadekoBot.Core.Modules.Gambling.Common.Events
 {
     public class GameStatusEvent : ICurrencyEvent
     {
-        private readonly Logger _log;
         private readonly DiscordSocketClient _client;
         private readonly IGuild _guild;
         private IUserMessage _msg;
@@ -35,7 +34,6 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
         private readonly ConcurrentQueue<ulong> _toAward = new ConcurrentQueue<ulong>();
         private readonly Timer _t;
         private readonly Timer _timeout = null;
-        private readonly IBotConfigProvider _bc;
         private readonly EventOptions _opts;
 
         private readonly string _code;
@@ -48,12 +46,9 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
             .Select(x => (char)x)
             .ToArray();
 
-        public GameStatusEvent(DiscordSocketClient client, ICurrencyService cs,
-            IBotConfigProvider bc, SocketGuild g, ITextChannel ch,
-            EventOptions opt,
-            Func<CurrencyEvent.Type, EventOptions, long, EmbedBuilder> embedFunc)
+        public GameStatusEvent(DiscordSocketClient client, ICurrencyService cs,SocketGuild g, ITextChannel ch,
+            EventOptions opt, Func<CurrencyEvent.Type, EventOptions, long, EmbedBuilder> embedFunc)
         {
-            _log = LogManager.GetCurrentClassLogger();
             _client = client;
             _guild = g;
             _cs = cs;
@@ -62,7 +57,6 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
             _embedFunc = embedFunc;
             _isPotLimited = PotSize > 0;
             _channel = ch;
-            _bc = bc;
             _opts = opt;
             // generate code
             _code = new string(_sneakyGameStatusChars.Shuffle().Take(5).ToArray());
@@ -106,7 +100,7 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
                     }, new RequestOptions() { RetryMode = RetryMode.AlwaysRetry }).ConfigureAwait(false);
                 }
 
-                _log.Info("Awarded {0} users {1} currency.{2}",
+                Log.Information("Awarded {0} users {1} currency.{2}",
                     toAward.Count,
                     _amount,
                     _isPotLimited ? $" {PotSize} left." : "");
@@ -119,7 +113,7 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
             }
             catch (Exception ex)
             {
-                _log.Warn(ex);
+                Log.Warning(ex, "Error in OnTimerTick in gamestatusevent");
             }
         }
 

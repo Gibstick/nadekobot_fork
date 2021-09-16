@@ -55,7 +55,7 @@ namespace NadekoBot.Modules.Utility
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            public async Task ShowQuote([Leftover] string keyword)
+            public async Task QuotePrint([Leftover] string keyword)
             {
                 if (string.IsNullOrWhiteSpace(keyword))
                     return;
@@ -88,6 +88,40 @@ namespace NadekoBot.Modules.Utility
                     return;
                 }
                 await ctx.Channel.SendMessageAsync($"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            public async Task QuoteShow(int id)
+            {
+                Quote quote;
+                using (var uow = _db.GetDbContext())
+                {
+                    quote = uow.Quotes.GetById(id);
+                    if (quote.GuildId != Context.Guild.Id)
+                        quote = null;
+                }
+
+                if (quote is null)
+                {
+                    await ReplyErrorLocalizedAsync("quote_no_found_id");
+                    return;
+                }
+
+                await ShowQuoteData(quote);
+            }
+
+            private async Task ShowQuoteData(Quote data)
+            {
+                await ctx.Channel.EmbedAsync(new EmbedBuilder()
+                    .WithOkColor()
+                    .WithTitle(GetText("quote_id", $"#{data.Id}"))
+                    .AddField(efb => efb.WithName(GetText("trigger")).WithValue(data.Keyword))
+                    .AddField(efb => efb.WithName(GetText("response")).WithValue(data.Text.Length > 1000
+                        ? GetText("redacted_too_long")
+                        : Format.Sanitize(data.Text)))
+                    .WithFooter(GetText("created_by", $"{data.AuthorName} ({data.AuthorId})"))
+                ).ConfigureAwait(false);
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -128,11 +162,9 @@ namespace NadekoBot.Modules.Utility
                 using (var uow = _db.GetDbContext())
                 {
                     quote = uow.Quotes.GetById(id);
-                    if (quote.GuildId != ctx.Guild.Id)
-                        quote = null;
                 }
 
-                if (quote == null)
+                if (quote is null || quote.GuildId != ctx.Guild.Id)
                 {
                     await ctx.Channel.SendErrorAsync(GetText("quotes_notfound")).ConfigureAwait(false);
                     return;
@@ -156,13 +188,13 @@ namespace NadekoBot.Modules.Utility
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            public async Task AddQuote(string keyword, [Leftover] string text)
+            public async Task QuoteAdd(string keyword, [Leftover] string text)
             {
                 if (string.IsNullOrWhiteSpace(keyword) || string.IsNullOrWhiteSpace(text))
                     return;
-
+            
                 keyword = keyword.ToUpperInvariant();
-
+            
                 Quote q;
                 using (var uow = _db.GetDbContext())
                 {

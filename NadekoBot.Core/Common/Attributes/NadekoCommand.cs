@@ -8,9 +8,12 @@ namespace NadekoBot.Common.Attributes
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class NadekoCommandAttribute : CommandAttribute
     {
-        public NadekoCommandAttribute([CallerMemberName] string memberName="") : base(Localization.LoadCommand(memberName.ToLowerInvariant()).Cmd.Split(' ')[0])
+        public NadekoCommandAttribute([CallerMemberName] string memberName="") 
+            : base(CommandNameLoadHelper.GetCommandNameFor(memberName))
         {
-
+            this.MethodName = memberName.ToLowerInvariant();
         }
+
+        public string MethodName { get; }
     }
 }
