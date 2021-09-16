@@ -234,7 +234,6 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
                     }
                     else
                         usr.State = User.UserState.Lost;
-
                 }
             }
 
