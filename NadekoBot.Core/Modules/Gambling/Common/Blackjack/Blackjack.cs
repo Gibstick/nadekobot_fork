@@ -227,12 +227,14 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
                 foreach (var usr in Players)
                 {
                     if (usr.State == User.UserState.Blackjack)
-                        usr.State = User.UserState.Won;
+                        usr.State = User.UserState.BJWin;
                     else if (usr.State == User.UserState.Stand)
+                    {
                         if (hw == usr.GetHandValue())
                             usr.State = User.UserState.Tie;
                         else if (hw < usr.GetHandValue())
                             usr.State = User.UserState.Won;
+                    }
                     else
                         usr.State = User.UserState.Lost;
 
@@ -241,21 +243,18 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Blackjack
 
             foreach (var usr in Players)
             {
-                if (usr.State == User.UserState.Won)
+                switch (usr.State)
                 {
-                    await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * 2, gamble: true).ConfigureAwait(false);
-                }
-                else if (usr.State == User.UserState.Blackjack)
-                {
-                    await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * (5/2), gamble: true).ConfigureAwait(false);
-                }
-                else if (usr.State == User.UserState.Tie)
-                {
-                    await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-push", usr.Bet * 1, gamble: true).ConfigureAwait(false);
+                    case User.UserState.BJWin:
+                        await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * (5/2), gamble: true).ConfigureAwait(false);
+
+                    case User.UserState.Won:
+                        await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet * 2, gamble: true).ConfigureAwait(false);
+
+                    case User.UserState.Tie:
+                        await _cs.AddAsync(usr.DiscordUser.Id, "BlackJack-win", usr.Bet, gamble: true).ConfigureAwait(false);
                 }
             }   
-            
-
         }
 
         public async Task<bool> Double(IUser u)
