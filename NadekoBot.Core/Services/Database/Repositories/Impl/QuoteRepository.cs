@@ -48,6 +48,20 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
                 .FirstOrDefault();
         }
 
+        public IEnumerable<Quote> SearchQuoteKeywordKeyTextAsync(ulong guildId, string keyword)
+        {
+            var q = _set.AsQueryable()
+                .Where(x => x.GuildId == guildId
+                            //&& q.Keyword == keyword
+                            && EF.Functions.Like(x.Keyword.ToUpper(), $"%{keyword.ToUpper()}%")
+                            // && q.Text.Contains(text, StringComparison.OrdinalIgnoreCase)
+                            );
+                
+            q =  q.OrderBy(x => x.Keyword);
+            return  q.Take(15).ToArray();
+            
+        }
+
         public void RemoveAllByKeyword(ulong guildId, string keyword)
         {
             _set.RemoveRange(_set.AsQueryable().Where(x => x.GuildId == guildId && x.Keyword.ToUpper() == keyword));
