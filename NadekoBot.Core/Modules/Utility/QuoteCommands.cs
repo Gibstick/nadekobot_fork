@@ -111,8 +111,6 @@ namespace NadekoBot.Modules.Utility
                 await ShowQuoteData(quote);
             }
 
-
-
             private async Task ShowQuoteData(Quote data)
             {
                 await ctx.Channel.EmbedAsync(new EmbedBuilder()

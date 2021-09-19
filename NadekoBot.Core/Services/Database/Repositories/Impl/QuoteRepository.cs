@@ -52,10 +52,8 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
         {
             var q = _set.AsQueryable()
                 .Where(x => x.GuildId == guildId
-                            //&& q.Keyword == keyword
                             && EF.Functions.Like(x.Keyword.ToUpper(), $"%{keyword.ToUpper()}%")
-                            // && q.Text.Contains(text, StringComparison.OrdinalIgnoreCase)
-                            );
+                           );
                 
             q =  q.OrderBy(x => x.Keyword);
             return  q.Take(15).ToArray();

@@ -2044,4 +2044,4 @@ purgeuser:
 quotesearchkey:
   desc: "Searches for quote using keyword 15 Per page."
   args:
-    - "test"
+    - "keyword"
