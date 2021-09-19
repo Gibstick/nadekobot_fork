@@ -203,12 +203,12 @@ namespace NadekoBot.Modules.Utility
 
             const int rolesPerPage = 20;
 
-            if (page < 1 || page > 100)
+            if (--page < 0 || page > 100)
                 return;
 
             if (target != null)
             {
-                var roles = target.GetRoles().Except(new[] { guild.EveryoneRole }).OrderBy(r => -r.Position).Skip((page - 1) * rolesPerPage).Take(rolesPerPage).ToArray();
+                var roles = target.GetRoles().Except(new[] { guild.EveryoneRole }).OrderBy(r => -r.Position).Skip((page) * rolesPerPage).Take(rolesPerPage).ToArray();
                 if (!roles.Any())
                 {
                     await ReplyErrorLocalizedAsync("no_roles_on_page").ConfigureAwait(false);
@@ -222,16 +222,27 @@ namespace NadekoBot.Modules.Utility
             }
             else
             {
-                var roles = guild.Roles.Except(new[] { guild.EveryoneRole }).OrderBy(r => -r.Position).Skip((page - 1) * rolesPerPage).Take(rolesPerPage).ToArray();
+                var rolelist = guild.Roles.Except(new[] { guild.EveryoneRole }).OrderBy(r => -r.Position);
+
+                await ctx.SendPaginatedConfirmAsync(page,cur =>
+                {
+                    var roles = guild.Roles.Except(new[] { guild.EveryoneRole }).OrderBy(r => -r.Position).Skip((cur) * rolesPerPage).Take(rolesPerPage).ToArray();
+                
+
                 if (!roles.Any())
                 {
-                    await ReplyErrorLocalizedAsync("no_roles_on_page").ConfigureAwait(false);
+                    return new EmbedBuilder().WithErrorColor().WithDescription(Format.Bold(ctx.User.ToString()) + " " + "No roles on this page.");
                 }
                 else
                 {
-                    await channel.SendConfirmAsync(GetText("roles_all_page", page),
-                        "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions(true)).ConfigureAwait(false);
+                    var text = "\n• " + string.Join("\n• ", (IEnumerable<IRole>)roles).SanitizeMentions(true);
+                    var title = GetText("roles_all_page", cur+1);
+                    return new EmbedBuilder().WithOkColor().WithDescription(text)
+                .WithTitle(title);
+
                 }
+                }, rolelist.Count(), rolesPerPage).ConfigureAwait(false);
+                
             }
         }
 
