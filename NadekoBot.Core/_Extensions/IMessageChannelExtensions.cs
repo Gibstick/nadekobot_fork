@@ -62,12 +62,12 @@ namespace NadekoBot.Extensions
         public static Task SendPaginatedConfirmAsync(this ICommandContext ctx,
             int currentPage, Func<int, EmbedBuilder> pageFunc, int totalElements,
             int itemsPerPage, bool addPaginatedFooter = true)
-            => ctx.SendPaginatedConfirmAsync(currentPage,
+            => ctx.SendPaginatedConfirmAsync2(currentPage,
                 (x) => Task.FromResult(pageFunc(x)), totalElements, itemsPerPage, addPaginatedFooter);
         /// <summary>
         /// danny kamisama
         /// </summary>
-        public static async Task SendPaginatedConfirmAsync(this ICommandContext ctx, int currentPage, 
+        public static async Task SendPaginatedConfirmAsync2(this ICommandContext ctx, int currentPage, 
             Func<int, Task<EmbedBuilder>> pageFunc, int totalElements, int itemsPerPage, bool addPaginatedFooter = true)
         {
             var embed = await pageFunc(currentPage).ConfigureAwait(false);
