@@ -1241,3 +1241,5 @@ crsexport:
   - exexport
 quotesearchkey:
   - quotesearchkey
+goose:
+  - goose
