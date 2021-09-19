@@ -1241,3 +1241,7 @@ crsexport:
   - exexport
 quotesearchkey:
   - quotesearchkey
+randomgoose:
+  - randomgoose
+  - goose
+  - honk
