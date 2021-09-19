@@ -148,6 +148,32 @@ namespace NadekoBot.Modules.Utility
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
+            public async Task QuoteSearchKey(string keyword)
+            {
+
+                if (string.IsNullOrWhiteSpace(keyword))
+                    return;
+
+                keyword = keyword.ToUpperInvariant();
+
+                IEnumerable<Quote> quotes;
+                using (var uow = _db.GetDbContext())
+                {
+                    quotes = uow.Quotes.SearchQuoteKeywordKeyTextAsync(ctx.Guild.Id, keyword);
+                }
+
+                if (quotes.Any()){
+                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page",1),
+                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                        .ConfigureAwait(false);
+                }
+                else{
+                    await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
+                }
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
             public async Task QuoteId(int id)
             {
                 if (id < 0)

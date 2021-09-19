@@ -1239,3 +1239,5 @@ crsimport:
 crsexport:
   - crsexport
   - exexport
+quotesearchkey:
+  - quotesearchkey
