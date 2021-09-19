@@ -2045,7 +2045,7 @@ quotesearchkey:
   desc: "Searches for quote using keyword 15 Per page."
   args:
     - "keyword"
-goose:
+randomgoose:
   desc: "Shows a random goose image from dataset"
   args:
     - ""
