@@ -202,8 +202,8 @@ namespace NadekoBot.Modules.Utility
             var guild = channel.Guild;
 
             const int rolesPerPage = 20;
-
-            if (--page < 0 || page > 100)
+            --page;
+            if (page < 0 || page > 100)
                 return;
 
             if (target != null)
