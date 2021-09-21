@@ -3558,5 +3558,12 @@
     "usage": [
       "{0}economy"
     ]
-  }
+  },
+  "quotesearchkey": {
+    "Cmd": "quotesearchkey",
+    "Desc": "Searches for quote using keyword 15 Per page.",
+    "Usage": [
+      "{0}quotesearchkey test"
+    ]
+  },
 }
