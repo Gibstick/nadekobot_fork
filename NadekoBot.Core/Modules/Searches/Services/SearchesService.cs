@@ -321,7 +321,8 @@ namespace NadekoBot.Modules.Searches.Services
             Food,
             Dogs,
             Cats,
-            Birds
+            Birds,
+            Goose
         }
 
         public string GetRandomImageUrl(ImageTag tag)
@@ -343,13 +344,20 @@ namespace NadekoBot.Modules.Searches.Services
                 case ImageTag.Birds:
                     max = 578;
                     break;
+                case ImageTag.Goose:
+                    max = 1000;
+                    break;
                 default:
                     max = 100;
                     break;
             }
-
+            if (tag == ImageTag.Goose){
+                return $"https://raw.githubusercontent.com/steggie3/goose-dataset/master/images/goose-mugshot-{_rng.Next(1, max).ToString("0000")}.jpg";
+            }else{
+ 
             return $"https://nadeko-pictures.nyc3.digitaloceanspaces.com/{subpath}/" +
                 _rng.Next(1, max).ToString("000") + ".png";
+            }
         }
 
         public async Task<string> Translate(string langs, string text = null)
