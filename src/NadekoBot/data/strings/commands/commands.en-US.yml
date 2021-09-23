@@ -2049,3 +2049,8 @@ randomgoose:
   desc: "Shows a random goose image from dataset"
   args:
     - ""
+quoteauthor:
+  desc: "Lists quotes created by the author with page argument."
+  args:
+    - "author"
+    - "author 2"
