@@ -34,6 +34,16 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
                 .FirstOrDefault();
         }
 
+        public async Task<Quote> GetRandomQuoteAsync(ulong guildId)
+        {
+            var rng = new NadekoRandom();
+            return (await _set.AsQueryable()
+                .Where(q => q.GuildId == guildId)
+                .ToListAsync())
+                .OrderBy(q => rng.Next())
+                .FirstOrDefault();
+        }
+
         public async Task<Quote> SearchQuoteKeywordTextAsync(ulong guildId, string keyword, string text)
         {
             var rngk = new NadekoRandom();
