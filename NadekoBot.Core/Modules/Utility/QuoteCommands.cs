@@ -202,6 +202,36 @@ namespace NadekoBot.Modules.Utility
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
+            public async Task QuoteAuthor(IGuildUser usr = null,int page =1)
+            {
+                --page;
+                if (page <0){
+                    return;
+                }
+
+                if (usr == null){
+                usr = (IGuildUser)ctx.User;
+                }
+
+                
+                IEnumerable<Quote> quotes;
+                using (var uow = _db.GetDbContext())
+                {
+                    quotes = uow.Quotes.SearchQuoteAuthorTextAsync(ctx.Guild.Id, usr.Id,page);
+                }
+
+                if (quotes.Any()){
+                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page",page+1),
+                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                        .ConfigureAwait(false);
+                }
+                else{
+                    await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
+                }
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
             public async Task QuoteId(int id)
             {
                 if (id < 0)

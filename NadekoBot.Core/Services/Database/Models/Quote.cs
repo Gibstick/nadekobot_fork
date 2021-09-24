@@ -19,6 +19,7 @@ namespace NadekoBot.Core.Services.Database.Models
     public enum OrderType
     {
         Id = -1,
-        Keyword = -2
+        Keyword = -2,
+        AuthorName = -3
     }
 }

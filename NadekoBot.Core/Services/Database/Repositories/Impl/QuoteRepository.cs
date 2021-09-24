@@ -16,10 +16,15 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
         public IEnumerable<Quote> GetGroup(ulong guildId, int page, OrderType order)
         {
             var q = _set.AsQueryable().Where(x => x.GuildId == guildId);
-            if (order == OrderType.Keyword)
+            if (order == OrderType.Keyword){
                 q = q.OrderBy(x => x.Keyword);
-            else
+            }
+            else if (order == OrderType.AuthorName){
+                q = q.OrderBy(x => x.AuthorName);
+            }
+            else{
                 q = q.OrderBy(x => x.Id);
+            }
 
             return q.Skip(15 * page).Take(15).ToArray();
         }
@@ -67,6 +72,17 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
                 
             q =  q.OrderBy(x => x.Keyword);
             return  q.Take(15).ToArray();
+            
+        }
+
+        public IEnumerable<Quote> SearchQuoteAuthorTextAsync(ulong guildId, ulong Authorid,int page)
+        {
+            var q = _set.AsQueryable()
+                .Where(x => x.GuildId == guildId
+                    && x.AuthorId == Authorid);
+                
+            q =  q.OrderBy(x => x.AuthorName);
+            return  q.Skip(15*page).Take(15).ToArray();
             
         }
 
