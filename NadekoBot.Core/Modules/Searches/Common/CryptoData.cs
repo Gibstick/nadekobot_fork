@@ -5,8 +5,15 @@ namespace NadekoBot.Core.Modules.Searches.Common
 {
     public class CryptoResponse
     {
-        public List<CryptoResponseData> Data { get; set; }
+        //public CryptoResponseData Data { get; set; }
+        public Dictionary<string,CryptoResponseData> Data { get; set; }
+        public StatusResponseData Status { get; set; }
     }
+
+    public class StatusResponseData{
+        public int Error_code { get;set;}
+        public string Error_message { get;set;}
+    } 
 
     public class CryptoResponseData
     {

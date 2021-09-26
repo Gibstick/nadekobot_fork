@@ -25,7 +25,7 @@ namespace NadekoBot.Core.Modules.Searches.Services
             _creds = creds;
         }
 
-        public async Task<(CryptoResponseData Data, CryptoResponseData Nearest)> GetCryptoData(string name)
+        public async Task<(Dictionary<string,CryptoResponseData> Data, Dictionary<string,CryptoResponseData> Nearest)> GetCryptoData(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -33,63 +33,60 @@ namespace NadekoBot.Core.Modules.Searches.Services
             }
 
             name = name.ToUpperInvariant();
-            var cryptos = await CryptoData().ConfigureAwait(false);
-
-            var crypto = cryptos
-                ?.FirstOrDefault(x => x.Id.ToUpperInvariant() == name || x.Name.ToUpperInvariant() == name
-                    || x.Symbol.ToUpperInvariant() == name);
-
-            (CryptoResponseData Elem, int Distance)? nearest = null;
-            if (crypto == null)
-            {
-                nearest = cryptos.Select(x => (x, Distance: x.Name.ToUpperInvariant().LevenshteinDistance(name)))
-                    .OrderBy(x => x.Distance)
-                    .Where(x => x.Distance <= 2)
-                    .FirstOrDefault();
-
-                crypto = nearest?.Elem;
-            }
-
-            if (nearest != null)
-            {
-                return (null, crypto);
-            }
-
+            var crypto = await CryptoData(name).ConfigureAwait(false);
             return (crypto, null);
         }
 
         private readonly SemaphoreSlim getCryptoLock = new SemaphoreSlim(1, 1);
-        public async Task<List<CryptoResponseData>> CryptoData()
+        public async Task<Dictionary<string,CryptoResponseData>> CryptoData(string name)
         {
             await getCryptoLock.WaitAsync();
             try
             {
-                var fullStrData = await _cache.GetOrAddCachedDataAsync("nadeko:crypto_data", async _ =>
-                {
                     try
                     {
                         using (var _http = _httpFactory.CreateClient())
-                        {
-                            var strData = await _http.GetStringAsync(new Uri($"https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?" +
+                        {   
+                            //check by slug name
+                            Uri urival = new Uri($"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?" +
                                 $"CMC_PRO_API_KEY={_creds.CoinmarketcapApiKey}" +
-                                $"&start=1" +
-                                $"&limit=500" +
-                                $"&convert=USD"));
+                                $"&slug={name.ToLowerInvariant()}" +
+                                $"&convert=USD");
+                            var strData = await _http.GetStringAsync(urival);
+                            //check for match
+                            return JsonConvert.DeserializeObject<CryptoResponse>(strData).Data;
 
-                            JsonConvert.DeserializeObject<CryptoResponse>(strData); // just to see if its' valid
-
-                            return strData;
-                        }
+                            }
                     }
+                    
+
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Error getting crypto data: {Message}", ex.Message);
-                        return default;
+                        if (ex is HttpRequestException){
+                            try{
+                                // check using symbol
+                                using (var _http = _httpFactory.CreateClient()){
+                                Uri urival2 = new Uri($"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?" +
+                                $"CMC_PRO_API_KEY={_creds.CoinmarketcapApiKey}" +
+                                $"&symbol={name}" +
+                                $"&convert=USD");
+                                var strData2 = await _http.GetStringAsync(urival2);
+                                JsonConvert.DeserializeObject<CryptoResponse>(strData2); // just to see if its' valid
+                                return JsonConvert.DeserializeObject<CryptoResponse>(strData2).Data;
+                            }
+                            }catch(Exception exc){
+                                Log.Error(exc, "Error getting crypto data: {Message}", exc.Message);
+                                return default;
+                            }
+
+                        }else{
+                            Log.Error(ex, "Error getting crypto data: {Message}", ex.Message);
+
+                            return default;
+
+                        }
                     }
 
-                }, "", TimeSpan.FromHours(1));
-
-                return JsonConvert.DeserializeObject<CryptoResponse>(fullStrData).Data;
             }
             catch (Exception ex)
             {
