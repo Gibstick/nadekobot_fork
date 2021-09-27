@@ -1245,3 +1245,6 @@ randomgoose:
   - randomgoose
   - goose
   - honk
+quoterandom:
+  - quoterandom
+  - qrandom

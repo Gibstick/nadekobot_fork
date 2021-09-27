@@ -2054,3 +2054,7 @@ quoteauthor:
   args:
     - "author"
     - "author 2"
+quoterandom:
+  desc: "Prints a random quote"
+  args:
+    - ""

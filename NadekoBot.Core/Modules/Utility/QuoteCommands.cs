@@ -89,6 +89,34 @@ namespace NadekoBot.Modules.Utility
                 }
                 await ctx.Channel.SendMessageAsync($"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
             }
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            public async Task QuoteRandom()
+            {
+            
+            
+                Quote quote;
+                using (var uow = _db.GetDbContext())
+                {
+                    quote = await uow.Quotes.GetRandomQuoteAsync(ctx.Guild.Id);
+                }
+
+                if (quote == null)
+                    return;
+
+                var rep = new ReplacementBuilder()
+                    .WithDefault(Context)
+                    .Build();
+
+                if (CREmbed.TryParse(quote.Text, out var crembed))
+                {
+                    rep.Replace(crembed);
+                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
+                        .ConfigureAwait(false);
+                    return;
+                }
+                await ctx.Channel.SendMessageAsync($"`#{quote.Id} {quote.Keyword}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+            }
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
