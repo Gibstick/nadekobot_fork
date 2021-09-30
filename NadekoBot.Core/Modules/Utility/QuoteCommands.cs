@@ -331,18 +331,19 @@ namespace NadekoBot.Modules.Utility
             public async Task QuoteDeleteAuthor(IGuildUser usr)
             {
                 
-                var success = false;
-                string response;
                 using (var uow = _db.GetDbContext())
                 {
                     uow.Quotes.RemoveAllByAuthor(ctx.Guild.Id, usr.Id);
                     await uow.SaveChangesAsync();
         
                 }
-                //await ReplyConfirmLocalizedAsync($"Deleted all quotes from {Format.Bold(usr.Username.SanitizeAllMentions())}").ConfigureAwait(false);
                 var text = $"Deleted all quotes from {Format.Bold(usr.Username.SanitizeAllMentions())}";
                 await ctx.Channel.SendConfirmAsync(Format.Bold(ctx.User.ToString()) + " " + text);
             }
+
+
+
+
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
             [UserPerm(GuildPerm.Administrator)]
