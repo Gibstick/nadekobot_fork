@@ -91,5 +91,10 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             _set.RemoveRange(_set.AsQueryable().Where(x => x.GuildId == guildId && x.Keyword.ToUpper() == keyword));
         }
 
+        public void RemoveAllByAuthor(ulong guildId, ulong Authorid)
+        {
+            _set.RemoveRange(_set.AsQueryable().Where(x => x.GuildId == guildId && x.AuthorId == Authorid));
+        }
+
     }
 }

@@ -1248,3 +1248,6 @@ randomgoose:
 quoterandom:
   - quoterandom
   - qrandom
+quotedeleteauthor:
+  - quotedeleteauthor
+  - qdelauthor
