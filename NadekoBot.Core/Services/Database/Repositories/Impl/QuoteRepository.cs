@@ -75,6 +75,17 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             
         }
 
+        public IEnumerable<Quote> SearchQuoteLinkTextAsync(ulong guildId)
+        {
+            var q = _set.AsQueryable()
+                .Where(x => x.GuildId == guildId
+                            && EF.Functions.Like(x.Text, $"http%")
+                           );
+                
+            return  q.ToArray();
+            
+        }
+
         public IEnumerable<Quote> SearchQuoteAuthorTextAsync(ulong guildId, ulong Authorid,int page)
         {
             var q = _set.AsQueryable()

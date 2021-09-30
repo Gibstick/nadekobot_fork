@@ -2062,3 +2062,7 @@ quotedeleteauthor:
   desc: "Deletes all quotes from author"
   args:
     - "@User"
+quotedeletelinks:
+  desc: "Deletes dead links"
+  args:
+    - ""

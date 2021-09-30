@@ -1251,3 +1251,5 @@ quoterandom:
 quotedeleteauthor:
   - quotedeleteauthor
   - qdelauthor
+quotedeletelinks:
+  - quotedeletelinks

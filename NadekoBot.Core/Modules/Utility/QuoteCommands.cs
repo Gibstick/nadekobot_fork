@@ -9,6 +9,9 @@ using NadekoBot.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
+using System.Net.Http;
+using Serilog;
 
 namespace NadekoBot.Modules.Utility
 {
@@ -18,10 +21,12 @@ namespace NadekoBot.Modules.Utility
         public class QuoteCommands : NadekoSubmodule
         {
             private readonly DbService _db;
+            private readonly IHttpClientFactory _httpFactory;
 
-            public QuoteCommands(DbService db)
+            public QuoteCommands(DbService db,IHttpClientFactory factory)
             {
                 _db = db;
+                _httpFactory = factory;
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -339,6 +344,45 @@ namespace NadekoBot.Modules.Utility
                 }
                 var text = $"Deleted all quotes from {Format.Bold(usr.Username.SanitizeAllMentions())}";
                 await ctx.Channel.SendConfirmAsync(Format.Bold(ctx.User.ToString()) + " " + text);
+            }
+
+            [NadekoCommand, Usage, Description, Aliases]
+            [RequireContext(ContextType.Guild)]
+            [UserPerm(GuildPerm.Administrator)]
+            public async Task QuoteDeleteLinks()
+            {
+                int badlinks = 0;
+                //get all links from database
+                IEnumerable<Quote> quotes;
+                using (var uow = _db.GetDbContext())
+                {
+                    quotes = uow.Quotes.SearchQuoteLinkTextAsync(ctx.Guild.Id);
+                    
+                
+                foreach(var q in quotes){
+                    // check if valid url
+                    Uri uriResult;
+                    bool result = Uri.TryCreate(q.Text, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                    if (result){
+                        using (var _http = _httpFactory.CreateClient("QuotesClient")){
+                        //check if link is dead
+                        try{
+                            await _http.GetStringAsync(q.Text);
+                        }
+                        catch (HttpRequestException ex){
+                            uow.Quotes.Remove(q);
+                            await uow.SaveChangesAsync();
+                            badlinks = badlinks+1;
+
+                        }
+                    }
+
+                    }
+                    
+                }
+                }
+                 
+                await ctx.Channel.SendConfirmAsync(Format.Bold(ctx.User.ToString()) + " " + $"Successfully removed {badlinks.ToString()} dead links");
             }
 
 
