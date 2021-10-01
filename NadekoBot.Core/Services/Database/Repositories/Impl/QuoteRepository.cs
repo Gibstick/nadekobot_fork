@@ -75,6 +75,17 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             
         }
 
+        public IEnumerable<Quote> SearchQuoteLinkTextAsync(ulong guildId)
+        {
+            var q = _set.AsQueryable()
+                .Where(x => x.GuildId == guildId
+                            && EF.Functions.Like(x.Text, $"http%")
+                           );
+                
+            return  q.ToArray();
+            
+        }
+
         public IEnumerable<Quote> SearchQuoteAuthorTextAsync(ulong guildId, ulong Authorid,int page)
         {
             var q = _set.AsQueryable()
@@ -89,6 +100,11 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
         public void RemoveAllByKeyword(ulong guildId, string keyword)
         {
             _set.RemoveRange(_set.AsQueryable().Where(x => x.GuildId == guildId && x.Keyword.ToUpper() == keyword));
+        }
+
+        public void RemoveAllByAuthor(ulong guildId, ulong Authorid)
+        {
+            _set.RemoveRange(_set.AsQueryable().Where(x => x.GuildId == guildId && x.AuthorId == Authorid));
         }
 
     }
