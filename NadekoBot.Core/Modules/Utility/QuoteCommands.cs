@@ -357,31 +357,29 @@ namespace NadekoBot.Modules.Utility
                 using (var uow = _db.GetDbContext())
                 {
                     quotes = uow.Quotes.SearchQuoteLinkTextAsync(ctx.Guild.Id);
-                    
-                
-                foreach(var q in quotes){
-                    // check if valid url
-                    Uri uriResult;
-                    bool result = Uri.TryCreate(q.Text, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-                    if (result){
-                        using (var _http = _httpFactory.CreateClient("QuotesClient")){
-                        //check if link is dead
-                        try{
-                            await _http.GetStringAsync(q.Text);
-                        }
-                        catch (HttpRequestException ex){
-                            uow.Quotes.Remove(q);
-                            await uow.SaveChangesAsync();
-                            badlinks = badlinks+1;
 
+
+                    foreach(var q in quotes){
+                        // check if valid url
+                        Uri uriResult;
+                        bool result = Uri.TryCreate(q.Text, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                        if (!result) {
+                            return;
+                        }
+                        using (var _http = _httpFactory.CreateClient("QuotesClient")) {
+                            //check if link is dead
+                            try {
+                                await _http.GetStringAsync(q.Text);
+                            }
+                            catch (HttpRequestException ex) {
+                                uow.Quotes.Remove(q);
+                                await uow.SaveChangesAsync();
+                                badlinks = badlinks+1;
+                            }
                         }
                     }
+                }
 
-                    }
-                    
-                }
-                }
-                 
                 await ctx.Channel.SendConfirmAsync(Format.Bold(ctx.User.ToString()) + " " + $"Successfully removed {badlinks.ToString()} dead links");
             }
 
