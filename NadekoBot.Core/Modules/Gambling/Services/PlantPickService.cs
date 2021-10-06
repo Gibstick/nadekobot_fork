@@ -11,6 +11,7 @@ using NadekoBot.Extensions;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -23,7 +24,7 @@ using System.Threading.Tasks;
 using NadekoBot.Core.Modules.Gambling.Services;
 using Image = SixLabors.ImageSharp.Image;
 using Color = SixLabors.ImageSharp.Color;
-
+using Serilog;
 namespace NadekoBot.Modules.Gambling.Services
 {
     public class PlantPickService : INService
@@ -157,6 +158,8 @@ namespace NadekoBot.Modules.Gambling.Services
             {
                 // choose font size based on the image height, so that it's visible
                 var font = _fonts.NotoSans.CreateFont(img.Height / 12, FontStyle.Bold);
+
+                //var font = _fonts.Emojis.CreateFont(img.Height / 12, FontStyle.Bold);
                 img.Mutate(x =>
                 {
                     // measure the size of the text to be drawing
@@ -168,9 +171,10 @@ namespace NadekoBot.Modules.Gambling.Services
                         new PointF(size.Width + 5, 0),
                         new PointF(size.Width + 5, size.Height + 10),
                         new PointF(0, size.Height + 10));
+                    var options = new TextGraphicsOptions(new GraphicsOptions(), new TextOptions { FallbackFonts = { _fonts.Emojis} });
 
                     // draw the password over the background
-                    x.DrawText(pass,
+                    x.DrawText(options,pass,
                         font,
                         SixLabors.ImageSharp.Color.White,
                         new PointF(0, 0));
@@ -298,8 +302,8 @@ namespace NadekoBot.Modules.Gambling.Services
 
         public async Task<ulong?> SendPlantMessageAsync(ulong gid, IMessageChannel ch, string user, long amount, string pass)
         {
-            try
-            {
+           try
+           {
                 // get the text
                 var prefix = _cmdHandler.GetPrefix(gid);
                 var msgToSend = GetText(gid,
@@ -321,8 +325,8 @@ namespace NadekoBot.Modules.Gambling.Services
                     // return sent message's id (in order to be able to delete it when it's picked)
                     return msg.Id;
                 }
-            }
-            catch
+           }
+            catch (Exception e)
             {
                 // if sending fails, return null as message id
                 return null;
@@ -334,7 +338,7 @@ namespace NadekoBot.Modules.Gambling.Services
             // normalize it - no more than 10 chars, uppercase
             pass = pass?.Trim().TrimTo(10, hideDots: true).ToUpperInvariant();
             // has to be either null or alphanumeric
-            if (!string.IsNullOrWhiteSpace(pass) && !pass.IsAlphaNumeric())
+            if (string.IsNullOrWhiteSpace(pass))// && !pass.IsAlphaNumeric())
                 return false;
 
             // remove currency from the user who's planting
