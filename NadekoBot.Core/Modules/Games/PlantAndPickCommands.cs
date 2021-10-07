@@ -29,7 +29,7 @@ namespace NadekoBot.Modules.Games
             [RequireContext(ContextType.Guild)]
             public async Task Pick(string pass = null)
             {
-                if (string.IsNullOrWhiteSpace(pass))// && !pass.IsAlphaNumeric())
+                if (string.IsNullOrWhiteSpace(pass))
                 {
                     return;
                 }
@@ -60,7 +60,7 @@ namespace NadekoBot.Modules.Games
             {
                 if (amount < 1)
                     return;
-                if (string.IsNullOrWhiteSpace(pass))// && !pass.IsAlphaNumeric())
+                if (string.IsNullOrWhiteSpace(pass))
                 {
                     return;
                 }

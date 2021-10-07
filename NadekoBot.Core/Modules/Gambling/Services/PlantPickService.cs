@@ -21,10 +21,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Net;
 using NadekoBot.Core.Modules.Gambling.Services;
 using Image = SixLabors.ImageSharp.Image;
 using Color = SixLabors.ImageSharp.Color;
-using Serilog;
+
 namespace NadekoBot.Modules.Gambling.Services
 {
     public class PlantPickService : INService
@@ -153,31 +156,125 @@ namespace NadekoBot.Modules.Gambling.Services
         private (Stream, string) AddPassword(byte[] curImg, string pass)
         {
             // draw lower, it looks better
-            pass = pass.TrimTo(10, true).ToLowerInvariant();
+            pass = pass.ToLowerInvariant();
+            Regex rx = new Regex(@"<:.+?:\d+>");
+            Regex rxid = new Regex(@":\d+>");
+            List<int> emojindex = new List<int>();
+            List<string> emojid = new List<string>();
+            MatchCollection matches = rx.Matches(pass);
+            foreach (Match match in matches)
+                {
+                    GroupCollection groups = match.Groups;
+                    emojindex.Add((int)groups[0].Index);
+                    Match m = rxid.Match(groups[0].Value);
+                    emojid.Add(m.Value.Substring(1,18)); 
+                }
+
+            
+            var startx = (float)0.0;
+            var starty = (float)0.0;
+            var emojidx = 0;
+            var emojiwidth =40;
+            var emojiheight = 60;
             using (var img = Image.Load<Rgba32>(curImg, out var format))
             {
                 // choose font size based on the image height, so that it's visible
                 var font = _fonts.NotoSans.CreateFont(img.Height / 12, FontStyle.Bold);
+                RendererOptions renderoptions = new RendererOptions(font, new PointF(0, 0)){ 
+                        FallbackFontFamilies  = new []
+                        {
+                         _fonts.Emojis// will be used if a particular code point doesn't exist in the font passed into the constructor. (e.g. emoji)
+                        }};
+                var options = new TextGraphicsOptions(new GraphicsOptions(), new TextOptions { FallbackFonts = { _fonts.Emojis} });
+
 
                 //var font = _fonts.Emojis.CreateFont(img.Height / 12, FontStyle.Bold);
                 img.Mutate(x =>
                 {
-                    // measure the size of the text to be drawing
-                    var size = TextMeasurer.Measure(pass, new RendererOptions(font, new PointF(0, 0)));
+                    var i=0;
+                    while (i<pass.Length){
+                    var currentchar = pass[i];
+                    bool singlechar = true;
+                    //check if character needs multiple glpyhs, used for emojis and some symbols
+                    try{
+                        Rune rune = new Rune(currentchar);
 
-                    // fill the background with black, add 5 pixels on each side to make it look better
-                    x.FillPolygon(Color.ParseHex("00000080"),
-                        new PointF(0, 0),
-                        new PointF(size.Width + 5, 0),
-                        new PointF(size.Width + 5, size.Height + 10),
-                        new PointF(0, size.Height + 10));
-                    var options = new TextGraphicsOptions(new GraphicsOptions(), new TextOptions { FallbackFonts = { _fonts.Emojis} });
+                    }catch{
+                        singlechar=false;
 
-                    // draw the password over the background
-                    x.DrawText(options,pass,
+                    }
+                    FontRectangle size;
+
+                    // check if character is alphanumeric
+                    
+                    if (emojindex.Contains(i)){
+                        string url = $"https://cdn.discordapp.com/emojis/{emojid[emojidx]}.png";
+                        byte[] imageBytes;
+                        using (var webClient = new WebClient()) { 
+                            imageBytes = webClient.DownloadData(url);
+                        }
+                        using (Image emojimage = Image.Load(imageBytes)){
+                           emojimage.Mutate(y => y.Resize(emojiwidth,emojiheight));
+                        x.DrawImage(emojimage,new Point((int)startx, 0),1f);
+                        }
+                        for (int j=i;j<pass.Length;++j){
+                            if (pass[j]=='>'){
+                                i=j;
+                                break;
+                            }
+                        }
+                        emojidx = emojidx + 1; 
+                        size = new FontRectangle((float)2.0,(float)1.0,emojiwidth,emojiheight);
+
+
+
+                    }else if (char.IsLetterOrDigit(currentchar) || singlechar){
+                        //use notosans font
+                        font = _fonts.NotoSans.CreateFont(img.Height / 12, FontStyle.Bold);
+
+                        size = TextMeasurer.Measure(currentchar.ToString(), renderoptions);
+                        
+                        //set height of background if its unset
+                        if (starty==0){
+                            starty = size.Height + 10;
+                        }
+                        //set background black
+                        x.FillPolygon(Color.ParseHex("00000080"),
+                        new PointF(startx, 0),
+                        new PointF(startx + size.Width + 5, 0),
+                        new PointF(startx + size.Width + 5, starty),
+                        new PointF(startx, starty));
+                        //draw character
+                        x.DrawText(options,currentchar.ToString(),
                         font,
                         SixLabors.ImageSharp.Color.White,
-                        new PointF(0, 0));
+                        new PointF(startx, 0));
+                    }else{
+                        //use emoji font
+                        font = _fonts.Emojis.CreateFont(img.Height / 12, FontStyle.Bold);
+                        //use two characters for emojis
+                        var currentstr = pass.Substring(i,2);
+                        //custom size for font rectangle
+                        size = new FontRectangle((float)2.0,(float)1.0,emojiwidth,emojiheight);
+                        if (starty==0){
+                            starty = size.Height + 10;
+                        }
+                        //set background
+                        x.FillPolygon(Color.ParseHex("00000080"),
+                        new PointF(startx, 0),
+                        new PointF(startx + size.Width + 5, 0),
+                        new PointF(startx + size.Width + 5, starty),
+                        new PointF(startx, starty));
+                        //draw character
+                        x.DrawText(options,currentstr,
+                        font,
+                        SixLabors.ImageSharp.Color.White,
+                        new PointF(startx, 0));
+                        i=i+1;
+                    }
+                    i=i+1;
+                    startx = startx + size.Width;
+                }
                 });
                 // return image as a stream for easy sending
                 return (img.ToStream(format), format.FileExtensions.FirstOrDefault() ?? "png");
@@ -302,8 +399,8 @@ namespace NadekoBot.Modules.Gambling.Services
 
         public async Task<ulong?> SendPlantMessageAsync(ulong gid, IMessageChannel ch, string user, long amount, string pass)
         {
-           try
-           {
+           //try
+           //{
                 // get the text
                 var prefix = _cmdHandler.GetPrefix(gid);
                 var msgToSend = GetText(gid,
@@ -325,18 +422,18 @@ namespace NadekoBot.Modules.Gambling.Services
                     // return sent message's id (in order to be able to delete it when it's picked)
                     return msg.Id;
                 }
-           }
-            catch (Exception e)
-            {
+           //}
+            //catch (Exception e)
+            //{
                 // if sending fails, return null as message id
-                return null;
-            }
+            //    return null;
+            //}
         }
 
         public async Task<bool> PlantAsync(ulong gid, IMessageChannel ch, ulong uid, string user, long amount, string pass)
         {
             // normalize it - no more than 10 chars, uppercase
-            pass = pass?.Trim().TrimTo(10, hideDots: true).ToUpperInvariant();
+            pass = pass?.Trim().ToUpperInvariant();
             // has to be either null or alphanumeric
             if (string.IsNullOrWhiteSpace(pass))// && !pass.IsAlphaNumeric())
                 return false;
