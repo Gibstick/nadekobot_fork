@@ -174,7 +174,7 @@ namespace NadekoBot.Modules.Gambling.Services
             var startx = (float)0.0;
             var starty = (float)0.0;
             var emojidx = 0;
-            var emojiwidth =40;
+            var emojiwidth =60;
             var emojiheight = 60;
             using (var img = Image.Load<Rgba32>(curImg, out var format))
             {
@@ -210,11 +210,15 @@ namespace NadekoBot.Modules.Gambling.Services
                     if (emojindex.Contains(i)){
                         string url = $"https://cdn.discordapp.com/emojis/{emojid[emojidx]}.png";
                         byte[] imageBytes;
+                        size = new FontRectangle((float)2.0,(float)1.0,(float)emojiwidth,(float)emojiheight);
+                        if (starty==0){
+                            starty = size.Height + 10;
+                        }
                         using (var webClient = new WebClient()) { 
                             imageBytes = webClient.DownloadData(url);
                         }
                         using (Image emojimage = Image.Load(imageBytes)){
-                           emojimage.Mutate(y => y.Resize(emojiwidth,emojiheight));
+                           emojimage.Mutate(y => y.Resize(emojiwidth,(int)starty));
                         x.DrawImage(emojimage,new Point((int)startx, 0),1f);
                         }
                         for (int j=i;j<pass.Length;++j){
@@ -223,9 +227,8 @@ namespace NadekoBot.Modules.Gambling.Services
                                 break;
                             }
                         }
-                        emojidx = emojidx + 1; 
-                        size = new FontRectangle((float)2.0,(float)1.0,emojiwidth,emojiheight);
-
+                        emojidx = emojidx + 1;
+                        startx = startx-5; 
 
 
                     }else if (char.IsLetterOrDigit(currentchar) || singlechar){
@@ -273,7 +276,7 @@ namespace NadekoBot.Modules.Gambling.Services
                         i=i+1;
                     }
                     i=i+1;
-                    startx = startx + size.Width;
+                    startx = startx + size.Width + 5;
                 }
                 });
                 // return image as a stream for easy sending
