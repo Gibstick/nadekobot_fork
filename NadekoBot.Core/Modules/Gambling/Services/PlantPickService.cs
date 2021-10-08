@@ -402,8 +402,8 @@ namespace NadekoBot.Modules.Gambling.Services
 
         public async Task<ulong?> SendPlantMessageAsync(ulong gid, IMessageChannel ch, string user, long amount, string pass)
         {
-           //try
-           //{
+           try
+           {
                 // get the text
                 var prefix = _cmdHandler.GetPrefix(gid);
                 var msgToSend = GetText(gid,
@@ -425,12 +425,12 @@ namespace NadekoBot.Modules.Gambling.Services
                     // return sent message's id (in order to be able to delete it when it's picked)
                     return msg.Id;
                 }
-           //}
-            //catch (Exception e)
-            //{
-                // if sending fails, return null as message id
-            //    return null;
-            //}
+           }
+            catch (Exception e)
+            {
+                if sending fails, return null as message id
+               return null;
+            }
         }
 
         public async Task<bool> PlantAsync(ulong gid, IMessageChannel ch, ulong uid, string user, long amount, string pass)
