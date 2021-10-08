@@ -4,5 +4,5 @@
 
 DATA=/home/nadeko/app/data
 
-rsync -rv --ignore-existing $DATA-default/ $DATA/
+rsync -rv --update $DATA-default/ $DATA/
 exec dotnet "/home/nadeko/app/NadekoBot.dll"

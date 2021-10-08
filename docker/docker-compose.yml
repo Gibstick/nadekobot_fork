@@ -27,5 +27,6 @@ services:
 
 volumes:
   nadeko-data:
+    external: true
   nadeko-db:
     external: true
