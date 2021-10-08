@@ -438,7 +438,7 @@ namespace NadekoBot.Modules.Gambling.Services
             // normalize it - no more than 10 chars, uppercase
             pass = pass?.Trim().ToUpperInvariant();
             // has to be either null or alphanumeric
-            if (string.IsNullOrWhiteSpace(pass))// && !pass.IsAlphaNumeric())
+            if (string.IsNullOrWhiteSpace(pass))
                 return false;
 
             // remove currency from the user who's planting
