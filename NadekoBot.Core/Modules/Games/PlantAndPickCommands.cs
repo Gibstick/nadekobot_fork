@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NadekoBot.Core.Modules.Gambling.Common;
 using NadekoBot.Core.Modules.Gambling.Services;
+using Serilog;
 
 namespace NadekoBot.Modules.Games
 {
@@ -28,7 +29,7 @@ namespace NadekoBot.Modules.Games
             [RequireContext(ContextType.Guild)]
             public async Task Pick(string pass = null)
             {
-                if (!string.IsNullOrWhiteSpace(pass) && !pass.IsAlphaNumeric())
+                if (string.IsNullOrWhiteSpace(pass))
                 {
                     return;
                 }
@@ -59,12 +60,10 @@ namespace NadekoBot.Modules.Games
             {
                 if (amount < 1)
                     return;
-
-                if (!string.IsNullOrWhiteSpace(pass) && !pass.IsAlphaNumeric())
+                if (string.IsNullOrWhiteSpace(pass))
                 {
                     return;
                 }
-
                 var success = await _service.PlantAsync(ctx.Guild.Id, ctx.Channel, ctx.User.Id, ctx.User.ToString(), amount, pass);
                 if (!success)
                 {

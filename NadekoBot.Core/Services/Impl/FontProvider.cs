@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Serilog;
 
 namespace NadekoBot.Core.Services.Impl
 {
@@ -15,6 +16,7 @@ namespace NadekoBot.Core.Services.Impl
 
             NotoSans = _fonts.Install("data/fonts/NotoSans-Bold.ttf");
             UniSans = _fonts.Install("data/fonts/Uni Sans.ttf");
+            Emojis = _fonts.Install("data/fonts/TwitterColorEmoji-SVGinOT.ttf");
 
             FallBackFonts = new List<FontFamily>();
 
@@ -52,7 +54,7 @@ namespace NadekoBot.Core.Services.Impl
 
         public FontFamily UniSans { get; }
         public FontFamily NotoSans { get; }
-        //public FontFamily Emojis { get; }
+        public FontFamily Emojis { get; }
 
         /// <summary>
         /// Font used for .rip command
