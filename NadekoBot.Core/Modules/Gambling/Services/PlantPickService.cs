@@ -70,7 +70,7 @@ namespace NadekoBot.Modules.Gambling.Services
                     .Include(x => x.GenerateCurrencyChannelIds)
                     .Where(x => guildIds.Contains(x.GuildId))
                     .ToList();
-                
+
                 _generationChannels = new ConcurrentHashSet<ulong>(configs
                     .SelectMany(c => c.GenerateCurrencyChannelIds.Select(obj => obj.ChannelId)));
             }
@@ -167,10 +167,10 @@ namespace NadekoBot.Modules.Gambling.Services
                     GroupCollection groups = match.Groups;
                     emojindex.Add((int)groups[0].Index);
                     Match m = rxid.Match(groups[0].Value);
-                    emojid.Add(m.Value.Substring(1,18)); 
+                    emojid.Add(m.Value.Substring(1,18));
                 }
 
-            
+
             var startx = (float)0.0;
             var starty = (float)0.0;
             var emojidx = 0;
@@ -180,7 +180,7 @@ namespace NadekoBot.Modules.Gambling.Services
             {
                 // choose font size based on the image height, so that it's visible
                 var font = _fonts.NotoSans.CreateFont(img.Height / 12, FontStyle.Bold);
-                RendererOptions renderoptions = new RendererOptions(font, new PointF(0, 0)){ 
+                RendererOptions renderoptions = new RendererOptions(font, new PointF(0, 0)){
                         FallbackFontFamilies  = new []
                         {
                          _fonts.Emojis// will be used if a particular code point doesn't exist in the font passed into the constructor. (e.g. emoji)
@@ -206,7 +206,7 @@ namespace NadekoBot.Modules.Gambling.Services
                     FontRectangle size;
 
                     // check if character is alphanumeric
-                    
+
                     if (emojindex.Contains(i)){
                         string url = $"https://cdn.discordapp.com/emojis/{emojid[emojidx]}.png";
                         byte[] imageBytes;
@@ -214,7 +214,7 @@ namespace NadekoBot.Modules.Gambling.Services
                         if (starty==0){
                             starty = size.Height + 10;
                         }
-                        using (var webClient = new WebClient()) { 
+                        using (var webClient = new WebClient()) {
                             imageBytes = webClient.DownloadData(url);
                         }
                         using (Image emojimage = Image.Load(imageBytes)){
@@ -228,7 +228,7 @@ namespace NadekoBot.Modules.Gambling.Services
                             }
                         }
                         emojidx = emojidx + 1;
-                        startx = startx-5; 
+                        startx = startx-5;
 
 
                     }else if (char.IsLetterOrDigit(currentchar) || singlechar){
@@ -236,7 +236,7 @@ namespace NadekoBot.Modules.Gambling.Services
                         font = _fonts.NotoSans.CreateFont(img.Height / 12, FontStyle.Bold);
 
                         size = TextMeasurer.Measure(currentchar.ToString(), renderoptions);
-                        
+
                         //set height of background if its unset
                         if (starty==0){
                             starty = size.Height + 10;
@@ -428,7 +428,7 @@ namespace NadekoBot.Modules.Gambling.Services
            }
             catch (Exception e)
             {
-                if sending fails, return null as message id
+               // if sending fails, return null as message id
                return null;
             }
         }
