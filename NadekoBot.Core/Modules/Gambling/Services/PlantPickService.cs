@@ -228,7 +228,6 @@ namespace NadekoBot.Modules.Gambling.Services
                             }
                         }
                         emojidx = emojidx + 1;
-                        startx = startx-5;
 
 
                     }else if (char.IsLetterOrDigit(currentchar) || singlechar){
@@ -244,14 +243,15 @@ namespace NadekoBot.Modules.Gambling.Services
                         //set background black
                         x.FillPolygon(Color.ParseHex("00000080"),
                         new PointF(startx, 0),
-                        new PointF(startx + size.Width + 5, 0),
-                        new PointF(startx + size.Width + 5, starty),
+                        new PointF(startx + size.Width, 0),
+                        new PointF(startx + size.Width, starty),
                         new PointF(startx, starty));
                         //draw character
                         x.DrawText(options,currentchar.ToString(),
                         font,
                         SixLabors.ImageSharp.Color.White,
                         new PointF(startx, 0));
+
                     }else{
                         //use emoji font
                         font = _fonts.Emojis.CreateFont(img.Height / 12, FontStyle.Bold);
@@ -265,8 +265,8 @@ namespace NadekoBot.Modules.Gambling.Services
                         //set background
                         x.FillPolygon(Color.ParseHex("00000080"),
                         new PointF(startx, 0),
-                        new PointF(startx + size.Width + 5, 0),
-                        new PointF(startx + size.Width + 5, starty),
+                        new PointF(startx + size.Width, 0),
+                        new PointF(startx + size.Width, starty),
                         new PointF(startx, starty));
                         //draw character
                         x.DrawText(options,currentstr,
@@ -276,7 +276,7 @@ namespace NadekoBot.Modules.Gambling.Services
                         i=i+1;
                     }
                     i=i+1;
-                    startx = startx + size.Width + 5;
+                    startx = startx + size.Width;
                 }
                 });
                 // return image as a stream for easy sending
