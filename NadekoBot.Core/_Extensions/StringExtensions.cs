@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 using NadekoBot.Common.Yml;
 
 namespace NadekoBot.Extensions
@@ -139,7 +140,7 @@ namespace NadekoBot.Extensions
 
         public static string Unmention(this string str) => str.Replace("@", "ම", StringComparison.InvariantCulture);
 
-        public static string SanitizeMentions(this string str, bool sanitizeRoleMentions = false,IGuild guild=null)
+        public static string SanitizeMentions(this string str, bool sanitizeRoleMentions = false,SocketGuild guild=null)
         { 
             if (guild == null){
             str = str.Replace("@everyone", "@everyοne", StringComparison.InvariantCultureIgnoreCase)
@@ -149,6 +150,27 @@ namespace NadekoBot.Extensions
 
             return str;
             }
+            Regex rx = new Regex(@"<@!?\d+>");
+            Regex rxid = new Regex(@"\d+");
+            string name;
+            // Find matches.
+            MatchCollection matches = rx.Matches(str);
+
+            // Report on each match.
+            foreach (Match match in matches)
+            {
+                GroupCollection groups = match.Groups;
+                Match m = rxid.Match(groups[0].Value);
+                var user = guild.GetUser(Convert.ToUInt64(m.Value));
+                if (user.Nickname == null){
+                   name = user.Username; 
+                }else{
+                    name = user.Nickname;
+                }
+                str = str.Replace(groups[0].Value, $"@{name}", StringComparison.InvariantCultureIgnoreCase);
+            }
+            return str;
+
         }
 
         public static string SanitizeRoleMentions(this string str,IGuild guild=null){
@@ -172,7 +194,7 @@ namespace NadekoBot.Extensions
         }
 
         public static string SanitizeAllMentions(this string str,IGuild guild=null) =>
-            str.SanitizeMentions().SanitizeRoleMentions(guild);
+            str.SanitizeMentions(false,guild as SocketGuild).SanitizeRoleMentions(guild);
 
         public static string ToBase64(this string plainText)
         {
