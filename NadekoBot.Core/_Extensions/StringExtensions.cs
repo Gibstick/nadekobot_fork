@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Discord;
 using NadekoBot.Common.Yml;
 
 namespace NadekoBot.Extensions
@@ -148,11 +149,28 @@ namespace NadekoBot.Extensions
             return str;
         }
 
-        public static string SanitizeRoleMentions(this string str) =>
-            str.Replace("<@&", "<ම&", StringComparison.InvariantCultureIgnoreCase);
+        public static string SanitizeRoleMentions(this string str,IGuild guild=null){
+        if (guild == null){
+        return str.Replace("<@&", "<ම&", StringComparison.InvariantCultureIgnoreCase);
+        }
+        Regex rx = new Regex(@"<@&\d+>");
+        Regex rxid = new Regex(@"\d+");
+        // Find matches.
+        MatchCollection matches = rx.Matches(str);
 
-        public static string SanitizeAllMentions(this string str) =>
-            str.SanitizeMentions().SanitizeRoleMentions();
+        // Report on each match.
+        foreach (Match match in matches)
+        {
+            GroupCollection groups = match.Groups;
+            Match m = rxid.Match(groups[0].Value);
+            IRole role = guild.GetRole(Convert.ToUInt64(m.Value));
+            str = str.Replace(groups[0].Value, $"@{role.Name}", StringComparison.InvariantCultureIgnoreCase);
+        }
+        return str;
+        }
+
+        public static string SanitizeAllMentions(this string str,IGuild guild=null) =>
+            str.SanitizeMentions().SanitizeRoleMentions(guild);
 
         public static string ToBase64(this string plainText)
         {

@@ -88,11 +88,11 @@ namespace NadekoBot.Modules.Utility
                 if (CREmbed.TryParse(quote.Text, out var crembed))
                 {
                     rep.Replace(crembed);
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
+                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id}` 📣 " + crembed.PlainText?.SanitizeAllMentions(ctx.Guild) ?? "")
                         .ConfigureAwait(false);
                     return;
                 }
-                await ctx.Channel.SendMessageAsync($"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+                await ctx.Channel.SendMessageAsync($"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions(ctx.Guild)).ConfigureAwait(false);
             }
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
@@ -227,7 +227,7 @@ namespace NadekoBot.Modules.Utility
 
                 if (quotes.Any()){
                     await ctx.Channel.SendConfirmAsync(GetText("quotes_page",page+1),
-                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions(ctx.Guild)),-20} by {q.AuthorName.SanitizeAllMentions(ctx.Guild)}")))
                         .ConfigureAwait(false);
                 }
                 else{
@@ -259,18 +259,18 @@ namespace NadekoBot.Modules.Utility
                     return;
                 }
 
-                var infoText = $"`#{quote.Id} added by {quote.AuthorName.SanitizeAllMentions()}` 🗯️ " + quote.Keyword.ToLowerInvariant().SanitizeAllMentions() + ":\n";
+                var infoText = $"`#{quote.Id} added by {quote.AuthorName.SanitizeAllMentions(ctx.Guild)}` 🗯️ " + quote.Keyword.ToLowerInvariant().SanitizeAllMentions(ctx.Guild) + ":\n";
 
                 if (CREmbed.TryParse(quote.Text, out var crembed))
                 {
                     rep.Replace(crembed);
 
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), infoText + crembed.PlainText?.SanitizeAllMentions())
+                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), infoText + crembed.PlainText?.SanitizeAllMentions(ctx.Guild))
                         .ConfigureAwait(false);
                 }
                 else
                 {
-                    await ctx.Channel.SendMessageAsync(infoText + rep.Replace(quote.Text)?.SanitizeAllMentions())
+                    await ctx.Channel.SendMessageAsync(infoText + rep.Replace(quote.Text)?.SanitizeAllMentions(ctx.Guild))
                         .ConfigureAwait(false);
                 }
             }
