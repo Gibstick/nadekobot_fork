@@ -141,15 +141,16 @@ namespace NadekoBot.Extensions
         public static string Unmention(this string str) => str.Replace("@", "ම", StringComparison.InvariantCulture);
 
         public static string SanitizeMentions(this string str, bool sanitizeRoleMentions = false,SocketGuild guild=null)
-        { 
-            if (guild == null){
+        {   
             str = str.Replace("@everyone", "@everyοne", StringComparison.InvariantCultureIgnoreCase)
                      .Replace("@here", "@һere", StringComparison.InvariantCultureIgnoreCase);
-            if (sanitizeRoleMentions)
+            if (guild == null){
+                if (sanitizeRoleMentions){
                 str = str.SanitizeRoleMentions();
-
+                } 
             return str;
             }
+
             Regex rx = new Regex(@"<@!?\d+>");
             Regex rxid = new Regex(@"\d+");
             string name;
