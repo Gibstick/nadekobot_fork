@@ -51,12 +51,9 @@ namespace NadekoBot.Modules.Utility
                 }
 
                 if (quotes.Any())
-                    await ctx.Channel.EmbedAsync(new EmbedBuilder()
-                    .WithOkColor()
-                    .WithTitle(GetText("quotes_page", page + 1))
-                    .AddField(efb => efb.WithName("Id").WithValue(string.Join("\n", quotes.Select(q => $"`#{q.Id}`"))).WithIsInline(true))
-                    .AddField(efb => efb.WithName("KeyWord").WithValue(string.Join("\n", quotes.Select(q => $"{Format.Bold(q.Keyword.SanitizeAllMentions()),-20}"))).WithIsInline(true))
-                    .AddField(efb => efb.WithName("Author").WithValue(string.Join("\n", quotes.Select(q => $"{q.AuthorName.SanitizeAllMentions()}"))).WithIsInline(true))).ConfigureAwait(false);
+                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page", page + 1),
+                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                        .ConfigureAwait(false);
                 else
                     await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
             }
@@ -199,12 +196,9 @@ namespace NadekoBot.Modules.Utility
                 }
 
                 if (quotes.Any()){
-                    await ctx.Channel.EmbedAsync(new EmbedBuilder()
-                    .WithOkColor()
-                    .WithTitle(GetText("quotes_page", 1))
-                    .AddField(efb => efb.WithName("Id").WithValue(string.Join("\n", quotes.Select(q => $"`#{q.Id}`"))).WithIsInline(true))
-                    .AddField(efb => efb.WithName("KeyWord").WithValue(string.Join("\n", quotes.Select(q => $"{Format.Bold(q.Keyword.SanitizeAllMentions()),-20}"))).WithIsInline(true))
-                    .AddField(efb => efb.WithName("Author").WithValue(string.Join("\n", quotes.Select(q => $"{q.AuthorName.SanitizeAllMentions()}"))).WithIsInline(true))).ConfigureAwait(false);
+                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page",1),
+                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                        .ConfigureAwait(false);
                 }
                 else{
                     await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
@@ -232,12 +226,9 @@ namespace NadekoBot.Modules.Utility
                 }
 
                 if (quotes.Any()){
-                    await ctx.Channel.EmbedAsync(new EmbedBuilder()
-                    .WithOkColor()
-                    .WithTitle(GetText("quotes_page", page + 1))
-                    .AddField(efb => efb.WithName("Id").WithValue(string.Join("\n", quotes.Select(q => $"`#{q.Id}`"))).WithIsInline(true))
-                    .AddField(efb => efb.WithName("KeyWord").WithValue(string.Join("\n", quotes.Select(q => $"{Format.Bold(q.Keyword.SanitizeAllMentions()),-20}"))).WithIsInline(true))
-                    .AddField(efb => efb.WithName("Author").WithValue(string.Join("\n", quotes.Select(q => $"{q.AuthorName.SanitizeAllMentions()}"))).WithIsInline(true))).ConfigureAwait(false);
+                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page",page+1),
+                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                        .ConfigureAwait(false);
                 }
                 else{
                     await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
