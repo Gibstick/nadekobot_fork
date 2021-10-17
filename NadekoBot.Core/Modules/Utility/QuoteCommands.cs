@@ -364,7 +364,7 @@ namespace NadekoBot.Modules.Utility
                         Uri uriResult;
                         bool result = Uri.TryCreate(q.Text, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
                         if (!result) {
-                            return;
+                            continue;
                         }
                         using (var _http = _httpFactory.CreateClient("QuotesClient")) {
                             //check if link is dead
