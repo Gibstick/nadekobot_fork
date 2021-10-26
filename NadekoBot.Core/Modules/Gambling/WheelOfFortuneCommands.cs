@@ -54,18 +54,7 @@ namespace NadekoBot.Modules.Gambling
                 var fileName = $"data/images/wheel/wheel_{result.Index}.png";
                 var embed = new EmbedBuilder().WithOkColor().WithDescription(Format.Bold($@"{ctx.User.ToString()} won: {result.Amount + CurrencySign}"));
                 embed.WithImageUrl($"attachment://{fileName}"); 
-                //{
-                //  ImageUrl = $"attachment://{fileName}"
-                //}.Build();
                 await Context.Channel.SendFileAsync(fileName, embed: embed.Build());
-//                 await ctx.Channel.SendConfirmAsync(
-// Format.Bold($@"{ctx.User.ToString()} won: {result.Amount + CurrencySign}
-
-//    『{wofMultipliers[1]}』   『{wofMultipliers[0]}』   『{wofMultipliers[7]}』
-
-// 『{wofMultipliers[2]}』      {_emojis[result.Index]}      『{wofMultipliers[6]}』
-
-//      『{wofMultipliers[3]}』   『{wofMultipliers[4]}』   『{wofMultipliers[5]}』")).ConfigureAwait(false);
              } 
         }
     }
