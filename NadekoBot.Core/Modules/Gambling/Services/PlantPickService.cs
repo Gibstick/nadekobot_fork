@@ -183,9 +183,12 @@ namespace NadekoBot.Modules.Gambling.Services
                 RendererOptions renderoptions = new RendererOptions(font, new PointF(0, 0)){
                         FallbackFontFamilies  = new []
                         {
-                         _fonts.Emojis// will be used if a particular code point doesn't exist in the font passed into the constructor. (e.g. emoji)
+                         _fonts.Emojis,
+                         _fonts.NotoSans,
+                         _fonts.FreeSerif// will be used if a particular code point doesn't exist in the font passed into the constructor. (e.g. emoji)
                         }};
-                var options = new TextGraphicsOptions(new GraphicsOptions(), new TextOptions { FallbackFonts = { _fonts.Emojis} });
+                var options = new TextGraphicsOptions(new GraphicsOptions(), new TextOptions { FallbackFonts = { _fonts.Emojis,_fonts.NotoSans,
+                         _fonts.FreeSerif} });
 
 
                 //var font = _fonts.Emojis.CreateFont(img.Height / 12, FontStyle.Bold);

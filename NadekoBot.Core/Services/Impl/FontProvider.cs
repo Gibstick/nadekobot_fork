@@ -17,6 +17,7 @@ namespace NadekoBot.Core.Services.Impl
             NotoSans = _fonts.Install("data/fonts/NotoSans-Bold.ttf");
             UniSans = _fonts.Install("data/fonts/Uni Sans.ttf");
             Emojis = _fonts.Install("data/fonts/TwitterColorEmoji-SVGinOT.ttf");
+            FreeSerif = _fonts.Install("data/fonts/FreeSerif-4aeK.ttf");
 
             FallBackFonts = new List<FontFamily>();
 
@@ -53,6 +54,8 @@ namespace NadekoBot.Core.Services.Impl
         }
 
         public FontFamily UniSans { get; }
+
+        public FontFamily FreeSerif { get; }
         public FontFamily NotoSans { get; }
         public FontFamily Emojis { get; }
 
