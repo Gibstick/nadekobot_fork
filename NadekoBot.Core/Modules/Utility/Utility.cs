@@ -16,6 +16,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Common;
+using System.Net;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Formats.Png;
+using System.IO;
 using Serilog;
 
 namespace NadekoBot.Modules.Utility
@@ -301,6 +307,46 @@ namespace NadekoBot.Modules.Utility
                 await ReplyErrorLocalizedAsync("showemojis_none").ConfigureAwait(false);
             else
                 await ctx.Channel.SendMessageAsync(result.TrimTo(2000)).ConfigureAwait(false);
+        }
+
+        [NadekoCommand, Usage, Description, Aliases]
+        public async Task Giframe([Leftover] string gifurl)
+        {
+            gifurl = gifurl?.Trim() ?? "";
+
+            if (string.IsNullOrWhiteSpace(gifurl)){
+                return;
+            }
+            try
+            {
+            byte[] imageBytes;
+            ImageFrameCollection imgframe;
+            using (var webClient = new WebClient()) {
+                imageBytes = webClient.DownloadData(gifurl);
+            }
+
+            using (SixLabors.ImageSharp.Image img = SixLabors.ImageSharp.Image.Load(imageBytes)){
+                imgframe = img.Frames;
+                
+                int framecount = imgframe.Count;
+                var rng = new NadekoRandom();
+                int idx = rng.Next(framecount);
+                var singleframe = imgframe.ExportFrame(idx);
+                using (MemoryStream ms = new MemoryStream()){
+                singleframe.SaveAsPng(ms, new PngEncoder()
+                {
+                    ColorType = PngColorType.RgbWithAlpha,
+                    CompressionLevel = PngCompressionLevel.BestCompression
+                });
+                ms.Position = 0;
+                await ctx.Channel.SendFileAsync(ms, $"img.png", ctx.User.Mention).ConfigureAwait(false);
+                }
+            }
+            }
+            catch (System.Exception)
+            {
+                return; 
+            }
         }
 
         [NadekoCommand, Usage, Description, Aliases]
