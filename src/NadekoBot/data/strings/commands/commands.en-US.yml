@@ -2066,3 +2066,7 @@ quotedeletelinks:
   desc: "Deletes dead links"
   args:
     - ""
+giframe:
+  desc: "Gets random frame from image"
+  args:
+    - "Gifurl"
