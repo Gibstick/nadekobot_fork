@@ -658,8 +658,7 @@ namespace NadekoBot.Modules.Searches
 
             await ctx.Channel.EmbedAsync(new EmbedBuilder().WithOkColor()
                 .AddField(efb => efb.WithName("Username").WithValue(usr.ToString()).WithIsInline(false))
-                .AddField(efb => efb.WithName("Avatar Url").WithValue(avatarUrl).WithIsInline(false))
-                .WithThumbnailUrl(avatarUrl.ToString()), ctx.User.Mention).ConfigureAwait(false);
+                .WithImageUrl(avatarUrl.ToString()),ctx.User.Mention).ConfigureAwait(false);
         }
         
         // done in 3.0
