@@ -40,6 +40,8 @@ namespace NadekoBot
         public CommandService CommandService { get; }
 
         private readonly DbService _db;
+
+        private readonly DbReadOnlyService _dbro;
         public ImmutableArray<GuildConfig> AllGuildConfigs { get; private set; }
 
         /* Will have to be removed soon, it's been way too long */
@@ -74,10 +76,12 @@ namespace NadekoBot
             Cache = new RedisCache(Credentials, shardId);
             LinqToDBForEFTools.Initialize();
             _db = new DbService(Credentials);
+            _dbro = new DbReadOnlyService(Credentials);
 
             if (shardId == 0)
             {
                 _db.Setup();
+                _dbro.Setup();
             }
 
             Client = new DiscordSocketClient(new DiscordSocketConfig
@@ -153,6 +157,7 @@ namespace NadekoBot
             var s = new ServiceCollection()
                 .AddSingleton<IBotCredentials>(Credentials)
                 .AddSingleton(_db)
+                .AddSingleton(_dbro)
                 .AddSingleton(Client)
                 .AddSingleton(CommandService)
                 .AddSingleton(this)
