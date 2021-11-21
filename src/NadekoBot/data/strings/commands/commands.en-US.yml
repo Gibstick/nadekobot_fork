@@ -2070,3 +2070,7 @@ giframe:
   desc: "Gets random frame from image"
   args:
     - "Gifurl"
+sqlselectquery:
+  desc: "Query internal database using read only sql commands"
+  args:
+    -  "Select * from table limit 1;"

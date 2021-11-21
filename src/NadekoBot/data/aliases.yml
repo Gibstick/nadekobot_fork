@@ -1255,3 +1255,5 @@ quotedeletelinks:
   - quotedeletelinks
 giframe:
   - giframe
+sqlselectquery:
+  - sqlselectquery
