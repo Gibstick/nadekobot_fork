@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Discord;
 using NadekoBot.Core.Modules.Utility.Services;
 using System.Linq;
+using Serilog;
 
-#if !GLOBAL_NADEKO
 namespace NadekoBot.Modules.Utility
 {
     public partial class Utility
@@ -16,14 +16,12 @@ namespace NadekoBot.Modules.Utility
         {
 
             [NadekoCommand, Usage, Description, Aliases]
-            public Task SqlSelectQuery([Leftover]string sql)
+            public async Task SqlSelectQuery([Leftover]string sql)
             {
+ 
                 try{
-                var result = _service.SelectSql(sql);
-                }catch{
-                    return;
-                }
-                return ctx.SendPaginatedConfirmAsync(0, (cur) =>
+                   var result = _service.SelectSql(sql);
+                   await ctx.SendPaginatedConfirmAsync(0, (cur) =>
                 {
                     var items = result.Results.Skip(cur * 20).Take(20);
 
@@ -42,9 +40,11 @@ namespace NadekoBot.Modules.Utility
                         .WithDescription(string.Join('\n', items.Select(x => string.Join(" ║ ", x))));
 
                 }, result.Results.Count, 20);
+                }catch (Exception e){
+                    await ctx.Channel.SendErrorAsync(e.Message);
+                }
             }
 
         }
     }
 }
-#endif
