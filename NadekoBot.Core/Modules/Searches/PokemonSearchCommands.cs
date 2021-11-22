@@ -42,8 +42,9 @@ namespace NadekoBot.Modules.Searches
                 string desc = await _service.GetPokemonDescription(pok);
                 string thumbnail = await _service.GetPokemonThumbnail(pok);
                 var poktypes = await _service.GetPokemonTypes(pok);
-                int height = pok.Height/10;
-                int weight = pok.Weight/10;
+                // Convert weird units from API
+                double height = pok.Height/10.0;
+                double weight = pok.Weight/10.0;
                 var abilities = await _service.GetPokemonAbilites(pok);
                 await ctx.Channel.EmbedAsync(new EmbedBuilder().WithOkColor()
                             .WithTitle(pokemon.ToTitleCase())
