@@ -2074,3 +2074,7 @@ sqlselectquery:
   desc: "Query internal database using read only sql commands"
   args:
     -  "Select * from table limit 1;"
+piechart:
+  desc: "Create a pie chart by specifying values, labels and title"
+  args:
+    - "1,2,3 a,b,c Sample Title"
