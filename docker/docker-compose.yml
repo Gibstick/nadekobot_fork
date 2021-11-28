@@ -2,6 +2,7 @@ version: "3.5"
 
 services:
   nadeko:
+    image: ghcr.io/gibstick/nadekobot_fork:latest
     build:
       context: ../
       dockerfile: docker/Dockerfile
