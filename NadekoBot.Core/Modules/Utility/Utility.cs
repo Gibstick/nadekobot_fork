@@ -349,6 +349,28 @@ namespace NadekoBot.Modules.Utility
             }
         }
 
+               [NadekoCommand, Usage, Description, Aliases]
+        public async Task Piechart(string values,string labels,[Leftover]string title)
+        {
+            try{
+                var valuesdbl =Array.ConvertAll(values.Split(","),x=>Double.Parse(x));
+                var labelsarr = labels.Split(",");
+                int height = 600;
+                int width = 400;
+                var plt = new ScottPlot.Plot(height, width);
+
+                var pie = plt.AddPie(valuesdbl);
+                pie.SliceLabels = labelsarr;
+                plt.Title(title);
+                plt.Legend();
+                var bytesarr = plt.GetImageBytes();
+                MemoryStream stream = new MemoryStream(bytesarr);
+                await ctx.Channel.SendFileAsync(stream, $"img.png", ctx.User.Mention).ConfigureAwait(false);
+            } catch (Exception e){
+                    await ctx.Channel.SendErrorAsync(e.Message);
+            }
+        }
+
         [NadekoCommand, Usage, Description, Aliases]
         [OwnerOnly]
         public async Task ListServers(int page = 1)
