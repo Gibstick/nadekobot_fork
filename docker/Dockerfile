@@ -18,7 +18,7 @@ COPY src ./src
 # FIXME: the data directory is specified in the project file and therefore gets
 # copied in a publish. This means that changes in the data changes trigger a
 # full rebuild.
-RUN dotnet publish -c release -o /app --no-restore /restore
+RUN dotnet publish -c release -o /app
 
 # Set up runtime container
 FROM mcr.microsoft.com/dotnet/runtime:3.1
