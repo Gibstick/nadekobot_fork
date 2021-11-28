@@ -9,7 +9,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push Docker image to GitHub Packages
+    name: Docker Build
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -44,3 +44,5 @@ jobs:
           tags: |
             ghcr.io/gibstick/nadekobot_fork:${{ env.GITHUB_SHA_SHORT}}
             ghcr.io/gibstick/nadekobot_fork:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
