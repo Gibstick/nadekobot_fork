@@ -1257,5 +1257,3 @@ giframe:
   - giframe
 sqlselectquery:
   - sqlselectquery
-piechart:
-  -  piechart
