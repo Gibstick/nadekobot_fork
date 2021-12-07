@@ -1259,3 +1259,5 @@ sqlselectquery:
   - sqlselectquery
 piechart:
   - piechart
+piecolors:
+  - piecolors
