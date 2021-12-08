@@ -14,6 +14,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Drawing;
+using DrawingColor = System.Drawing.Color;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Common;
 using System.Net;
@@ -349,8 +351,8 @@ namespace NadekoBot.Modules.Utility
             }
         }
 
-               [NadekoCommand, Usage, Description, Aliases]
-        public async Task Piechart(string values,string labels,[Leftover]string title)
+        [NadekoCommand, Usage, Description, Aliases]
+        public async Task Piechart(string values,string labels,string title, string colors = null)
         {
             try{
                 var valuesdbl =Array.ConvertAll(values.Split(","),x=>Double.Parse(x));
@@ -363,6 +365,10 @@ namespace NadekoBot.Modules.Utility
                 pie.SliceLabels = labelsarr;
                 plt.Title(title);
                 plt.Legend();
+                if (colors != null){
+                    var colorsarr = Array.ConvertAll(colors.Split(","),x=>DrawingColor.FromName(x));
+                    pie.SliceFillColors = colorsarr;
+                }
                 var bytesarr = plt.GetImageBytes();
                 MemoryStream stream = new MemoryStream(bytesarr);
                 await ctx.Channel.SendFileAsync(stream, $"img.png", ctx.User.Mention).ConfigureAwait(false);
@@ -370,6 +376,20 @@ namespace NadekoBot.Modules.Utility
                     await ctx.Channel.SendErrorAsync(e.Message);
             }
         }
+
+        [NadekoCommand, Usage, Description, Aliases]
+        public async Task Piecolors(){
+            await ctx.SendPaginatedConfirmAsync(0, (cur)=>
+            {
+                var enumnames = Enum.GetNames(typeof(KnownColor));
+                return  new EmbedBuilder()
+                        .WithOkColor()
+                        .WithTitle("Colors for Pie Chart")
+                        .WithDescription(String.Join("\n",enumnames.Skip(cur*20).Take(20)));
+
+            }, Enum.GetNames(typeof(KnownColor)).Length,20);
+        }
+
 
         [NadekoCommand, Usage, Description, Aliases]
         [OwnerOnly]

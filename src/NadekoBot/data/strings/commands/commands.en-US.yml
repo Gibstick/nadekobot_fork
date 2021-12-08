@@ -2075,6 +2075,11 @@ sqlselectquery:
   args:
     -  "Select * from table limit 1;"
 piechart:
-  desc: "Creates a pie chart given slices labels and title"
+  desc: "Creates a pie chart given slices, labels, title and optional colors. To see all valid colors run piecolors command"
   args:
     -  "1,2,3 a,b,c test"
+    -  "1,2,3 a,b,c test red,blue,yellow"
+piecolors:
+  desc: "Shows valid color for pie chart"
+  args:
+    -  ""
