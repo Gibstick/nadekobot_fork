@@ -43,19 +43,29 @@ namespace NadekoBot.Modules.Utility
                 page -= 1;
                 if (page < 0)
                     return;
-
+                int quotecount;
+                using (var uow = _db.GetDbContext()){
+                    quotecount = uow.Quotes.GetGroupCount(ctx.Guild.Id);
+                }
+                await ctx.SendPaginatedConfirmAsync(page,(cur)=>{
                 IEnumerable<Quote> quotes;
                 using (var uow = _db.GetDbContext())
                 {
-                    quotes = uow.Quotes.GetGroup(ctx.Guild.Id, page, order);
+                    quotes = uow.Quotes.GetGroup(ctx.Guild.Id, cur, order);
                 }
 
-                if (quotes.Any())
-                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page", page + 1),
-                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
-                        .ConfigureAwait(false);
-                else
-                    await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
+                if (quotes.Any()){
+                    return new EmbedBuilder()
+                    .WithOkColor()
+                    .WithDescription(string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                    .WithTitle(GetText("quotes_page", cur + 1));
+                }else{
+                    return new EmbedBuilder()
+                    .WithErrorColor()
+                    .WithDescription(Format.Bold(ctx.User.ToString()) + " " + GetText("quotes_page_none"));
+                    
+                }},quotecount,15);
+
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -181,28 +191,42 @@ namespace NadekoBot.Modules.Utility
 
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteSearchKey(string keyword)
+            public async Task QuoteSearchKey(string keyword,int page=1)
             {
+                page -= 1;
+                if (page < 0)
+                    return;
 
                 if (string.IsNullOrWhiteSpace(keyword))
                     return;
 
                 keyword = keyword.ToUpperInvariant();
+                int quotescount;
 
+                using (var uow = _db.GetDbContext()){
+                    quotescount = uow.Quotes.SearchQuoteKeywordKeyTextCount(ctx.Guild.Id,keyword);
+                }
+
+                
+                await ctx.SendPaginatedConfirmAsync(page,(cur)=>{
                 IEnumerable<Quote> quotes;
                 using (var uow = _db.GetDbContext())
                 {
-                    quotes = uow.Quotes.SearchQuoteKeywordKeyTextAsync(ctx.Guild.Id, keyword);
+                    quotes = uow.Quotes.SearchQuoteKeywordKeyTextAsync(ctx.Guild.Id, keyword,cur);
+                }
+                if (quotes.Any()){
+                    return new EmbedBuilder()
+                    .WithOkColor()
+                    .WithDescription(string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                    .WithTitle(GetText("quotes_page", cur + 1));
+                }else{
+                    return new EmbedBuilder()
+                    .WithErrorColor()
+                    .WithDescription(Format.Bold(ctx.User.ToString()) + " " + GetText("quotes_page_none"));
+                    
                 }
 
-                if (quotes.Any()){
-                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page",1),
-                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
-                        .ConfigureAwait(false);
-                }
-                else{
-                    await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
-                }
+                },quotescount,15);
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -218,21 +242,33 @@ namespace NadekoBot.Modules.Utility
                 usr = (IGuildUser)ctx.User;
                 }
 
-                
+                int quotescount;
+
+                using (var uow = _db.GetDbContext()){
+                    quotescount = uow.Quotes.SearchQuoteAuthorTextCount(ctx.Guild.Id,usr.Id);
+                }
+
+                await ctx.SendPaginatedConfirmAsync(page,(cur)=>{
                 IEnumerable<Quote> quotes;
                 using (var uow = _db.GetDbContext())
                 {
-                    quotes = uow.Quotes.SearchQuoteAuthorTextAsync(ctx.Guild.Id, usr.Id,page);
+                    quotes = uow.Quotes.SearchQuoteAuthorTextAsync(ctx.Guild.Id, usr.Id,cur);
                 }
 
                 if (quotes.Any()){
-                    await ctx.Channel.SendConfirmAsync(GetText("quotes_page",page+1),
-                            string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
-                        .ConfigureAwait(false);
+                    return new EmbedBuilder()
+                    .WithOkColor()
+                    .WithDescription(string.Join("\n", quotes.Select(q => $"`#{q.Id}` {Format.Bold(q.Keyword.SanitizeAllMentions()),-20} by {q.AuthorName.SanitizeAllMentions()}")))
+                    .WithTitle(GetText("quotes_page", cur + 1));
+                }else{
+                    return new EmbedBuilder()
+                    .WithErrorColor()
+                    .WithDescription(Format.Bold(ctx.User.ToString()) + " " + GetText("quotes_page_none"));
+                    
                 }
-                else{
-                    await ReplyErrorLocalizedAsync("quotes_page_none").ConfigureAwait(false);
-                }
+
+                },quotescount,15);
+
             }
 
             [NadekoCommand, Usage, Description, Aliases]

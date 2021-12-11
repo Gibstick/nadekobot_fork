@@ -29,6 +29,10 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             return q.Skip(15 * page).Take(15).ToArray();
         }
 
+        public int GetGroupCount(ulong guildId){
+            return _set.AsQueryable().Where(x => x.GuildId == guildId).Count();
+        }
+
         public async Task<Quote> GetRandomQuoteByKeywordAsync(ulong guildId, string keyword)
         {
             var rng = new NadekoRandom();
@@ -63,7 +67,7 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
                 .FirstOrDefault();
         }
 
-        public IEnumerable<Quote> SearchQuoteKeywordKeyTextAsync(ulong guildId, string keyword)
+        public IEnumerable<Quote> SearchQuoteKeywordKeyTextAsync(ulong guildId, string keyword,int page)
         {
             var q = _set.AsQueryable()
                 .Where(x => x.GuildId == guildId
@@ -71,8 +75,14 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
                            );
                 
             q =  q.OrderBy(x => x.Keyword);
-            return  q.Take(15).ToArray();
+            return  q.Skip(15*page).Take(15).ToArray();
             
+        }
+        public int SearchQuoteKeywordKeyTextCount(ulong guildId, string keyword){
+            return _set.AsQueryable()
+                .Where(x => x.GuildId == guildId
+                            && EF.Functions.Like(x.Keyword.ToUpper(), $"%{keyword.ToUpper()}%")
+                           ).Count();
         }
 
         public IEnumerable<Quote> SearchQuoteLinkTextAsync(ulong guildId)
@@ -95,6 +105,11 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             q =  q.OrderBy(x => x.AuthorName);
             return  q.Skip(15*page).Take(15).ToArray();
             
+        }
+        public int SearchQuoteAuthorTextCount(ulong guildId, ulong Authorid){
+            return _set.AsQueryable()
+                .Where(x => x.GuildId == guildId
+                    && x.AuthorId == Authorid).Count();
         }
 
         public void RemoveAllByKeyword(ulong guildId, string keyword)
