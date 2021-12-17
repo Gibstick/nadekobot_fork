@@ -2042,9 +2042,10 @@ purgeuser:
   args:
     - "@Oblivion"
 quotesearchkey:
-  desc: "Searches for quote using keyword 15 Per page."
+  desc: "Searches for quote using keyword 15 Per page with page argument"
   args:
     - "keyword"
+    - "keyword 1"
 randomgoose:
   desc: "Shows a random goose image from dataset"
   args:
@@ -2081,5 +2082,9 @@ piechart:
     -  "1,2,3 a,b,c test red,blue,yellow"
 piecolors:
   desc: "Shows valid color for pie chart"
+  args:
+    -  ""
+randomraccoon:
+  desc: "Shows a random raccoon from dataset"
   args:
     -  ""
