@@ -6,6 +6,7 @@ using Discord;
 using NadekoBot.Common;
 using Newtonsoft.Json;
 using System.IO;
+using YamlDotNet.Serialization;
 
 namespace NadekoBot.Core.Services.Impl
 {
@@ -17,8 +18,11 @@ namespace NadekoBot.Core.Services.Impl
         public ConcurrentDictionary<ulong, CultureInfo> GuildCultureInfos { get; }
         public CultureInfo DefaultCultureInfo => _bss.Data.DefaultLocale;
 
-        private static readonly Dictionary<string, CommandData> _commandData = JsonConvert.DeserializeObject<Dictionary<string, CommandData>>(
-                File.ReadAllText("./data/strings/commands/commands.en-US.json"));
+        public static IDeserializer _deserializer = new DeserializerBuilder().Build();
+
+        private static readonly Dictionary<string, CommandStrings> _commandData = _deserializer.Deserialize<Dictionary<string, CommandStrings>>(
+                File.ReadAllText("./data/strings/commands/commands.en-US.yml"));
+        
 
         public Localization(BotConfigService bss, NadekoBot bot, DbService db)
         {
@@ -102,16 +106,15 @@ namespace NadekoBot.Core.Services.Impl
             return info;
         }
 
-        public static CommandData LoadCommand(string key)
+        public static CommandStrings LoadCommand(string key)
         {
             _commandData.TryGetValue(key, out var toReturn);
 
             if (toReturn == null)
-                return new CommandData
+                return new CommandStrings
                 {
-                    Cmd = key,
                     Desc = key,
-                    Usage = new[] { key },
+                    Args = new[] { key },
                 };
 
             return toReturn;

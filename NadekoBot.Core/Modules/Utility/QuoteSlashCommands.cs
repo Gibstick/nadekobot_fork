@@ -1,5 +1,5 @@
 using Discord;
-using Discord.Commands;
+using Discord.Interactions;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Common.Replacements;
@@ -17,37 +17,33 @@ namespace NadekoBot.Modules.Utility
 {
     public partial class Utility
     {
-        [Group]
-        public class QuoteCommands : NadekoSubmodule
+
+        public class QuoteSlashCommands : NadekoSlashSubmodule
         {
             private readonly DbService _db;
             private readonly IHttpClientFactory _httpFactory;
 
-            public QuoteCommands(DbService db,IHttpClientFactory factory)
+            public QuoteSlashCommands(DbService db,IHttpClientFactory factory)
             {
                 _db = db;
                 _httpFactory = factory;
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.Guild)]
-            [Priority(1)]
-            public Task ListQuotes(OrderType order = OrderType.Keyword)
-                => ListQuotes(1, order);
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            [Priority(0)]
-            public async Task ListQuotes(int page = 1, OrderType order = OrderType.Keyword)
+            public async Task ListQuotes([Summary("page","page number")][MinValue(1)]int page = 1,
+            [Summary("order","Sorting Column")] OrderType order = OrderType.Keyword)
             {
                 page -= 1;
                 if (page < 0)
                     return;
                 int quotecount;
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext()){
                     quotecount = uow.Quotes.GetGroupCount(ctx.Guild.Id);
                 }
-                await ctx.SendPaginatedConfirmAsync(page,(cur)=>{
+                await ctx.SendScrollingButtonAsync(page,(cur)=>{
                 IEnumerable<Quote> quotes;
                 using (var uow = _db.GetDbContext())
                 {
@@ -68,9 +64,9 @@ namespace NadekoBot.Modules.Utility
 
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuotePrint([Leftover] string keyword)
+            public async Task QuotePrint([Summary("keyword","Name of the quote")]string keyword)
             {
                 if (string.IsNullOrWhiteSpace(keyword))
                     return;
@@ -78,6 +74,7 @@ namespace NadekoBot.Modules.Utility
                 keyword = keyword.ToUpperInvariant();
 
                 Quote quote;
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
                 {
                     quote = await uow.Quotes.GetRandomQuoteByKeywordAsync(ctx.Guild.Id, keyword);
@@ -88,8 +85,10 @@ namespace NadekoBot.Modules.Utility
                     //}
                 }
 
-                if (quote == null)
+                if (quote == null){
+                    await ReplyErrorLocalizedAsync("quotes_notfound_key");
                     return;
+                }
 
                 var rep = new ReplacementBuilder()
                     .WithDefault(Context)
@@ -98,26 +97,30 @@ namespace NadekoBot.Modules.Utility
                 if (CREmbed.TryParse(quote.Text, out var crembed))
                 {
                     rep.Replace(crembed);
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
+                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
                         .ConfigureAwait(false);
                     return;
                 }
-                await ctx.Channel.SendMessageAsync($"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+                await ctx.Interaction.ModifyOriginalResponseAsync(x=>x.Content = $"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
             }
-            [NadekoCommand, Usage, Description, Aliases]
+
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
             public async Task QuoteRandom()
             {
             
             
                 Quote quote;
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
                 {
                     quote = await uow.Quotes.GetRandomQuoteAsync(ctx.Guild.Id);
                 }
 
-                if (quote == null)
+                if (quote == null){
+                    await ReplyErrorLocalizedAsync("quote_no_found_id");
                     return;
+                }
 
                 var rep = new ReplacementBuilder()
                     .WithDefault(Context)
@@ -126,18 +129,21 @@ namespace NadekoBot.Modules.Utility
                 if (CREmbed.TryParse(quote.Text, out var crembed))
                 {
                     rep.Replace(crembed);
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
+                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
                         .ConfigureAwait(false);
                     return;
                 }
-                await ctx.Channel.SendMessageAsync($"`#{quote.Id} {quote.Keyword}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+                await ctx.Interaction.ModifyOriginalResponseAsync(x=>{
+                    x.Content = $"`#{quote.Id} {quote.Keyword}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions();
+                }).ConfigureAwait(false);
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteShow(int id)
+            public async Task QuoteShow([Summary("id","Quote Id number")][MinValue(1)]int id)
             {
                 Quote quote;
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
                 {
                     quote = uow.Quotes.GetById(id);
@@ -146,13 +152,12 @@ namespace NadekoBot.Modules.Utility
                         return;
                     }
                 }
-
                 await ShowQuoteData(quote);
             }
 
             private async Task ShowQuoteData(Quote data)
             {
-                await ctx.Channel.EmbedAsync(new EmbedBuilder()
+                await ctx.Interaction.EmbedAsync(new EmbedBuilder()
                     .WithOkColor()
                     .WithTitle(GetText("quote_id", $"#{data.Id}"))
                     .AddField(efb => efb.WithName(GetText("trigger")).WithValue(data.Keyword))
@@ -163,9 +168,10 @@ namespace NadekoBot.Modules.Utility
                 ).ConfigureAwait(false);
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteSearch(string keyword, [Leftover] string text)
+            public async Task QuoteSearch([Summary("keyword","Quote keyword")]string keyword,
+             [Summary("text","Searching text")] string text)
             {
                 if (string.IsNullOrWhiteSpace(keyword) || string.IsNullOrWhiteSpace(text))
                     return;
@@ -173,21 +179,26 @@ namespace NadekoBot.Modules.Utility
                 keyword = keyword.ToUpperInvariant();
 
                 Quote keywordquote;
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
                 {
                     keywordquote = await uow.Quotes.SearchQuoteKeywordTextAsync(ctx.Guild.Id, keyword, text);
                 }
 
-                if (keywordquote == null)
+                if (keywordquote == null){
+                    await ReplyErrorLocalizedAsync("quotes_notfound_key");
                     return;
 
-                await ctx.Channel.SendMessageAsync($"`#{keywordquote.Id}` 💬 " + keyword.ToLowerInvariant() + ":  " +
+                }
+
+                await ctx.Interaction.ModifyOriginalResponseAsync(x=> x.Content = $"`#{keywordquote.Id}` 💬 " + keyword.ToLowerInvariant() + ":  " +
                                                        keywordquote.Text.SanitizeAllMentions()).ConfigureAwait(false);
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteSearchKey(string keyword,int page=1)
+            public async Task QuoteSearchKey([Summary("keyword","quote keyword")]string keyword,
+            [Summary("page","search results page")][MinValue(1)]int page=1)
             {
                 page -= 1;
                 if (page < 0)
@@ -198,13 +209,13 @@ namespace NadekoBot.Modules.Utility
 
                 keyword = keyword.ToUpperInvariant();
                 int quotescount;
-
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext()){
                     quotescount = uow.Quotes.SearchQuoteKeywordKeyTextCount(ctx.Guild.Id,keyword);
                 }
 
                 
-                await ctx.SendPaginatedConfirmAsync(page,(cur)=>{
+                await ctx.SendScrollingButtonAsync(page,(cur)=>{
                 IEnumerable<Quote> quotes;
                 using (var uow = _db.GetDbContext())
                 {
@@ -225,9 +236,10 @@ namespace NadekoBot.Modules.Utility
                 },quotescount,15);
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteAuthor(IGuildUser usr = null,int page =1)
+            public async Task QuoteAuthor([Summary("user","Author of quotes")]IGuildUser usr = null,
+            [Summary("page","page number")][MinValue(1)]int page =1)
             {
                 --page;
                 if (page <0){
@@ -239,12 +251,12 @@ namespace NadekoBot.Modules.Utility
                 }
 
                 int quotescount;
-
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext()){
                     quotescount = uow.Quotes.SearchQuoteAuthorTextCount(ctx.Guild.Id,usr.Id);
                 }
 
-                await ctx.SendPaginatedConfirmAsync(page,(cur)=>{
+                await ctx.SendScrollingButtonAsync(page,(cur)=>{
                 IEnumerable<Quote> quotes;
                 using (var uow = _db.GetDbContext())
                 {
@@ -267,9 +279,9 @@ namespace NadekoBot.Modules.Utility
 
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteId(int id)
+            public async Task QuoteId([Summary("id","Quote id")][MinValue(1)]int id)
             {
                 if (id < 0)
                     return;
@@ -279,7 +291,7 @@ namespace NadekoBot.Modules.Utility
                 var rep = new ReplacementBuilder()
                     .WithDefault(Context)
                     .Build();
-
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
                 {
                     quote = uow.Quotes.GetById(id);
@@ -287,7 +299,7 @@ namespace NadekoBot.Modules.Utility
 
                 if (quote is null || quote.GuildId != ctx.Guild.Id)
                 {
-                    await ctx.Channel.SendErrorAsync(GetText("quotes_notfound")).ConfigureAwait(false);
+                    await ctx.Interaction.SendErrorAsync(GetText("quotes_notfound")).ConfigureAwait(false);
                     return;
                 }
 
@@ -297,19 +309,19 @@ namespace NadekoBot.Modules.Utility
                 {
                     rep.Replace(crembed);
 
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), infoText + crembed.PlainText?.SanitizeAllMentions())
+                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), infoText + crembed.PlainText?.SanitizeAllMentions())
                         .ConfigureAwait(false);
                 }
                 else
                 {
-                    await ctx.Channel.SendMessageAsync(infoText + rep.Replace(quote.Text)?.SanitizeAllMentions())
+                    await ctx.Interaction.ModifyOriginalResponseAsync(x=>x.Content=infoText + rep.Replace(quote.Text)?.SanitizeAllMentions())
                         .ConfigureAwait(false);
                 }
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteAdd(string keyword, [Leftover] string text)
+            public async Task QuoteAdd([Summary("keyword","Name of quote")]string keyword, [Summary("text","Content of Quote")] string text)
             {
                 if (string.IsNullOrWhiteSpace(keyword) || string.IsNullOrWhiteSpace(text))
                     return;
@@ -317,12 +329,13 @@ namespace NadekoBot.Modules.Utility
                 keyword = keyword.ToUpperInvariant();
             
                 Quote q;
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
                 {
                     uow.Quotes.Add(q = new Quote
                     {
-                        AuthorId = ctx.Message.Author.Id,
-                        AuthorName = ctx.Message.Author.Username,
+                        AuthorId = ctx.User.Id,
+                        AuthorName = ctx.User.Username,
                         GuildId = ctx.Guild.Id,
                         Keyword = keyword,
                         Text = text,
@@ -332,19 +345,20 @@ namespace NadekoBot.Modules.Utility
                 await ReplyConfirmLocalizedAsync("quote_added_new", Format.Code(q.Id.ToString())).ConfigureAwait(false);
             }
 
-            [NadekoCommand, Usage, Description, Aliases]
+            [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuoteDelete(int id)
+            public async Task QuoteDelete([Summary("id","quote id")]int id)
             {
-                var isAdmin = ((IGuildUser)ctx.Message.Author).GuildPermissions.Administrator;
+                var isAdmin = ((IGuildUser)ctx.User).GuildPermissions.Administrator;
 
                 var success = false;
                 string response;
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
                 {
                     var q = uow.Quotes.GetById(id);
 
-                    if ((q?.GuildId != ctx.Guild.Id) || (!isAdmin && q.AuthorId != ctx.Message.Author.Id))
+                    if ((q?.GuildId != ctx.Guild.Id) || (!isAdmin && q.AuthorId != ctx.User.Id))
                     {
                         response = GetText("quotes_remove_none");
                     }
@@ -357,85 +371,9 @@ namespace NadekoBot.Modules.Utility
                     }
                 }
                 if (success)
-                    await ctx.Channel.SendConfirmAsync(response).ConfigureAwait(false);
+                    await ctx.Interaction.SendConfirmAsync(response).ConfigureAwait(false);
                 else
-                    await ctx.Channel.SendErrorAsync(response).ConfigureAwait(false);
-            }
-
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.Administrator)]
-            public async Task QuoteDeleteAuthor(IGuildUser usr)
-            {
-                
-                using (var uow = _db.GetDbContext())
-                {
-                    uow.Quotes.RemoveAllByAuthor(ctx.Guild.Id, usr.Id);
-                    await uow.SaveChangesAsync();
-        
-                }
-                var text = $"Deleted all quotes from {Format.Bold(usr.Username.SanitizeAllMentions())}";
-                await ctx.Channel.SendConfirmAsync(Format.Bold(ctx.User.ToString()) + " " + text);
-            }
-
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.Administrator)]
-            public async Task QuoteDeleteLinks()
-            {
-                int badlinks = 0;
-                //get all links from database
-                IEnumerable<Quote> quotes;
-                using (var uow = _db.GetDbContext())
-                {
-                    quotes = uow.Quotes.SearchQuoteLinkTextAsync(ctx.Guild.Id);
-
-
-                    foreach(var q in quotes){
-                        // check if valid url
-                        Uri uriResult;
-                        bool result = Uri.TryCreate(q.Text, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-                        if (!result) {
-                            continue;
-                        }
-                        using (var _http = _httpFactory.CreateClient("QuotesClient")) {
-                            //check if link is dead
-                            try {
-                                await _http.GetStringAsync(q.Text);
-                            }
-                            catch (HttpRequestException ex) {
-                                uow.Quotes.Remove(q);
-                                await uow.SaveChangesAsync();
-                                badlinks = badlinks+1;
-                            }
-                        }
-                    }
-                }
-
-                await ctx.Channel.SendConfirmAsync(Format.Bold(ctx.User.ToString()) + " " + $"Successfully removed {badlinks.ToString()} dead links");
-            }
-
-
-
-
-            [NadekoCommand, Usage, Description, Aliases]
-            [RequireContext(ContextType.Guild)]
-            [UserPerm(GuildPerm.Administrator)]
-            public async Task DelAllQuotes([Leftover] string keyword)
-            {
-                if (string.IsNullOrWhiteSpace(keyword))
-                    return;
-
-                keyword = keyword.ToUpperInvariant();
-
-                using (var uow = _db.GetDbContext())
-                {
-                    uow.Quotes.RemoveAllByKeyword(ctx.Guild.Id, keyword.ToUpperInvariant());
-
-                    await uow.SaveChangesAsync();
-                }
-
-                await ReplyConfirmLocalizedAsync("quotes_deleted", Format.Bold(keyword.SanitizeAllMentions())).ConfigureAwait(false);
+                    await ctx.Interaction.SendErrorAsync(response).ConfigureAwait(false);
             }
         }
     }

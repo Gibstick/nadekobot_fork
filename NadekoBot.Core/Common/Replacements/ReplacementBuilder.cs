@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using NadekoBot.Extensions;
 using NadekoBot.Modules.Administration.Services;
@@ -34,7 +35,8 @@ namespace NadekoBot.Common.Replacements
 
         public ReplacementBuilder WithDefault(ICommandContext ctx) =>
             WithDefault(ctx.User, ctx.Channel, ctx.Guild as SocketGuild, (DiscordSocketClient)ctx.Client);
-
+        public ReplacementBuilder WithDefault(IInteractionContext ctx) =>
+            WithDefault(ctx.User, ctx.Channel, ctx.Guild as SocketGuild, (DiscordSocketClient)ctx.Client);
         public ReplacementBuilder WithMention(DiscordSocketClient client)
         {
             /*OBSOLETE*/

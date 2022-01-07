@@ -1,6 +1,7 @@
-﻿using Discord;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
 using NadekoBot.Common;
 using NadekoBot.Common.ShardCom;
@@ -38,6 +39,8 @@ namespace NadekoBot
         public BotCredentials Credentials { get; }
         public DiscordSocketClient Client { get; }
         public CommandService CommandService { get; }
+
+        public InteractionService InteractionService { get; } 
 
         private readonly DbService _db;
 
@@ -91,14 +94,17 @@ namespace NadekoBot
                 ConnectionTimeout = int.MaxValue,
                 TotalShards = Credentials.TotalShards,
                 ShardId = shardId,
-                AlwaysDownloadUsers = false,
-                ExclusiveBulkDelete = true,
+                AlwaysDownloadUsers = false
             });
 
             CommandService = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
-                DefaultRunMode = RunMode.Sync,
+                DefaultRunMode = Discord.Commands.RunMode.Sync,
+            });
+
+            InteractionService = new InteractionService(Client,new InteractionServiceConfig(){
+                LogLevel = LogSeverity.Warning
             });
 
             SetupShard(parentProcessId);
@@ -160,6 +166,7 @@ namespace NadekoBot
                 .AddSingleton(_dbro)
                 .AddSingleton(Client)
                 .AddSingleton(CommandService)
+                .AddSingleton(InteractionService)
                 .AddSingleton(this)
                 .AddSingleton(Cache)
                 .AddSingleton(Cache.Redis)
@@ -253,7 +260,6 @@ namespace NadekoBot
         private async Task LoginAsync(string token)
         {
             var clientReady = new TaskCompletionSource<bool>();
-
             Task SetClientReady()
             {
                 var _ = Task.Run(async () =>
@@ -301,7 +307,25 @@ namespace NadekoBot
             Client.Ready -= SetClientReady;
             Client.JoinedGuild += Client_JoinedGuild;
             Client.LeftGuild += Client_LeftGuild;
+            Client.InteractionCreated += HandleInteraction;
             Log.Information("Shard {0} logged in.", Client.ShardId);
+        }
+
+        private async Task HandleInteraction (SocketInteraction arg)
+        {
+            try
+            {
+                // Create an execution context that matches the generic type parameter of your InteractionModuleBase<T> modules
+                var ctx = new SocketInteractionContext(Client, arg);
+                await InteractionService.ExecuteCommandAsync(ctx, Services);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+
+                if(arg.Type == InteractionType.ApplicationCommand)
+                    await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
+            }
         }
 
         private Task Client_LeftGuild(SocketGuild arg)
@@ -350,13 +374,15 @@ namespace NadekoBot
             stats.Initialize();
             var commandHandler = Services.GetService<CommandHandler>();
             var CommandService = Services.GetService<CommandService>();
-
+            var IService = Services.GetService<InteractionService>();
             // start handling messages received in commandhandler
             await commandHandler.StartHandling().ConfigureAwait(false);
 
             _ = await CommandService.AddModulesAsync(this.GetType().GetTypeInfo().Assembly, Services)
                 .ConfigureAwait(false);
-
+            _ = await IService.AddModulesAsync(this.GetType().GetTypeInfo().Assembly, Services).ConfigureAwait(false);
+            // register commands globally which takes up to 1 hour to finish
+            await InteractionService.RegisterCommandsGloballyAsync();
             HandleStatusChanges();
             StartSendingData();
             Ready.TrySetResult(true);
