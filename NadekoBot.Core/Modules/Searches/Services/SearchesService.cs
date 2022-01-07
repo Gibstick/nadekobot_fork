@@ -322,7 +322,8 @@ namespace NadekoBot.Modules.Searches.Services
             Dogs,
             Cats,
             Birds,
-            Goose
+            Goose,
+            Raccoon
         }
 
         public string GetRandomImageUrl(ImageTag tag)
@@ -347,11 +348,17 @@ namespace NadekoBot.Modules.Searches.Services
                 case ImageTag.Goose:
                     max = 1000;
                     break;
+                case ImageTag.Raccoon:
+                    max=200;
+                    break;
                 default:
                     max = 100;
                     break;
             }
-            if (tag == ImageTag.Goose){
+            if (tag == ImageTag.Raccoon){
+                return $"https://raw.githubusercontent.com/datitran/raccoon_dataset/master/images/raccoon-{_rng.Next(1, max).ToString()}.jpg";
+            }
+            else if (tag == ImageTag.Goose){
                 return $"https://raw.githubusercontent.com/steggie3/goose-dataset/master/images/goose-mugshot-{_rng.Next(1, max).ToString("0000")}.jpg";
             }else{
  
