@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord.WebSocket;
+using Discord;
 using NadekoBot.Common.Collections;
 using NadekoBot.Extensions;
 using NadekoBot.Core.Services;
@@ -29,7 +30,7 @@ namespace NadekoBot.Modules.Administration.Services
             _client.GuildMemberUpdated += _client_GuildMemberUpdated;
         }
 
-        private Task _client_GuildMemberUpdated(SocketGuildUser before, SocketGuildUser after)
+        private Task _client_GuildMemberUpdated(Cacheable<SocketGuildUser, ulong> before, SocketGuildUser after)
         {
             var _ = Task.Run(async () =>
             {
@@ -41,12 +42,12 @@ namespace NadekoBot.Modules.Administration.Services
                         return;
 
                     //if the activity has changed, and is a playing activity
-                    if (before.Activity != after.Activity
-                        && after.Activity != null
-                        && after.Activity.Type == Discord.ActivityType.Playing)
+                    if (before.Value.Activities.FirstOrDefault() != after.Activities.FirstOrDefault()
+                        && after.Activities.Any()
+                        && after.Activities.FirstOrDefault().Type == Discord.ActivityType.Playing)
                     {
                         //trigger gvc
-                        await TriggerGvc(after, after.Activity.Name);
+                        await TriggerGvc(after, after.Activities.FirstOrDefault().Name);
                     }
 
                 }
@@ -92,7 +93,7 @@ namespace NadekoBot.Modules.Administration.Services
                     if (!(usr is SocketGuildUser gUser))
                         return;
 
-                    var game = gUser.Activity?.Name;
+                    var game = gUser.Activities.Where(x => x.Type == Discord.ActivityType.Playing).FirstOrDefault()?.Name;
 
                     if (oldState.VoiceChannel == newState.VoiceChannel ||
                         newState.VoiceChannel == null)

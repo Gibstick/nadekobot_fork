@@ -31,8 +31,8 @@ namespace NadekoBot.Modules.Music.Services
                 .GetProperties(BindingFlags.NonPublic | BindingFlags.Instance)
                 .First(x => x.Name == "ApiClient" && x.PropertyType.Name == "DiscordSocketApiClient");
             _dnetApiClient = prop.GetValue(_client, null);
-            _sendVoiceStateUpdateMethodInfo = _dnetApiClient.GetType().GetMethod("SendVoiceStateUpdateAsync");
-            
+            _sendVoiceStateUpdateMethodInfo = _dnetApiClient.GetType().GetMethods().Where(x => x.Name == "SendVoiceStateUpdateAsync").FirstOrDefault();
+
             _client.LeftGuild += ClientOnLeftGuild;
         }
 

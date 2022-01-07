@@ -87,7 +87,7 @@ namespace NadekoBot.Modules.CustomReactions.Extensions
 
         public static async Task<IUserMessage> Send(this CustomReaction cr, IUserMessage ctx, DiscordSocketClient client, bool sanitize)
         {
-            var channel = cr.DmResponse ? await ctx.Author.GetOrCreateDMChannelAsync().ConfigureAwait(false) : ctx.Channel;
+            var channel = cr.DmResponse ? await ctx.Author.CreateDMChannelAsync().ConfigureAwait(false) : ctx.Channel;
 
             if (CREmbed.TryParse(cr.Response, out CREmbed crembed))
             {
