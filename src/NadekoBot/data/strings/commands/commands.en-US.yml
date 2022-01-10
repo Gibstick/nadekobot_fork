@@ -2088,3 +2088,7 @@ randomraccoon:
   desc: "Shows a random raccoon from dataset"
   args:
     -  ""
+randomimage:
+  desc: "Shows a random image"
+  args:
+    -  ""
