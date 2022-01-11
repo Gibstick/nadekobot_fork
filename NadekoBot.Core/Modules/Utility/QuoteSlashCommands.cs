@@ -78,11 +78,6 @@ namespace NadekoBot.Modules.Utility
                 using (var uow = _db.GetDbContext())
                 {
                     quote = await uow.Quotes.GetRandomQuoteByKeywordAsync(ctx.Guild.Id, keyword);
-                    //if (quote != null)
-                    //{
-                    //    quote.UseCount += 1;
-                    //    uow.Complete();
-                    //}
                 }
 
                 if (quote == null){
