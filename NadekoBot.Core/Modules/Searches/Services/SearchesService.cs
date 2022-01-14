@@ -323,7 +323,8 @@ namespace NadekoBot.Modules.Searches.Services
             Cats,
             Birds,
             Goose,
-            Raccoon
+            Raccoon,
+            Image
         }
 
         public string GetRandomImageUrl(ImageTag tag)
@@ -360,11 +361,21 @@ namespace NadekoBot.Modules.Searches.Services
             }
             else if (tag == ImageTag.Goose){
                 return $"https://raw.githubusercontent.com/steggie3/goose-dataset/master/images/goose-mugshot-{_rng.Next(1, max).ToString("0000")}.jpg";
-            }else{
+            }
+            else if (tag == ImageTag.Image){
+                return $"https://picsum.photos/seed/{GetRandomString(16)}/2000";
+            }
+            else{
  
             return $"https://nadeko-pictures.nyc3.digitaloceanspaces.com/{subpath}/" +
                 _rng.Next(1, max).ToString("000") + ".png";
             }
+        }
+
+        private string GetRandomString(int length) {
+            const string chars = "abcdefghijklmnopqrstuvwxyz";
+            return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[_rng.Next(s.Length)]).ToArray());
         }
 
         public async Task<string> Translate(string langs, string text = null)

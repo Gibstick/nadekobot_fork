@@ -221,7 +221,10 @@ namespace NadekoBot.Modules.Searches
         public Task RandomGoose() => InternalRandomImage(SearchesService.ImageTag.Goose);
         
         [NadekoCommand, Usage, Description, Aliases]
-        public Task RandomRaccoon() => InternalRandomImage(SearchesService.ImageTag.Raccoon); 
+        public Task RandomRaccoon() => InternalRandomImage(SearchesService.ImageTag.Raccoon);
+
+        [NadekoCommand, Usage, Description, Aliases]
+        public Task RandomImage() => InternalRandomImage(SearchesService.ImageTag.Image);
         // done in 3.0
         private Task InternalRandomImage(SearchesService.ImageTag tag)
         {
