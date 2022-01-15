@@ -203,7 +203,7 @@ namespace NadekoBot.Modules.Administration
             {
                 user = user ?? (IGuildUser) Context.User;
                 
-                var channel = await user.GetOrCreateDMChannelAsync();
+                var channel = await user.CreateDMChannelAsync();
                 var success = await _service.GreetDmTest(channel, user);
                 if (success)
                     await Context.OkAsync();

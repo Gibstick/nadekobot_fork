@@ -485,13 +485,13 @@ namespace NadekoBot.Modules.Administration
                     if (CREmbed.TryParse(msg, out var crembed))
                     {
                         rep.Replace(crembed);
-                        await (await user.GetOrCreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(crembed)
+                        await (await user.CreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(crembed)
                             .ConfigureAwait(false);
                         await ReplyConfirmLocalizedAsync("message_sent").ConfigureAwait(false);
                         return;
                     }
 
-                    await (await user.GetOrCreateDMChannelAsync().ConfigureAwait(false)).SendMessageAsync(rep.Replace(msg).SanitizeMentions()).ConfigureAwait(false);
+                    await (await user.CreateDMChannelAsync().ConfigureAwait(false)).SendMessageAsync(rep.Replace(msg).SanitizeMentions()).ConfigureAwait(false);
                 }
                 else
                 {

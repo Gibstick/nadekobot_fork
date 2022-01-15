@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
 WORKDIR /build
 
@@ -21,7 +21,7 @@ COPY src ./src
 RUN dotnet publish -c release -o /app
 
 # Set up runtime container
-FROM mcr.microsoft.com/dotnet/runtime:3.1
+FROM mcr.microsoft.com/dotnet/runtime:5.0
 
 
 RUN apt-get update && apt-get install -y \

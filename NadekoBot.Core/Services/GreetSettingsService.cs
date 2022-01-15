@@ -57,16 +57,16 @@ namespace NadekoBot.Core.Services
             return Task.CompletedTask;
         }
 
-        private Task UserLeft(IGuildUser user)
+        private Task UserLeft(SocketGuild guild, SocketUser user)
         {
             var _ = Task.Run(async () =>
             {
                 try
                 {
-                    var conf = GetOrAddSettingsForGuild(user.GuildId);
+                    var conf = GetOrAddSettingsForGuild((user as IGuildUser).GuildId);
 
                     if (!conf.SendChannelByeMessage) return;
-                    var channel = (await user.Guild.GetTextChannelsAsync().ConfigureAwait(false)).SingleOrDefault(c => c.Id == conf.ByeMessageChannelId);
+                    var channel = (await (user as IGuildUser).Guild.GetTextChannelsAsync().ConfigureAwait(false)).SingleOrDefault(c => c.Id == conf.ByeMessageChannelId);
 
                     if (channel == null) //maybe warn the server owner that the channel is missing
                         return;
@@ -76,7 +76,7 @@ namespace NadekoBot.Core.Services
                         // if group is newly created, greet that user right away,
                         // but any user which joins in the next 5 seconds will
                         // be greeted in a group greet
-                        if (byes.CreateOrAdd(user.GuildId, user))
+                        if (byes.CreateOrAdd((user as IGuildUser).GuildId, (user as IGuildUser)))
                         {
                             // greet single user
                             await ByeUsers(conf, channel, new[] {user});
@@ -84,7 +84,7 @@ namespace NadekoBot.Core.Services
                             while(!groupClear)
                             {
                                 await Task.Delay(5000).ConfigureAwait(false);
-                                groupClear = byes.ClearGroup(user.GuildId, 5, out var toBye);
+                                groupClear = byes.ClearGroup((user as IGuildUser).GuildId, 5, out var toBye);
                                 await ByeUsers(conf, channel, toBye);
                             }
                         }
@@ -298,7 +298,7 @@ namespace NadekoBot.Core.Services
 
                     if (conf.SendDmGreetMessage)
                     {
-                        var channel = await user.GetOrCreateDMChannelAsync().ConfigureAwait(false);
+                        var channel = await user.CreateDMChannelAsync().ConfigureAwait(false);
 
                         if (channel != null)
                         {

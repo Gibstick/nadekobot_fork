@@ -169,7 +169,7 @@ namespace NadekoBot.Modules.Gambling
                         }
                         try
                         {
-                            await (await ctx.User.GetOrCreateDMChannelAsync().ConfigureAwait(false))
+                            await (await ctx.User.CreateDMChannelAsync().ConfigureAwait(false))
                                 .EmbedAsync(new EmbedBuilder().WithOkColor()
                                 .WithTitle(GetText("shop_purchase", ctx.Guild.Name))
                                 .AddField(efb => efb.WithName(GetText("item")).WithValue(item.Text).WithIsInline(false))

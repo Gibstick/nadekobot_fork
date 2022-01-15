@@ -135,7 +135,7 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
             return _embedFunc(CurrencyEvent.Type.Reaction, _opts, pot);
         }
 
-        private async Task OnMessageDeleted(Cacheable<IMessage, ulong> msg, ISocketMessageChannel _)
+        private async Task OnMessageDeleted(Cacheable<IMessage, ulong> msg, Cacheable<IMessageChannel, ulong> _)
         {
             if (msg.Id == _msg.Id)
             {
@@ -162,7 +162,7 @@ namespace NadekoBot.Core.Modules.Gambling.Common.Events
         }
 
         private Task HandleReaction(Cacheable<IUserMessage, ulong> msg,
-            ISocketMessageChannel ch, SocketReaction r)
+            Cacheable<IMessageChannel, ulong> ch, SocketReaction r)
         {
             var _ = Task.Run(() =>
             {

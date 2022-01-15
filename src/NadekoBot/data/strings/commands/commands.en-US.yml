@@ -555,11 +555,11 @@ quotesearch:
   args:
     - "keyword text"
 quoteid:
-  desc: "Displays the quote with the specified ID number. Quote ID numbers can be found by typing `{0}liqu [num]` where `[num]` is a number of a page which contains 15 quotes."
+  desc: "Displays the quote with the specified ID number. Found using listquotes or quotesearchkey"
   args:
     - "123456"
 quotedelete:
-  desc: "Deletes a quote with the specified ID. You have to be either server Administrator or the creator of the quote to delete it."
+  desc: "Deletes a quote with the specified ID. You must be either server Admin or the quote author"
   args:
     - "123456"
 draw:

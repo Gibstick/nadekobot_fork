@@ -60,7 +60,7 @@ namespace NadekoBot.Modules.Administration
                 var dmFailed = false;
                 try
                 {
-                    await (await user.GetOrCreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(new EmbedBuilder().WithErrorColor()
+                    await (await user.CreateDMChannelAsync().ConfigureAwait(false)).EmbedAsync(new EmbedBuilder().WithErrorColor()
                                      .WithDescription(GetText("warned_on", ctx.Guild.ToString()))
                                      .AddField(efb => efb.WithName(GetText("moderator")).WithValue(ctx.User.ToString()))
                                      .AddField(efb => efb.WithName(GetText("reason")).WithValue(reason ?? "-")))
@@ -432,7 +432,7 @@ namespace NadekoBot.Modules.Administration
                         var embed = _service.GetBanUserDmEmbed(Context, guildUser, defaultMessage, msg, time.Time);
                         if (!(embed is null))
                         {
-                            var userChannel = await guildUser.GetOrCreateDMChannelAsync();
+                            var userChannel = await guildUser.CreateDMChannelAsync();
                             await userChannel.EmbedAsync(embed);
                         }
                     }
@@ -499,7 +499,7 @@ namespace NadekoBot.Modules.Administration
                     var embed = _service.GetBanUserDmEmbed(Context, user, defaultMessage, msg, null);
                     if (!(embed is null))
                     {
-                        var userChannel = await user.GetOrCreateDMChannelAsync();
+                        var userChannel = await user.CreateDMChannelAsync();
                         await userChannel.EmbedAsync(embed);
                     }
                 }
@@ -575,7 +575,7 @@ namespace NadekoBot.Modules.Administration
             
             private async Task InternalBanMessageTest(string reason, TimeSpan? duration)
             {
-                var dmChannel = await ctx.User.GetOrCreateDMChannelAsync();
+                var dmChannel = await ctx.User.CreateDMChannelAsync();
                 var defaultMessage = GetText("bandm", Format.Bold(ctx.Guild.Name), reason);
                 var crEmbed = _service.GetBanUserDmEmbed(Context,
                     (IGuildUser)Context.User,

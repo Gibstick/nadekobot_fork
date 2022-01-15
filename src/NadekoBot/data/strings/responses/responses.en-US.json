@@ -808,6 +808,7 @@
   "animal_race_no_race": "This Animal Race is full!",
   "cant_read_or_send": "You can't read from or send messages to that channel.",
   "quotes_notfound": "No quotes found matching the quote ID specified.",
+  "quotes_notfound_key": "No quotes found matching the quote keyword specified.",
   "prefix_current": "Prefix on this server is {0}",
   "prefix_new": "Changed prefix on this server from {0} to {1}",
   "defprefix_current": "Default bot prefix is {0}",
