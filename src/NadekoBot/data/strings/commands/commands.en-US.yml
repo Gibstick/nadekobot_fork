@@ -984,7 +984,11 @@ urbandict:
   args:
     - "Pineapple"
 catfact:
-  desc: "Shows a random catfact from <http://catfacts-api.appspot.com/api/facts>"
+  desc: "Shows a random cat fact from <http://catfacts-api.appspot.com/api/facts>"
+  args:
+    - ""
+raccoonfact:
+  desc: "Shows a random raccoon fact from <https://some-random-api.ml/animal/raccoon>"
   args:
     - ""
 yomama:
@@ -2086,5 +2090,9 @@ piecolors:
     -  ""
 randomraccoon:
   desc: "Shows a random raccoon from dataset"
+  args:
+    -  ""
+randomimage:
+  desc: "Shows a random image"
   args:
     -  ""

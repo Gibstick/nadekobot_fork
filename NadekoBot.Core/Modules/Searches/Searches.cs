@@ -221,7 +221,10 @@ namespace NadekoBot.Modules.Searches
         public Task RandomGoose() => InternalRandomImage(SearchesService.ImageTag.Goose);
         
         [NadekoCommand, Usage, Description, Aliases]
-        public Task RandomRaccoon() => InternalRandomImage(SearchesService.ImageTag.Raccoon); 
+        public Task RandomRaccoon() => InternalRandomImage(SearchesService.ImageTag.Raccoon);
+
+        [NadekoCommand, Usage, Description, Aliases]
+        public Task RandomImage() => InternalRandomImage(SearchesService.ImageTag.Image);
         // done in 3.0
         private Task InternalRandomImage(SearchesService.ImageTag tag)
         {
@@ -561,6 +564,27 @@ namespace NadekoBot.Modules.Searches
 
                 var fact = JObject.Parse(response)["fact"].ToString();
                 await ctx.Channel.SendConfirmAsync("🐈" + GetText("catfact"), fact).ConfigureAwait(false);
+            }
+        }
+
+        [NadekoCommand, Usage, Description, Aliases]
+        public async Task Raccoonfact()
+        {
+            using (var http = _httpFactory.CreateClient())
+            {
+                var response = await http.GetStringAsync("https://some-random-api.ml/animal/raccoon").ConfigureAwait(false);
+                if (response == null)
+                    return;
+
+                var fact = JObject.Parse(response)["fact"].ToString();
+                var ImageUrl = JObject.Parse(response)["image"].ToString();
+
+                var embed = new EmbedBuilder()
+                    .WithOkColor()
+                    .WithTitle("🦝" + GetText("raccoonfact"))
+                    .WithDescription(fact)
+                    .WithImageUrl(ImageUrl);
+                await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
             }
         }
 
