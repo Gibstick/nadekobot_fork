@@ -567,6 +567,27 @@ namespace NadekoBot.Modules.Searches
             }
         }
 
+        [NadekoCommand, Usage, Description, Aliases]
+        public async Task Raccoonfact()
+        {
+            using (var http = _httpFactory.CreateClient())
+            {
+                var response = await http.GetStringAsync("https://some-random-api.ml/animal/raccoon").ConfigureAwait(false);
+                if (response == null)
+                    return;
+
+                var fact = JObject.Parse(response)["fact"].ToString();
+                var ImageUrl = JObject.Parse(response)["image"].ToString();
+
+                var embed = new EmbedBuilder()
+                    .WithOkColor()
+                    .WithTitle("🦝" + GetText("raccoonfact"))
+                    .WithDescription(fact)
+                    .WithImageUrl(ImageUrl);
+                await ctx.Channel.EmbedAsync(embed).ConfigureAwait(false);
+            }
+        }
+
         //done in 3.0
         [NadekoCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.Guild)]
