@@ -27,6 +27,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.IO;
 using NadekoBot.Modules.Administration.Services;
 using Serilog;
 using Configuration = AngleSharp.Configuration;
@@ -48,27 +49,19 @@ namespace NadekoBot.Modules.Searches
         public async Task Weather([Summary("city","name of the city")]string city,
         [Summary("country","optional name of country")]string country = "")
         {
-            if (!await ValidateQuery(ctx.Channel, city).ConfigureAwait(false))
+            if (string.IsNullOrWhiteSpace(city)){
                 return;
-            string query;
-            await ctx.Interaction.DeferAsync().ConfigureAwait(false);
-            // case for no country
-            if (country == ""){
-                query = city;
-            //lookup country code using json file
-            }else{
-                using (var _http = _httpFactory.CreateClient()){
-                    string strdata = await _http.GetStringAsync("https://datahub.io/core/country-list/r/data.json");
-                    List<CountryCode> dd = JsonConvert.DeserializeObject<List<CountryCode>>(strdata);
-                    string code = dd.Where(x=>x.Name.ToLowerInvariant()==country.ToLowerInvariant()).Select(e => e.Code).FirstOrDefault().ToString();
-                    if (code == null){
-                        query = city; 
-                    }else{
-                        query = $"{city},{code}";
-                    }
+            }
+            string query = city;
+            await ctx.Interaction.DeferAsync().ConfigureAwait(false); 
+            if (country != ""){
+                (bool valid,string code) = await ValidateCountry(country).ConfigureAwait(false);
+                if (valid){
+                    query = $"{city},{code}"; 
+                }else{
+                    return;
                 }
             }
-            
             var embed = new EmbedBuilder();
             var data = await _service.GetWeatherDataAsync(query).ConfigureAwait(false);
             if (data == null)
@@ -104,15 +97,15 @@ namespace NadekoBot.Modules.Searches
             await ctx.Interaction.EmbedAsync(embed).ConfigureAwait(false);
         }
 
-        public async Task<bool> ValidateQuery(IMessageChannel ch, string query)
+        public async Task<(bool valid,string code)> ValidateCountry(string country)
         {
-            if (!string.IsNullOrWhiteSpace(query))
-            {
-                return true;
-            }
-
-            await ErrorLocalizedAsync("specify_search_params").ConfigureAwait(false);
-            return false;
+            List<CountryCode> dd = JsonConvert.DeserializeObject<List<CountryCode>>(File.ReadAllText("data/country_codes.json"));
+            var code = dd.Where(x=>x.Name.ToLowerInvariant()==country.ToLowerInvariant()).Select(e => e.Code).FirstOrDefault();
+            if (code==null){
+                await ctx.Interaction.SendErrorAsync("Country not found. Try again with a valid country name").ConfigureAwait(false);
+                return (false,null);
+            } 
+            return (true,code);
         }
 
     }
