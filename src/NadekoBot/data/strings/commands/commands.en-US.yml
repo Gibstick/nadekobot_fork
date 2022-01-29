@@ -2097,6 +2097,6 @@ randomimage:
   args:
     -  ""
 randomimg:
-  desc: "Shows a random bird,cat,dog,raccoon or image"
+  desc: "Shows a random bird,cat,dog,raccoon,food,goose or image"
   args:
     - "Dog"

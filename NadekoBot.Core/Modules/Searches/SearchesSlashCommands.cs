@@ -31,7 +31,7 @@ namespace NadekoBot.Modules.Searches
     {
         private readonly IHttpClientFactory _httpFactory;
         private readonly GuildTimezoneService _tzSvc;
-        public SearchesSlash(IHttpClientFactory factory,GuildTimezoneService tzSvc)
+        public SearchesSlashCommands(IHttpClientFactory factory,GuildTimezoneService tzSvc)
         {
             _httpFactory = factory;
             _tzSvc = tzSvc;
