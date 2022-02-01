@@ -108,5 +108,40 @@ namespace NadekoBot.Modules.Searches
             return (true,code);
         }
 
+
+
+
+        [NadekoSlash]
+        [RequireContext(ContextType.Guild)]
+        public async Task Bible([Autocomplete(typeof(BibleAutoCompleteHandler))][Summary("book","Name of bible book")]string book,[Summary("chapterAndVerse", "Chapter and verse seperated by : (11:2)")] string chapterAndVerse)
+        {
+            
+            var obj = new BibleVerses();
+            await ctx.Interaction.DeferAsync().ConfigureAwait(false);
+            try
+            {
+                using (var http = _httpFactory.CreateClient())
+                {
+                    var res = await http
+                        .GetStringAsync("https://bible-api.com/" + book + " " + chapterAndVerse).ConfigureAwait(false);
+
+                    obj = JsonConvert.DeserializeObject<BibleVerses>(res);
+                }
+            }
+            catch
+            {
+            }
+            if (obj.Error != null || obj.Verses == null || obj.Verses.Length == 0)
+                await ctx.Interaction.SendErrorAsync(obj.Error ?? "No verse found.").ConfigureAwait(false);
+            else
+            {
+                var v = obj.Verses[0];
+                await ctx.Interaction.EmbedAsync(new EmbedBuilder()
+                    .WithOkColor()
+                    .WithTitle($"{v.BookName} {v.Chapter}:{v.Verse}")
+                    .WithDescription(v.Text)).ConfigureAwait(false);
+            }
+        }
+
     }
 }
