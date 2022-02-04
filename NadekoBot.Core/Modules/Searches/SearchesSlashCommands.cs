@@ -1,7 +1,3 @@
-using AngleSharp;
-using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
-using AngleSharp.Html.Parser;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -17,10 +13,6 @@ using NadekoBot.Modules.Searches.Common;
 using NadekoBot.Modules.Searches.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -34,12 +26,12 @@ using Configuration = AngleSharp.Configuration;
 
 namespace NadekoBot.Modules.Searches
 {
-    public partial class SearchesSlash : NadekoSlashModule<SearchesService>
+
+    public partial class SearchesSlashCommands : NadekoSlashModule<SearchesService>
     {
         private readonly IHttpClientFactory _httpFactory;
-
         private readonly GuildTimezoneService _tzSvc;
-        public SearchesSlash(IHttpClientFactory factory,GuildTimezoneService tzSvc)
+        public SearchesSlashCommands(IHttpClientFactory factory,GuildTimezoneService tzSvc)
         {
             _httpFactory = factory;
             _tzSvc = tzSvc;
@@ -107,6 +99,19 @@ namespace NadekoBot.Modules.Searches
             } 
             return (true,code);
         }
+        
+        
+        [NadekoSlash]
+        public Task RandomImg([Summary("tag","Select random image tag")]SearchesService.ImageTag tag) => InternalRandomImage(tag);
+
+        private Task InternalRandomImage(SearchesService.ImageTag tag)
+        {
+            var url = _service.GetRandomImageUrl(tag);
+            return ctx.Interaction.RespondAsync(embed:new EmbedBuilder()
+                .WithOkColor()
+                .WithImageUrl(url).Build());
+        }
+
 
 
 
@@ -145,3 +150,4 @@ namespace NadekoBot.Modules.Searches
 
     }
 }
+
