@@ -1,7 +1,3 @@
-using AngleSharp;
-using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
-using AngleSharp.Html.Parser;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -17,10 +13,6 @@ using NadekoBot.Modules.Searches.Common;
 using NadekoBot.Modules.Searches.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -34,12 +26,12 @@ using Configuration = AngleSharp.Configuration;
 
 namespace NadekoBot.Modules.Searches
 {
-    public partial class SearchesSlash : NadekoSlashModule<SearchesService>
+
+    public partial class SearchesSlashCommands : NadekoSlashModule<SearchesService>
     {
         private readonly IHttpClientFactory _httpFactory;
-
         private readonly GuildTimezoneService _tzSvc;
-        public SearchesSlash(IHttpClientFactory factory,GuildTimezoneService tzSvc)
+        public SearchesSlashCommands(IHttpClientFactory factory,GuildTimezoneService tzSvc)
         {
             _httpFactory = factory;
             _tzSvc = tzSvc;
@@ -107,6 +99,55 @@ namespace NadekoBot.Modules.Searches
             } 
             return (true,code);
         }
+        
+        
+        [NadekoSlash]
+        public Task RandomImg([Summary("tag","Select random image tag")]SearchesService.ImageTag tag) => InternalRandomImage(tag);
+
+        private Task InternalRandomImage(SearchesService.ImageTag tag)
+        {
+            var url = _service.GetRandomImageUrl(tag);
+            return ctx.Interaction.RespondAsync(embed:new EmbedBuilder()
+                .WithOkColor()
+                .WithImageUrl(url).Build());
+        }
+
+
+
+
+
+        [NadekoSlash]
+        [RequireContext(ContextType.Guild)]
+        public async Task Bible([Autocomplete(typeof(BibleAutoCompleteHandler))][Summary("book","Name of bible book")]string book,[Summary("chapterAndVerse", "Chapter and verse seperated by : (11:2)")] string chapterAndVerse)
+        {
+            
+            var obj = new BibleVerses();
+            await ctx.Interaction.DeferAsync().ConfigureAwait(false);
+            try
+            {
+                using (var http = _httpFactory.CreateClient())
+                {
+                    var res = await http
+                        .GetStringAsync("https://bible-api.com/" + book + " " + chapterAndVerse).ConfigureAwait(false);
+
+                    obj = JsonConvert.DeserializeObject<BibleVerses>(res);
+                }
+            }
+            catch
+            {
+            }
+            if (obj.Error != null || obj.Verses == null || obj.Verses.Length == 0)
+                await ctx.Interaction.SendErrorAsync(obj.Error ?? "No verse found.").ConfigureAwait(false);
+            else
+            {
+                var v = obj.Verses[0];
+                await ctx.Interaction.EmbedAsync(new EmbedBuilder()
+                    .WithOkColor()
+                    .WithTitle($"{v.BookName} {v.Chapter}:{v.Verse}")
+                    .WithDescription(v.Text)).ConfigureAwait(false);
+            }
+        }
 
     }
 }
+
