@@ -36,48 +36,49 @@ namespace NadekoBot.Modules.Utility
             await ctx.Interaction.DeferAsync().ConfigureAwait(false);
             try
             {
-            byte[] imageBytes;
-            ImageFrameCollection imgframe;
-            // case for tenor urls
-            if ((gifurl.EndsWith(".gif") == false) && (gifurl.Contains("tenor.com"))){
-                var config = AngleSharp.Configuration.Default.WithDefaultLoader();
-                var context = BrowsingContext.New(config);
-                var document = await context.OpenAsync(gifurl).ConfigureAwait(false);
-                string newgifurl = document.QuerySelectorAll("meta").Where(x=>x.GetAttribute("content").EndsWith(".gif")).Select(m=>m.GetAttribute("content")).FirstOrDefault();
+                byte[] imageBytes;
+                // case for tenor urls
+                if ((gifurl.EndsWith(".gif") == false) && (gifurl.Contains("tenor.com"))){
+                    var config = AngleSharp.Configuration.Default.WithDefaultLoader();
+                    var context = BrowsingContext.New(config);
+                    var document = await context.OpenAsync(gifurl).ConfigureAwait(false);
+                    var newgifurl = document.QuerySelectorAll("meta")
+                        .Where(x=>x.GetAttribute("content").EndsWith(".gif"))
+                        .Select(m=>m.GetAttribute("content")).FirstOrDefault();
 
-                if (newgifurl == null){
-                    await ctx.Interaction.SendErrorAsync("Could not download tenor gif");
-                    return;
+                    if (newgifurl == null){
+                        await ctx.Interaction.SendErrorAsync("Could not download tenor gif");
+                        return;
+                    }
+
+                    gifurl = newgifurl;
+
+                }
+                using (var http = _httpFactory.CreateClient()) {
+                    imageBytes = await http.GetByteArrayAsync(gifurl).ConfigureAwait(false);
                 }
 
-                gifurl = newgifurl;
-
-            }
-            using (var http = _httpFactory.CreateClient()) {
-                imageBytes = await http.GetByteArrayAsync(gifurl).ConfigureAwait(false);
-            }
-
-            using (SixLabors.ImageSharp.Image img = SixLabors.ImageSharp.Image.Load(imageBytes)){
-                imgframe = img.Frames;
+                using (SixLabors.ImageSharp.Image img = SixLabors.ImageSharp.Image.Load(imageBytes)){
+                    var imgframe = img.Frames;
                 
-                int framecount = imgframe.Count;
-                var rng = new NadekoRandom();
-                int idx = rng.Next(framecount);
-                var singleframe = imgframe.ExportFrame(idx);
-                using (MemoryStream ms = new MemoryStream()){
-                singleframe.SaveAsPng(ms, new PngEncoder()
-                {
-                    ColorType = PngColorType.RgbWithAlpha,
-                    CompressionLevel = PngCompressionLevel.BestCompression
-                });
-                ms.Position = 0;
-                await ctx.Interaction.FollowupWithFileAsync(ms, $"img.png", ctx.User.Mention).ConfigureAwait(false);
+                    var framecount = imgframe.Count;
+                    var rng = new NadekoRandom();
+                    var idx = rng.Next(framecount);
+                    var singleframe = imgframe.ExportFrame(idx);
+                    await using (var ms = new MemoryStream()){
+                        singleframe.SaveAsPng(ms, new PngEncoder()
+                        {
+                            ColorType = PngColorType.RgbWithAlpha,
+                            CompressionLevel = PngCompressionLevel.BestCompression
+                        });
+                        ms.Position = 0;
+                        await ctx.Interaction.FollowupWithFileAsync(ms, $"img.png", ctx.User.Mention).ConfigureAwait(false);
+                    }
                 }
-            }
             }
             catch (System.Exception ex)
             {
-            await ctx.Interaction.SendErrorAsync(ex.Message).ConfigureAwait(false); 
+                await ctx.Interaction.SendErrorAsync(ex.Message).ConfigureAwait(false); 
             }
         }
 
