@@ -1,32 +1,18 @@
 using Discord;
-using Discord.Interactions;
-using Discord.WebSocket;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
-using NadekoBot.Core.Services;
-using NadekoBot.Core.Services.Impl;
 using NadekoBot.Extensions;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Drawing;
 using System.Net.Http;
 using DrawingColor = System.Drawing.Color;
-using NadekoBot.Common.Replacements;
-using NadekoBot.Core.Common;
-using System.Net;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
 using System.IO;
-using Serilog;
+using System.Text.RegularExpressions;
 using AngleSharp;
+using Discord.Commands;
 
 namespace NadekoBot.Modules.Utility
 {
@@ -40,7 +26,7 @@ namespace NadekoBot.Modules.Utility
         }
         
         [NadekoSlash]
-        public async Task Giframe([Summary("gifurl","url to gif")] string gifurl)
+        public async Task Giframe([Discord.Interactions.Summary("gifurl","url to gif")] string gifurl)
         {
             gifurl = gifurl?.Trim() ?? "";
 
@@ -95,7 +81,24 @@ namespace NadekoBot.Modules.Utility
             }
         }
 
+        [NadekoSlash]
+        public async Task ShowEmojies([Leftover] string text)
+        {
+            await ctx.Interaction.DeferAsync().ConfigureAwait(false);
 
+            const string pattern = "<:\\w+:[0-9]+>";
+            var rgx = new Regex(pattern);
+            var matches = rgx.Matches(text);
+
+            var emotes = new List<Emote>();
+            matches.ForEach(match => emotes.Add(Emote.Parse(match.Value)));
+            var result = string.Join("\n", emotes.Select(emote => GetText("showemojis", emote, emote.Url)));
+
+            if (string.IsNullOrWhiteSpace(result))
+                await ctx.Interaction.SendErrorAsync(GetText("showemojis_none")).ConfigureAwait(false);
+            else
+                await ctx.Interaction.FollowupAsync(result.TrimTo(2000)).ConfigureAwait(false);
+        }
 
     }
 }
