@@ -2099,4 +2099,12 @@ randomimage:
 randomimg:
   desc: "Shows a random bird,cat,dog,raccoon,food,goose or image"
   args:
-    - "Dog"
+    -  "Dog"
+scale:
+  desc: "Creates a grid using 9 images"
+  args:
+    -  "url1 url2 url3"
+banner:
+  desc: "Shows a user's banner"
+  args:
+    -  "@Someone"
