@@ -25,6 +25,8 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Fonts;
 using System.IO;
 using Serilog;
 using AngleSharp;
@@ -35,11 +37,14 @@ namespace NadekoBot.Modules.Utility
     {
         private readonly IHttpClientFactory _httpFactory;
         private readonly DiscordSocketClient _client;
+        private readonly FontProvider _fonts;
 
-        public UtilitySlashCommands(DiscordSocketClient client,IHttpClientFactory factory)
+
+        public UtilitySlashCommands(DiscordSocketClient client,IHttpClientFactory factory,FontProvider fonts)
         {
             _httpFactory = factory;
             _client = client;
+            _fonts = fonts;
         }
         
         [NadekoSlash]
@@ -117,7 +122,71 @@ namespace NadekoBot.Modules.Utility
                 }).ConfigureAwait(false);
         }
 
+        public async Task Scale([Summary("images","url to 9 images seperated by space")] string images){
 
+            var imagelist = images.Split(" ");
+            if (imagelist.Count()<9){
+                await ctx.Interaction.RespondAsync("Please provide link to 9 images");
+                return;
+            }
+            int imagelength = 600;
+            int imagewidth = 600;
+            int fontsize = 50;
+            var font = _fonts.NotoSans.CreateFont(fontsize,SixLabors.Fonts.FontStyle.Bold);
+            try
+            {
+            await ctx.Interaction.DeferAsync().ConfigureAwait(false);
+            
+            // read all images into list of byte array
+            var imgbyteslist = new List<byte[]>();
+            using (var http = _httpFactory.CreateClient()){
+                for (int ii =0;ii<9;ii++){
+                    imgbyteslist.Add(await http.GetByteArrayAsync(imagelist[ii]).ConfigureAwait(false));
+                }
+            }
 
+            using (var backimage = new Image<Rgba32>(imagelength,imagewidth)){
+                // make background pixels white
+                for (int x =0; x<imagelength;x++){
+                    for (int y =0; y<imagewidth;y++){
+                        backimage[x,y] = new Rgba32(255,255,255);
+                        }
+                }
+                backimage.Mutate(xx =>{
+                    for (int jj=0;jj<9;jj++){
+                        int xcord = jj%3;
+                        int ycord = jj/3;
+                        using (var img2 = SixLabors.ImageSharp.Image.Load(imgbyteslist[jj])){
+                            //resize image to square
+                            img2.Mutate(yy=>yy.Resize(imagelength/3,imagelength/3));
+                            //stack image on background
+                            xx.DrawImage(img2,new SixLabors.ImageSharp.Point(xcord*200,ycord*200),1f);
+                            //add number in corner
+                            xx.DrawText(new TextGraphicsOptions(),jj.ToString(),
+                            font,
+                            SixLabors.ImageSharp.Color.White,
+                            new SixLabors.ImageSharp.PointF(xcord*200, ycord*200));
+                        }
+                    }
+                });
+                //save image to stream
+                using (MemoryStream ms = new MemoryStream()){
+                backimage.SaveAsPng(ms, new PngEncoder()
+                {
+                    ColorType = PngColorType.RgbWithAlpha,
+                    CompressionLevel = PngCompressionLevel.BestCompression
+                });
+                ms.Position = 0;
+                await ctx.Interaction.FollowupWithFileAsync(ms, $"img.png", ctx.User.Mention).ConfigureAwait(false);
+                }
+            }
+
+            }
+            catch (System.Exception ex)
+            {
+                await ctx.Interaction.SendErrorAsync(ex.Message);
+            }
+        }
+        
     }
 }
