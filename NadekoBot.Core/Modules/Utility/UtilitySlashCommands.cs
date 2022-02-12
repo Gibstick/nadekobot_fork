@@ -1,5 +1,6 @@
 using Discord;
 using Discord.Interactions;
+using Discord.Rest;
 using Discord.WebSocket;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
@@ -35,12 +36,14 @@ namespace NadekoBot.Modules.Utility
     public partial class UtilitySlashCommands : NadekoSlashModule
     {
         private readonly IHttpClientFactory _httpFactory;
-
+        private readonly DiscordSocketClient _client;
         private readonly FontProvider _fonts;
 
-        public UtilitySlashCommands(IHttpClientFactory factory,FontProvider fonts)
+
+        public UtilitySlashCommands(DiscordSocketClient client,IHttpClientFactory factory,FontProvider fonts)
         {
             _httpFactory = factory;
+            _client = client;
             _fonts = fonts;
         }
         
@@ -101,6 +104,24 @@ namespace NadekoBot.Modules.Utility
         }
 
         [NadekoSlash]
+        public async Task Banner([Summary("user","Name of user to get banner")] IGuildUser usr)
+        {
+            await ctx.Interaction.DeferAsync().ConfigureAwait(false);
+
+            var restuser = await _client.Rest.GetUserAsync(usr.Id).ConfigureAwait(false);
+            var bannerurl = restuser?.GetBannerUrl(size:2048);
+            
+            if (bannerurl == null){
+                await ctx.Interaction.ModifyOriginalResponseAsync(yy=>yy.Content =$"No Banner for this user").ConfigureAwait(false);
+                return;
+            }
+            await ctx.Interaction.ModifyOriginalResponseAsync(xx=>{
+                xx.Embed =new EmbedBuilder().WithOkColor()
+                .AddField(efb => efb.WithName("Username").WithValue(usr.ToString()).WithIsInline(false))
+                .WithImageUrl(bannerurl.ToString()).Build();
+                }).ConfigureAwait(false);
+        }
+
         public async Task Scale([Summary("images","url to 9 images seperated by space")] string images){
 
             var imagelist = images.Split(" ");
@@ -167,7 +188,5 @@ namespace NadekoBot.Modules.Utility
             }
         }
         
-
-
     }
 }
