@@ -29,6 +29,7 @@ using NadekoBot.Core.Common.Configs;
 using NadekoBot.Core.Modules.Gambling.Services;
 using NadekoBot.Modules.Administration.Services;
 using NadekoBot.Modules.CustomReactions.Services;
+using NadekoBot.Modules.Utility;
 using NadekoBot.Modules.Utility.Services;
 using Serilog;
 
