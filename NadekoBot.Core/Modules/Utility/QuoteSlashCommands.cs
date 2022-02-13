@@ -92,11 +92,11 @@ namespace NadekoBot.Modules.Utility
                 if (CREmbed.TryParse(quote.Text, out var crembed))
                 {
                     rep.Replace(crembed);
-                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
+                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword.ToLowerInvariant().SanitizeAllMentions()}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
                         .ConfigureAwait(false);
                     return;
                 }
-                await ctx.Interaction.ModifyOriginalResponseAsync(x=>x.Content = $"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+                await ctx.Interaction.ModifyOriginalResponseAsync(x=>x.Content = $"`#{quote.Id} {quote.Keyword.ToLowerInvariant().SanitizeAllMentions()}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
             }
 
             [NadekoSlash]
@@ -322,7 +322,23 @@ namespace NadekoBot.Modules.Utility
                     return;
             
                 keyword = keyword.ToUpperInvariant();
+                await QuoteAddInternal(ctx,keyword,text).ConfigureAwait(false);
+                }
+
+            [NadekoSlash]
+            [RequireContext(ContextType.Guild)]
+            public async Task QuoteAddFile([Summary("keyword","Name of quote")]string keyword, [Summary("file","file to add")] IAttachment file)
+            {
+                if (string.IsNullOrWhiteSpace(keyword)){
+                    return;
+                }
             
+                keyword = keyword.ToUpperInvariant();
+                string text = file.Url;
+                await QuoteAddInternal(ctx,keyword,text).ConfigureAwait(false);
+            }
+
+            private async Task QuoteAddInternal(IInteractionContext ctx,string keyword,string text){
                 Quote q;
                 await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 using (var uow = _db.GetDbContext())
@@ -339,6 +355,7 @@ namespace NadekoBot.Modules.Utility
                 }
                 await ReplyConfirmLocalizedAsync("quote_added_new", Format.Code(q.Id.ToString())).ConfigureAwait(false);
             }
+
 
             [NadekoSlash]
             [RequireContext(ContextType.Guild)]

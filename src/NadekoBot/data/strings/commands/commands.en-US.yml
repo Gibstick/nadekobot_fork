@@ -365,9 +365,10 @@ savechat:
   args:
     - "150"
 remind:
-  desc: "Sends a message to you or a channel after certain amount of time (max 11 months). First parameter is `me`/`here`/'channelname'. Second parameter is time in a descending order (mo>w>d>h>m) example: 1w5d3h10m. Third parameter is a (multiword) message."
+  desc: "Sends a message to you or a channel after some time (max 11 months). Specify time using (mo>w>d>h>m)"
   args:
     - "me 1d5h Do something"
+    - "here 1d5h Do something"
     - "#general 1m Start now!"
 reminddelete:
   desc: "Deletes a reminder on the specified index."
@@ -2099,7 +2100,7 @@ randomimage:
 randomimg:
   desc: "Shows a random bird,cat,dog,raccoon,food,goose or image"
   args:
-    -  "Dog"
+    - "Dog"
 scale:
   desc: "Creates a grid using 9 images"
   args:
@@ -2108,3 +2109,7 @@ banner:
   desc: "Shows a user's banner"
   args:
     -  "@Someone"
+quoteaddfile:
+  desc: "Adds a new quote with the specified name and file."
+  args:
+    - "sayhi Img.jpg"
