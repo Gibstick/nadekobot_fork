@@ -1271,5 +1271,9 @@ randomimage:
   - randimg
 raccoonfact:
 - raccoonfact
+scale:
+- scale
+banner:
+- banner
 quoteaddfile:
 - quoteaddfile
