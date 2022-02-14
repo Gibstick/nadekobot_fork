@@ -1,4 +1,6 @@
 using Discord;
+using Discord.WebSocket;
+using Discord.Interactions;
 using NadekoBot.Common;
 using NadekoBot.Common.Attributes;
 using NadekoBot.Extensions;
@@ -10,15 +12,13 @@ using DrawingColor = System.Drawing.Color;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.Fonts;
 using System.IO;
 using System.Text.RegularExpressions;
 using AngleSharp;
-using Discord.Commands;
-using Discord.WebSocket;
 using NadekoBot.Core.Services.Impl;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace NadekoBot.Modules.Utility
 {
@@ -37,7 +37,7 @@ namespace NadekoBot.Modules.Utility
         }
         
         [NadekoSlash]
-        public async Task Giframe([Discord.Interactions.Summary("gifurl","url to gif")] string gifurl)
+        public async Task Giframe([Summary("gifurl","url to gif")] string gifurl)
         {
             gifurl = gifurl?.Trim() ?? "";
 
@@ -94,7 +94,7 @@ namespace NadekoBot.Modules.Utility
         }
 
         [NadekoSlash]
-        public async Task ShowEmojies([Leftover] string text)
+        public async Task ShowEmojies(string text)
         {
             await ctx.Interaction.DeferAsync().ConfigureAwait(false);
 
@@ -113,7 +113,7 @@ namespace NadekoBot.Modules.Utility
         }
 
         [NadekoSlash]
-        public async Task Banner([Discord.Interactions.Summary("user","Name of user to get banner")] IGuildUser usr)
+        public async Task Banner([Summary("user","Name of user to get banner")] IGuildUser usr)
         {
             await ctx.Interaction.DeferAsync().ConfigureAwait(false);
 
@@ -132,7 +132,7 @@ namespace NadekoBot.Modules.Utility
         }
 
         [NadekoSlash]
-        public async Task Scale([Discord.Interactions.Summary("images","url to 9 images seperated by space")] string images){
+        public async Task Scale([Summary("images","url to 9 images seperated by space")] string images){
             var imagelist = images.Split(" ");
             if (imagelist.Length < 9){
                 await ctx.Interaction.RespondAsync("Please provide link to 9 images");
@@ -171,21 +171,22 @@ namespace NadekoBot.Modules.Utility
                             //stack image on background
                             xx.DrawImage(img2,new Point(xcord*200,ycord*200),1f);
                             //add number in corner
-                            xx.DrawText(new TextGraphicsOptions(),jj.ToString(),
-                                font,
-                                SixLabors.ImageSharp.Color.White,
-                                new PointF(xcord*200, ycord*200));
+                            xx.DrawText(text:(jj+1).ToString(),
+                                font:font,
+                                pen:new Pen(color:SixLabors.ImageSharp.Color.Black,width:1),
+                                brush: Brushes.Solid(SixLabors.ImageSharp.Color.White),
+                                location:new PointF(xcord*200, ycord*200));
                         }
                     });
                     //save image to stream
-                    await using (var ms = new MemoryStream()){
+                    using (var ms = new MemoryStream()){
                         backimage.SaveAsPng(ms, new PngEncoder()
                         {
                             ColorType = PngColorType.RgbWithAlpha,
                             CompressionLevel = PngCompressionLevel.BestCompression
                         });
                         ms.Position = 0;
-                        await ctx.Interaction.FollowupWithFileAsync(ms, $"img.png", ctx.User.Mention).ConfigureAwait(false);
+                    await ctx.Interaction.FollowupWithFileAsync(ms, $"img.png", ctx.User.Mention).ConfigureAwait(false);
                     }
                 }
 
