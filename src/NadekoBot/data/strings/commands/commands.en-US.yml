@@ -2113,3 +2113,7 @@ quoteaddfile:
   desc: "Adds a new quote with the specified name and file."
   args:
     - "sayhi Img.jpg"
+omdbsearch:
+  desc: "Queries omdb for movies or series, shows multiple results."
+  args:
+    - "Batman vs Superman"

@@ -658,6 +658,44 @@ namespace NadekoBot.Modules.Searches.Services
             }
         }
 
+        public async Task<OmdbMovie> GetMovieDatabyId(string id)
+        {
+            using (var http = _httpFactory.CreateClient())
+            {
+                var res = await http.GetStringAsync(string.Format("https://omdbapi.nadeko.bot/?i={0}&y=&plot=full&r=json",
+                    id.Trim())).ConfigureAwait(false);
+                var movie = JsonConvert.DeserializeObject<OmdbMovie>(res);
+                if (movie?.Title == null)
+                    return null;
+                movie.Poster = await _google.ShortenUrl(movie.Poster).ConfigureAwait(false);
+                return movie;
+            }
+        }
+
+        public Task<OmdbSearch> GetMovieSearchDataAsync(string name)
+        {
+            name = name.Trim().ToLowerInvariant();
+            return _cache.GetOrAddCachedDataAsync($"nadeko_movie_search_{name.ToLowerInvariant()}",
+                GetMovieSearchDataFactory,
+                name,
+                TimeSpan.FromDays(1));
+        }
+
+        public async Task<OmdbSearch> GetMovieSearchDataFactory(string name)
+        {
+            using (var http = _httpFactory.CreateClient())
+            {
+                var res = await http.GetStringAsync(string.Format("https://omdbapi.nadeko.bot/?s={0}&r=json&page=1",
+                    name.Trim().Replace(' ', '+'))).ConfigureAwait(false);
+                var searchobj = JsonConvert.DeserializeObject<OmdbSearch>(res);
+                if (searchobj?.Response == "False")
+                    return null;
+                return searchobj;
+            }
+        }
+
+        
+
         public async Task<int> GetSteamAppIdByName(string query)
         {
             var redis = _cache.Redis;

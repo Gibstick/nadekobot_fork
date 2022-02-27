@@ -1277,3 +1277,5 @@ banner:
 - banner
 quoteaddfile:
 - quoteaddfile
+omdbsearch:
+- omdbsearch
