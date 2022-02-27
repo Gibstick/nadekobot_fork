@@ -160,7 +160,7 @@ namespace NadekoBot.Modules.Searches
             var imdbids = omdbsearch.Search.Select(x=> x.imdbID).ToList();
             var movielist = new List<OmdbMovie>();
             foreach(var id in imdbids){
-                movielist.Add(await _service.GetMovieDatabyId(id));
+                movielist.Add(await _service.GetMovieDataAsync(id,true));
             }
             await ctx.SendScrollingButtonAsync(currentPage:0,(p)=>{
                 var movie = movielist[p];

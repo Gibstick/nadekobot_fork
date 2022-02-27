@@ -635,8 +635,15 @@ namespace NadekoBot.Modules.Searches.Services
             }
         }
 
-        public Task<OmdbMovie> GetMovieDataAsync(string name)
+        public Task<OmdbMovie> GetMovieDataAsync(string name,bool idfactory=false)
         {
+            if (idfactory){
+                return _cache.GetOrAddCachedDataAsync($"nadeko_movie_{name}",
+                GetMovieIdDataFactory,
+                name,
+                TimeSpan.FromDays(1));
+
+            }
             name = name.Trim().ToLowerInvariant();
             return _cache.GetOrAddCachedDataAsync($"nadeko_movie_{name}",
                 GetMovieDataFactory,
@@ -658,7 +665,7 @@ namespace NadekoBot.Modules.Searches.Services
             }
         }
 
-        public async Task<OmdbMovie> GetMovieDatabyId(string id)
+        private async Task<OmdbMovie> GetMovieIdDataFactory(string id)
         {
             using (var http = _httpFactory.CreateClient())
             {
@@ -675,13 +682,13 @@ namespace NadekoBot.Modules.Searches.Services
         public Task<OmdbSearch> GetMovieSearchDataAsync(string name)
         {
             name = name.Trim().ToLowerInvariant();
-            return _cache.GetOrAddCachedDataAsync($"nadeko_movie_search_{name.ToLowerInvariant()}",
+            return _cache.GetOrAddCachedDataAsync($"nadeko_movie_search_{name}",
                 GetMovieSearchDataFactory,
                 name,
                 TimeSpan.FromDays(1));
         }
 
-        public async Task<OmdbSearch> GetMovieSearchDataFactory(string name)
+        private async Task<OmdbSearch> GetMovieSearchDataFactory(string name)
         {
             using (var http = _httpFactory.CreateClient())
             {
