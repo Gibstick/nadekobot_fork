@@ -16,6 +16,7 @@ namespace NadekoBot.Core.Services.Database.Repositories
         IEnumerable<Quote> SearchQuoteAuthorTextAsync(ulong guildId, ulong Authorid,int page);
         int SearchQuoteAuthorTextCount(ulong guildId, ulong Authorid);
         IEnumerable<Quote> SearchQuoteLinkTextAsync(ulong guildId);
+        IEnumerable<string> SearchDistinctQuoteKeywordAsync(ulong guildId, string keyword);
         void RemoveAllByKeyword(ulong guildId, string keyword);
         void RemoveAllByAuthor(ulong guildId, ulong Authorid);
     }
