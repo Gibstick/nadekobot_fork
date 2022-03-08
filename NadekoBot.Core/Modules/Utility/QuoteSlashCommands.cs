@@ -322,6 +322,7 @@ namespace NadekoBot.Modules.Utility
                     return;
             
                 keyword = keyword.ToUpperInvariant();
+				text = text.Replace("media.discordapp.net","cdn.discordapp.com");
                 await QuoteAddInternal(ctx,keyword,text).ConfigureAwait(false);
                 }
 
