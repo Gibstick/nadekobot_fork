@@ -15,9 +15,9 @@ namespace NadekoBot.Common.TypeReaders{
         }
         public override Task<TypeReaderResult> ReadAsync(ICommandContext ctx, string input, IServiceProvider services)
         {
-        if (!Emote.TryParse(input, out var emote))
+        if (!Emote.TryParse(input, out var emote)){
             return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, "Input is not a valid emote"));
-
+        }
         return Task.FromResult(TypeReaderResult.FromSuccess(emote));
         }
     }
