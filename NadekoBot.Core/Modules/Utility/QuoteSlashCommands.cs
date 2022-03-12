@@ -66,7 +66,7 @@ namespace NadekoBot.Modules.Utility
 
             [NadekoSlash]
             [RequireContext(ContextType.Guild)]
-            public async Task QuotePrint([Summary("keyword","Name of the quote")]string keyword)
+            public async Task QuotePrint([Autocomplete(typeof(QuoteAutoCompleteHandler))][Summary("keyword","Name of the quote")]string keyword)
             {
                 if (string.IsNullOrWhiteSpace(keyword))
                     return;

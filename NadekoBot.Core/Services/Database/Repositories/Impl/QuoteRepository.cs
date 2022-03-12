@@ -78,6 +78,16 @@ namespace NadekoBot.Core.Services.Database.Repositories.Impl
             return  q.Skip(15*page).Take(15).ToArray();
             
         }
+
+        public IEnumerable<string> SearchDistinctQuoteKeywordAsync(ulong guildId, string keyword)
+        {
+            var q = _set.AsQueryable()
+                .Where(x => x.GuildId == guildId
+                            && x.Keyword.StartsWith(keyword)
+                           );
+            return q.Select(z=>z.Keyword).Distinct().ToList();
+            
+        }
         public int SearchQuoteKeywordKeyTextCount(ulong guildId, string keyword){
             return _set.AsQueryable()
                 .Where(x => x.GuildId == guildId
