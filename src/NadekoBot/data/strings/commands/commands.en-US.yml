@@ -2124,3 +2124,7 @@ emojiadd:
     - ":someonesCustomEmoji:"
     - "MyEmojiName :someonesCustomEmoji:"
     - "owoNice https://cdn.discordapp.com/emojis/587930873811173386.png?size=128"
+omdbsearch:
+  desc: "Queries omdb for movies or series, shows multiple results."
+  args:
+    - "Batman vs Superman"

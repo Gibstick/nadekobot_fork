@@ -115,6 +115,7 @@ namespace NadekoBot.Extensions
                     currentPage = lastPage;
                 }
                 var newembed = await pageFunc(currentPage).ConfigureAwait(false);
+                newembed.AddPaginatedFooter(currentPage, lastPage);
                 await r.UpdateAsync(x=> x.Embed = newembed.Build());
             };
 
