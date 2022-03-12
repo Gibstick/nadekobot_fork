@@ -19,6 +19,7 @@ using DrawingColor = System.Drawing.Color;
 using NadekoBot.Common.Replacements;
 using NadekoBot.Core.Common;
 using System.Net;
+using System.Net.Http;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
@@ -35,15 +36,18 @@ namespace NadekoBot.Modules.Utility
         private readonly IBotCredentials _creds;
         private readonly NadekoBot _bot;
         private readonly DownloadTracker _tracker;
+        private readonly IHttpClientFactory _httpFactory;
 
         public Utility(NadekoBot nadeko, DiscordSocketClient client,
-            IStatsService stats, IBotCredentials creds, DownloadTracker tracker)
+            IStatsService stats, IBotCredentials creds, DownloadTracker tracker,
+            IHttpClientFactory httpFactory)
         {
             _client = client;
             _stats = stats;
             _creds = creds;
             _bot = nadeko;
             _tracker = tracker;
+            _httpFactory = httpFactory;
         }
         
 
@@ -310,6 +314,62 @@ namespace NadekoBot.Modules.Utility
             else
                 await ctx.Channel.SendMessageAsync(result.TrimTo(2000)).ConfigureAwait(false);
         }
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [BotPerm(GuildPerm.ManageEmojis)]
+        [UserPerm(GuildPerm.ManageEmojis)]
+        [Priority(2)]
+        public Task EmojiAdd(string name, Emote emote)
+            => EmojiAdd(name, emote.Url);
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [BotPerm(GuildPerm.ManageEmojis)]
+        [UserPerm(GuildPerm.ManageEmojis)]
+        [Priority(1)]
+        public Task EmojiAdd(Emote emote)
+            => EmojiAdd(emote.Name, emote.Url);
+
+        [NadekoCommand, Usage, Description, Aliases]
+        [RequireContext(ContextType.Guild)]
+        [BotPerm(GuildPerm.ManageEmojis)]
+        [UserPerm(GuildPerm.ManageEmojis)]
+        [Priority(0)]
+        public async Task EmojiAdd(string name, string url = null)
+        {
+            name = name.Trim(':');
+
+            url ??= ctx.Message.Attachments.FirstOrDefault()?.Url;
+
+            if (url is null)
+                return;
+
+            using var http = _httpFactory.CreateClient();
+            var res = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            if (!res.IsImage() || res.GetImageSize() is null or > 262_144)
+            {
+                await ReplyErrorLocalizedAsync("invalid_emoji_link");
+                return;
+            }
+
+            await using var imgStream = await res.Content.ReadAsStreamAsync();
+            Emote em;
+            try
+            {
+                em = await ctx.Guild.CreateEmoteAsync(name, new(imgStream));
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error adding emoji on server {GuildId}", ctx.Guild.Id);
+
+                await ReplyErrorLocalizedAsync("emoji_add_error");
+                return;
+            }
+
+            await ConfirmLocalizedAsync("emoji_added",(em.ToString()));
+        }
+        
 
         [NadekoCommand, Usage, Description, Aliases]
         public async Task Giframe([Leftover] string gifurl)
