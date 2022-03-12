@@ -315,7 +315,7 @@ namespace NadekoBot.Modules.Utility
                     return;
             
                 keyword = keyword.ToUpperInvariant();
-            
+                text = text.Replace("media.discordapp.net","cdn.discordapp.com"); 
                 Quote q;
                 using (var uow = _db.GetDbContext())
                 {
