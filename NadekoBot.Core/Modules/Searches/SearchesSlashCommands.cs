@@ -112,10 +112,6 @@ namespace NadekoBot.Modules.Searches
                 .WithImageUrl(url).Build());
         }
 
-
-
-
-
         [NadekoSlash]
         [RequireContext(ContextType.Guild)]
         public async Task Bible([Autocomplete(typeof(BibleAutoCompleteHandler))][Summary("book","Name of bible book")]string book,[Summary("chapterAndVerse", "Chapter and verse seperated by : (11:2)")] string chapterAndVerse)
@@ -146,6 +142,45 @@ namespace NadekoBot.Modules.Searches
                     .WithTitle($"{v.BookName} {v.Chapter}:{v.Verse}")
                     .WithDescription(v.Text)).ConfigureAwait(false);
             }
+        }
+
+        [NadekoSlash]
+        public async Task OmdbSearch([Summary("query","Movie/Show for searching")] string query){
+            if (string.IsNullOrWhiteSpace(query)){
+                return;
+            }
+            try{
+                await ctx.Interaction.DeferAsync().ConfigureAwait(false);
+            var omdbsearch = await _service.GetMovieSearchDataAsync(query).ConfigureAwait(false);
+            if (omdbsearch == null)
+            {
+                await ReplyErrorLocalizedAsync("imdb_fail").ConfigureAwait(false);
+                return;
+            }
+            var imdbids = omdbsearch.Search.Select(x=> x.imdbID).ToList();
+            var movielist = new List<OmdbMovie>();
+            foreach(var id in imdbids){
+                movielist.Add(await _service.GetMovieDataAsync(id,true));
+            }
+            await ctx.SendScrollingButtonAsync(currentPage:0,(p)=>{
+                var movie = movielist[p];
+                var embed= new EmbedBuilder().WithOkColor()
+                .WithTitle(movie.Title)
+                .WithUrl($"http://www.imdb.com/title/{movie.ImdbId}/")
+                .WithDescription(movie.Plot.TrimTo(1000))
+                .AddField(efb => efb.WithName("Rating").WithValue(movie.ImdbRating).WithIsInline(true))
+                .AddField(efb => efb.WithName("Genre").WithValue(movie.Genre).WithIsInline(true))
+                .AddField(efb => efb.WithName("Year").WithValue(movie.Year).WithIsInline(true));
+                if (movie.Poster != @"N/A"){
+                    embed.WithImageUrl(movie.Poster);    
+                }
+                return embed;
+
+            },totalElements:imdbids.Count(),itemsPerPage:1);
+            }catch (Exception e){
+                await ctx.Interaction.SendErrorAsync(e.Message);
+            }
+            
         }
 
     }
