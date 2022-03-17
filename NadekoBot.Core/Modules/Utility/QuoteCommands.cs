@@ -81,11 +81,6 @@ namespace NadekoBot.Modules.Utility
                 using (var uow = _db.GetDbContext())
                 {
                     quote = await uow.Quotes.GetRandomQuoteByKeywordAsync(ctx.Guild.Id, keyword);
-                    //if (quote != null)
-                    //{
-                    //    quote.UseCount += 1;
-                    //    uow.Complete();
-                    //}
                 }
 
                 if (quote == null)
@@ -95,14 +90,10 @@ namespace NadekoBot.Modules.Utility
                     .WithDefault(Context)
                     .Build();
 
-                if (CREmbed.TryParse(quote.Text, out var crembed))
-                {
-                    rep.Replace(crembed);
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
-                        .ConfigureAwait(false);
-                    return;
-                }
-                await ctx.Channel.SendMessageAsync($"`#{quote.Id}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+                var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
+                text = rep.Replace(text);
+
+                await ctx.Channel.SendAsync($"`#{quote.Id}` 📣 " + text, true);
             }
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
@@ -291,20 +282,14 @@ namespace NadekoBot.Modules.Utility
                     return;
                 }
 
-                var infoText = $"`#{quote.Id} added by {quote.AuthorName.SanitizeAllMentions()}` 🗯️ " + quote.Keyword.ToLowerInvariant().SanitizeAllMentions() + ":\n";
+                var infoText = $"`#{quote.Id} added by {quote.AuthorName.SanitizeAllMentions()}` 🗯️ "
+                            + quote.Keyword.ToLowerInvariant().SanitizeAllMentions()
+                            + ":\n";
 
-                if (CREmbed.TryParse(quote.Text, out var crembed))
-                {
-                    rep.Replace(crembed);
 
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), infoText + crembed.PlainText?.SanitizeAllMentions())
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    await ctx.Channel.SendMessageAsync(infoText + rep.Replace(quote.Text)?.SanitizeAllMentions())
-                        .ConfigureAwait(false);
-                }
+                var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
+                text = rep.Replace(text);
+                await ctx.Channel.SendAsync(infoText + text, true);
             }
 
             [NadekoCommand, Usage, Description, Aliases]
@@ -403,7 +388,7 @@ namespace NadekoBot.Modules.Utility
                             try {
                                 await _http.GetStringAsync(q.Text);
                             }
-                            catch (HttpRequestException ex) {
+                            catch (HttpRequestException) {
                                 uow.Quotes.Remove(q);
                                 await uow.SaveChangesAsync();
                                 badlinks = badlinks+1;
