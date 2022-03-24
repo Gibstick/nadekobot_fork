@@ -117,16 +117,10 @@ namespace NadekoBot.Modules.Utility
                     .WithDefault(Context)
                     .Build();
 
-                if (CREmbed.TryParse(quote.Text, out var crembed))
-                {
-                    rep.Replace(crembed);
-                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
-                        .ConfigureAwait(false);
-                    return;
-                }
-                await ctx.Interaction.ModifyOriginalResponseAsync(x=>{
-                    x.Content = $"`#{quote.Id} {quote.Keyword}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions();
-                }).ConfigureAwait(false);
+                var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
+                text = rep.Replace(text);
+
+                await ctx.Interaction.SendAsync($"`#{quote.Id} {quote.Keyword.SanitizeAllMentions()}` 📣 " + text,true).ConfigureAwait(false);
             }
 
             [NadekoSlash]

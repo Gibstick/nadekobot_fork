@@ -93,7 +93,7 @@ namespace NadekoBot.Modules.Utility
                 var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
                 text = rep.Replace(text);
 
-                await ctx.Channel.SendAsync($"`#{quote.Id}` 📣 " + text, true);
+                await ctx.Channel.SendAsync($"`#{quote.Id} added by {quote.AuthorName.SanitizeAllMentions()}` 📣 " + text, true);
             }
             [NadekoCommand, Usage, Description, Aliases]
             [RequireContext(ContextType.Guild)]
@@ -114,14 +114,9 @@ namespace NadekoBot.Modules.Utility
                     .WithDefault(Context)
                     .Build();
 
-                if (CREmbed.TryParse(quote.Text, out var crembed))
-                {
-                    rep.Replace(crembed);
-                    await ctx.Channel.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
-                        .ConfigureAwait(false);
-                    return;
-                }
-                await ctx.Channel.SendMessageAsync($"`#{quote.Id} {quote.Keyword}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+                var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
+                text = rep.Replace(text);
+                await ctx.Channel.SendAsync($"`#{quote.Id} {quote.Keyword.SanitizeAllMentions()}` 📣 " + text, true);
             }
 
             [NadekoCommand, Usage, Description, Aliases]
