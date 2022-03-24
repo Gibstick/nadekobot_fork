@@ -89,14 +89,10 @@ namespace NadekoBot.Modules.Utility
                     .WithDefault(Context)
                     .Build();
 
-                if (CREmbed.TryParse(quote.Text, out var crembed))
-                {
-                    rep.Replace(crembed);
-                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword.ToLowerInvariant().SanitizeAllMentions()}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
-                        .ConfigureAwait(false);
-                    return;
-                }
-                await ctx.Interaction.ModifyOriginalResponseAsync(x=>x.Content = $"`#{quote.Id} {quote.Keyword.ToLowerInvariant().SanitizeAllMentions()}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions()).ConfigureAwait(false);
+                var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
+                text = rep.Replace(text);
+
+                await ctx.Interaction.SendAsync($"`#{quote.Id} {quote.Keyword.ToLowerInvariant().SanitizeAllMentions()}` 📣 " + text, true);
             }
 
             [NadekoSlash]
@@ -121,16 +117,10 @@ namespace NadekoBot.Modules.Utility
                     .WithDefault(Context)
                     .Build();
 
-                if (CREmbed.TryParse(quote.Text, out var crembed))
-                {
-                    rep.Replace(crembed);
-                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), $"`#{quote.Id} {quote.Keyword}` 📣 " + crembed.PlainText?.SanitizeAllMentions() ?? "")
-                        .ConfigureAwait(false);
-                    return;
-                }
-                await ctx.Interaction.ModifyOriginalResponseAsync(x=>{
-                    x.Content = $"`#{quote.Id} {quote.Keyword}` 📣 " + rep.Replace(quote.Text)?.SanitizeAllMentions();
-                }).ConfigureAwait(false);
+                var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
+                text = rep.Replace(text);
+
+                await ctx.Interaction.SendAsync($"`#{quote.Id} {quote.Keyword.SanitizeAllMentions()}` 📣 " + text,true).ConfigureAwait(false);
             }
 
             [NadekoSlash]
@@ -298,20 +288,14 @@ namespace NadekoBot.Modules.Utility
                     return;
                 }
 
-                var infoText = $"`#{quote.Id} added by {quote.AuthorName.SanitizeAllMentions()}` 🗯️ " + quote.Keyword.ToLowerInvariant().SanitizeAllMentions() + ":\n";
+                var infoText = $"`#{quote.Id} added by {quote.AuthorName.SanitizeAllMentions()}` 🗯️ "
+                            + quote.Keyword.ToLowerInvariant().SanitizeAllMentions()
+                            + ":\n";
 
-                if (CREmbed.TryParse(quote.Text, out var crembed))
-                {
-                    rep.Replace(crembed);
 
-                    await ctx.Interaction.EmbedAsync(crembed.ToEmbed(), infoText + crembed.PlainText?.SanitizeAllMentions())
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    await ctx.Interaction.ModifyOriginalResponseAsync(x=>x.Content=infoText + rep.Replace(quote.Text)?.SanitizeAllMentions())
-                        .ConfigureAwait(false);
-                }
+                var text = SmartText.CreateFrom(quote.Text.SanitizeAllMentions());
+                text = rep.Replace(text);
+                await ctx.Interaction.SendAsync(infoText + text, true);
             }
 
             [NadekoSlash]

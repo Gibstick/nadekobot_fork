@@ -24,6 +24,24 @@ namespace NadekoBot.Extensions
                 eb.WithFooter(efb => efb.WithText(footer));
             return ch.SendMessageAsync("", embed: eb.Build());
         }
+        public static Task<IUserMessage> SendAsync(
+        this IMessageChannel channel,
+        string plainText,
+        Embed embed,
+        bool sanitizeAll = false)
+        {
+            plainText = sanitizeAll ? plainText?.SanitizeAllMentions() ?? "" : plainText?.SanitizeMentions() ?? "";
+
+            return channel.SendMessageAsync(plainText, embed: embed);
+        }
+
+        public static Task<IUserMessage> SendAsync(this IMessageChannel channel, SmartText text, bool sanitizeAll = false)
+        => text switch
+        {
+            SmartEmbedText set => channel.SendAsync(set.PlainText, set.GetEmbed().Build(), sanitizeAll),
+            SmartPlainText st => channel.SendAsync(st.Text, null, sanitizeAll),
+            _ => throw new ArgumentOutOfRangeException(nameof(text))
+        };
 
         public static Task<IUserMessage> SendErrorAsync(this IMessageChannel ch, string error)
              => ch.SendMessageAsync("", embed: new EmbedBuilder().WithErrorColor().WithDescription(error).Build());

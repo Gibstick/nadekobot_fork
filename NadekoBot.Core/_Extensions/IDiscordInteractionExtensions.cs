@@ -51,6 +51,28 @@ namespace NadekoBot.Extensions
                         x.Content = "";
             });
         }
+        public static Task<IUserMessage> SendAsync(
+        this IDiscordInteraction di,
+        string plainText,
+        Embed embed,
+        bool sanitizeAll = false)
+        {
+            plainText = sanitizeAll ? plainText?.SanitizeAllMentions() ?? "" : plainText?.SanitizeMentions() ?? "";
+
+            return di.ModifyOriginalResponseAsync(x=>{
+                x.Content=plainText;
+                x.Embed= embed;
+            });
+        }
+
+        public static Task<IUserMessage> SendAsync(this IDiscordInteraction di, SmartText text, bool sanitizeAll = false)
+        => text switch
+        {
+            SmartEmbedText set => di.SendAsync(set.PlainText, set.GetEmbed().Build(), sanitizeAll),
+            SmartPlainText st => di.SendAsync(st.Text, null, sanitizeAll),
+            _ => throw new ArgumentOutOfRangeException(nameof(text))
+        };
+
 
         public static Task<IUserMessage> SendConfirmAsync(this IDiscordInteraction di, string text)
              => di.ModifyOriginalResponseAsync(x=>x.Embed = new EmbedBuilder().WithOkColor().WithDescription(text).Build());
