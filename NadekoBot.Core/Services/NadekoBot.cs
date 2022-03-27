@@ -21,6 +21,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Scrutor;
 using Discord.Net;
 using LinqToDB.EntityFrameworkCore;
 using NadekoBot.Common.ModuleBehaviors;
@@ -195,6 +196,19 @@ namespace NadekoBot
             s.AddSingleton<IReadyExecutor>(x => x.GetService<SelfService>());
             s.AddSingleton<IReadyExecutor>(x => x.GetService<CustomReactionsService>());
             s.AddSingleton<IReadyExecutor>(x => x.GetService<RepeaterService>());
+            s.Scan(scan => scan.FromAssemblyOf<IReadyExecutor>()
+                              .AddClasses(classes => classes.AssignableToAny(
+                                      // services
+                                      typeof(INService),
+
+                                      // behaviours
+                                      typeof(IEarlyBehavior),
+                                      typeof(ILateBlocker),
+                                      typeof(IInputTransformer),
+                                      typeof(ILateExecutor))
+                              )
+                              .AsSelfWithInterfaces()
+                              .WithSingletonLifetime());
             //initialize Services
             Services = s.BuildServiceProvider();
             var commandHandler = Services.GetService<CommandHandler>();

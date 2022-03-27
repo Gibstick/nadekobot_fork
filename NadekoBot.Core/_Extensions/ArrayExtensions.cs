@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 namespace NadekoBot.Extensions
 {
     // made for customreactions because they almost never get added
@@ -20,5 +20,16 @@ namespace NadekoBot.Extensions
             newCrs[input.Length] = added;
             return newCrs;
         }
+        public static IReadOnlyCollection<TOut> Map<TIn, TOut>(this IReadOnlyCollection<TIn> col, Func<TIn, TOut> f)
+        {
+            var toReturn = new TOut[col.Count];
+            
+            var i = 0;
+            foreach (var item in col)
+                toReturn[i++] = f(item);
+
+            return toReturn;
+        }
+        
     }
 }
