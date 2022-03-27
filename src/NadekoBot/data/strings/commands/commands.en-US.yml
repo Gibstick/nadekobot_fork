@@ -2128,3 +2128,12 @@ omdbsearch:
   desc: "Queries omdb for movies or series, shows multiple results."
   args:
     - "Batman vs Superman"
+stockname:
+  desc: "Shows basic information about a stock using the name."
+  args:
+    - "advanced micro devices"
+stocksymbol:
+  desc: "Shows basic information about a stock using the symbol."
+  args:
+    - "tsla"
+    - "amd"

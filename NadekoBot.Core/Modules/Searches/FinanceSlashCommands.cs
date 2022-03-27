@@ -27,7 +27,7 @@ namespace NadekoBot.Modules.Searches
             }
             
             [NadekoSlash]
-            public async Task StockSymbol(string query)
+            public async Task StockSymbol([Summary("query","Symbol of stock")]string query)
             {
                 await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 // by symbol
@@ -42,7 +42,7 @@ namespace NadekoBot.Modules.Searches
             }
 
             [NadekoSlash]
-            public async Task StockName(string query){
+            public async Task StockName([Summary("query","Name of stock")]string query){
 
                 await ctx.Interaction.DeferAsync().ConfigureAwait(false);
                 

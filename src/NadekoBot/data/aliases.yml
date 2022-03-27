@@ -1282,3 +1282,7 @@ emojiadd:
 - ea
 omdbsearch:
 - omdbsearch
+stockname:
+- stockname
+stocksymbol:
+- stocksymbol
