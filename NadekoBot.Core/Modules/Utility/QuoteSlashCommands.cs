@@ -343,7 +343,7 @@ namespace NadekoBot.Modules.Utility
                         filebytes = await http.GetByteArrayAsync(text);
                     }
                     await using (var ms = new MemoryStream(filebytes)){
-                        var message = await ctx.Channel.SendFileAsync(ms,"image.png");
+                        var message = await ctx.Channel.SendFileAsync(ms,file.Filename);
                         text = message.Attachments.FirstOrDefault().Url;
                     }
                 }
