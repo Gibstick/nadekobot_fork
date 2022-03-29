@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.IO;
 using System.Net.Http;
 using Serilog;
 
@@ -335,7 +336,18 @@ namespace NadekoBot.Modules.Utility
                 }
             
                 keyword = keyword.ToUpperInvariant();
+                byte[] filebytes;
                 string text = file.Url;
+                if (file.Ephemeral){
+                    using (var http = _httpFactory.CreateClient()){
+                        filebytes = await http.GetByteArrayAsync(text);
+                    }
+                    await using (var ms = new MemoryStream(filebytes)){
+                        var message = await ctx.Channel.SendFileAsync(ms,file.Filename);
+                        text = message.Attachments.FirstOrDefault().Url;
+                    }
+                }
+
                 await QuoteAddInternal(ctx,keyword,text).ConfigureAwait(false);
             }
 
