@@ -339,7 +339,7 @@ namespace NadekoBot.Modules.Utility
                 byte[] filebytes;
                 string text = file.Url;
                 if (file.Ephemeral){
-                    using (var http = _httpFactory.CreateClient()) {
+                    using (var http = _httpFactory.CreateClient()){
                         filebytes = await http.GetByteArrayAsync(text);
                     }
                     await using (var ms = new MemoryStream(filebytes)){
@@ -347,7 +347,6 @@ namespace NadekoBot.Modules.Utility
                         text = message.Attachments.FirstOrDefault().Url;
                     }
                 }
-
 
                 await QuoteAddInternal(ctx,keyword,text).ConfigureAwait(false);
             }
